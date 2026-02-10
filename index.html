@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: sans-serif; margin: 0; background: #f4f4f4; }
+        .sidebar { height: 100%; width: 200px; position: fixed; background: #2c3e50; padding-top: 20px; }
+        .sidebar a { padding: 15px; text-decoration: none; font-size: 18px; color: white; display: block; }
+        .content { margin-left: 200px; padding: 20px; }
+        iframe { width: 100%; height: 80vh; border: none; }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="menu">
+        </div>
+    <div class="content">
+        <iframe id="player" src="ABOUT:BLANK"></iframe>
+    </div>
+
+    <script>
+        // ADD YOUR LINKS HERE - THIS IS THE FASTEST WAY TO UPDATE
+        const playlists = [
+            { name: "Live Quran", url: "https://www.youtube.com/embed/live_stream?channel=UC8p9ZgL_N_N_N" },
+            { name: "Recitations", url: "https://www.youtube.com/embed/videoseries?list=PLAYLIST_ID_1" },
+            { name: "Tafsir Series", url: "https://www.youtube.com/embed/videoseries?list=PLAYLIST_ID_2" }
+        ];
+
+        const menu = document.getElementById('menu');
+        const player = document.getElementById('player');
+
+        playlists.forEach(pl => {
+            let a = document.createElement('a');
+            a.innerText = pl.name;
+            a.href = "#";
+            a.onclick = () => { player.src = pl.url; };
+            menu.appendChild(a);
+        });
+        // Load first one by default
+        player.src = playlists[0].url;
+    </script>
+</body>
+</html>
