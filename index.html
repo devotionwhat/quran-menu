@@ -3,41 +3,49 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        /* This creates the 'Bottom Menu' look */
-        body { margin: 0; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; }
-        #player-container { flex: 1; background: #000; }
-        iframe { width: 100%; height: 100%; border: none; }
+        body { margin: 0; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; background: #000; }
+        #player-container { flex: 1; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; }
         
         .bottom-nav { 
             display: flex; 
             overflow-x: auto; 
-            background: #2c3e50; 
+            background: #1a1a1a; 
             color: white; 
             padding: 10px 0;
+            border-top: 2px solid #333;
         }
         .nav-item { 
             flex: 0 0 auto; 
-            padding: 10px 20px; 
+            padding: 12px 20px; 
             text-align: center; 
             cursor: pointer; 
-            border-right: 1px solid #34495e;
+            font-weight: bold;
+            border-right: 1px solid #333;
+            text-transform: uppercase;
+            font-size: 14px;
         }
-        .nav-item:active { background: #1abc9c; }
+        .nav-item:active { background: #00ccff; color: black; }
     </style>
 </head>
 <body>
 
-          <iframe id="main-player" src="https://www.youtube.com/watch?v=wiV-BpQ1odQ"></iframe>
+    <div id="player-container">
+        <iframe id="main-player" 
+                src="https://www.youtube.com/@ehabkanoo/featured" 
+                allow="autoplay; encrypted-media" 
+                allowfullscreen>
+        </iframe>
+    </div>
 
-    </div> 
+    <div class="bottom-nav" id="menu">
+        </div>
 
     <script>
-        // JUST ADD NEW LINKS HERE. THE MENU WILL AUTO-UPDATE.
         const channels = [
             { name: "🕋 Live Makkah", id: "Cm1v4bteXbI" },
-            { name: "📖 Albaqara Recitations", id: "dOvTkWpHNAc" },
-            { name: "🕌 Alkahf", id: "T_MkOAeFXrs" },
-            { name: "🌙 Daily Reminders", id: "https://www.youtube.com/watch?v=wwYvlgv7A0k&list=PLJCHYvnjPCfGzwFLIwdWO7H0skJqkmZ9i&pp=sAgC" }
+            { name: "📖 Al-Baqara Recitations", id: "dOvTkWpHNAc" },
+            { name: "🕌 Tafsir", id: "watch?v=wwYvlgv7A0k&list=PLJCHYvnjPCfGzwFLIwdWO7H0skJqkmZ9i&pp=sAgC" }
         ];
 
         const menu = document.getElementById('menu');
@@ -48,7 +56,8 @@
             div.className = 'nav-item';
             div.innerText = item.name;
             div.onclick = () => {
-                player.src = "https://www.youtube.com/embed/" + item.id;
+                // When clicking a button, we add autoplay=1 so it starts immediately
+                player.src = "https://www.youtube.com/embed/" + item.id + "&autoplay=1";
             };
             menu.appendChild(div);
         });
