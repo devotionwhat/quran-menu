@@ -2,10 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kids YouTube - Fun & Safe Videos</title>
+    <!-- Viewport settings for Android WebView: ensures proper scaling and disables user zoom (optional) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- If you prefer to allow zooming, replace the line above with:
+         <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    -->
+    <title>Kids YouTube - Android App</title>
     <style>
-        /* CSS3: reset, variables, and global styles */
+        /* Reset and global styles with Android-friendly touch adjustments */
         * {
             margin: 0;
             padding: 0;
@@ -14,19 +18,23 @@
         }
 
         body {
-            background-color: #f0f8ff;  /* Light blue */
+            background-color: #f0f8ff;
             padding: 20px;
+            /* Removes the gray highlight when tapping links/buttons on Android */
+            -webkit-tap-highlight-color: transparent;
+            /* Improve touch scrolling */
+            -webkit-overflow-scrolling: touch;
         }
 
-        /* Header area */
+        /* Header */
         .header {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            background: linear-gradient(135deg, #ffd966, #ffb347); /* CSS3 gradient */
+            background: linear-gradient(135deg, #ffd966, #ffb347);
             padding: 15px 25px;
-            border-radius: 50px; /* CSS3 rounded corners */
+            border-radius: 50px;
             box-shadow: 0 8px 15px rgba(0,0,0,0.1);
             margin-bottom: 30px;
         }
@@ -40,7 +48,7 @@
         .logo h1 {
             font-size: 2rem;
             color: #fff;
-            text-shadow: 3px 3px 0 #3b9cff; /* CSS3 text shadow */
+            text-shadow: 3px 3px 0 #3b9cff;
         }
 
         .search-bar {
@@ -75,14 +83,14 @@
             color: white;
             font-size: 1.8rem;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: transform 0.2s; /* CSS3 transition */
+            transition: transform 0.2s;
         }
 
-        .user-icon:hover {
+        .user-icon:active {
             transform: scale(1.1) rotate(5deg);
         }
 
-        /* Navigation categories */
+        /* Categories */
         .categories {
             display: flex;
             flex-wrap: wrap;
@@ -98,20 +106,24 @@
             font-size: 1.2rem;
             font-weight: bold;
             color: #1e3c72;
-            cursor: default;
             transition: all 0.2s;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             border: 2px solid transparent;
+            /* Better touch target */
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .category:hover {
+        .category:active {
             background-color: #ffb3ba;
             color: #fff;
             border-color: #ff4d4d;
             transform: translateY(-3px);
         }
 
-        /* Video grid using CSS Grid (CSS3) */
+        /* Video grid */
         .video-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -128,9 +140,11 @@
             transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
             border: 3px solid #fff;
+            /* Ensure touch feedback */
+            -webkit-tap-highlight-color: rgba(255, 170, 58, 0.3);
         }
 
-        .video-card:hover {
+        .video-card:active {
             transform: scale(1.02) translateY(-5px);
             box-shadow: 0 20px 30px rgba(0,0,0,0.15);
             border-color: #ffaa3a;
@@ -148,13 +162,14 @@
             height: 100%;
             object-fit: cover;
             transition: transform 0.5s;
+            pointer-events: none; /* Prevents image from interfering with tap */
         }
 
-        .video-card:hover .thumbnail img {
+        .video-card:active .thumbnail img {
             transform: scale(1.1);
         }
 
-        /* Play button overlay (CSS3 pseudo-elements) */
+        /* Play button overlay */
         .thumbnail::after {
             content: "▶";
             position: absolute;
@@ -173,10 +188,10 @@
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
-            backdrop-filter: blur(2px); /* CSS3 backdrop filter */
+            backdrop-filter: blur(2px);
         }
 
-        .video-card:hover .thumbnail::after {
+        .video-card:active .thumbnail::after {
             opacity: 1;
         }
 
@@ -259,97 +274,79 @@
         <div class="search-bar">
             <input type="text" placeholder="Search for cartoons, songs, fun...">
         </div>
-        <div class="user-icon">
+        <div class="user-icon" onclick="alert('Profile page would open here')">
             😊
         </div>
     </header>
 
     <nav class="categories">
-        <span class="category">All</span>
-        <span class="category">Cartoons</span>
-        <span class="category">Songs</span>
-        <span class="category">Animals</span>
-        <span class="category">Learning</span>
-        <span class="category">Toys</span>
+        <span class="category" onclick="filterVideos('all')">All</span>
+        <span class="category" onclick="filterVideos('cartoons')">Cartoons</span>
+        <span class="category" onclick="filterVideos('songs')">Songs</span>
+        <span class="category" onclick="filterVideos('animals')">Animals</span>
+        <span class="category" onclick="filterVideos('learning')">Learning</span>
+        <span class="category" onclick="filterVideos('toys')">Toys</span>
     </nav>
 
-    <main class="video-grid">
-        <!-- Video Card 1 -->
-        <div class="video-card">
-            <div class="thumbnail">
-                <img src="https://picsum.photos/300/180?random=1" alt="Funny Cat">
-            </div>
-            <div class="video-info">
-                <div class="video-title">Funny Cats Compilation</div>
-                <div class="channel-name">Animal Fun</div>
-                <div class="views">2.5M views</div>
-            </div>
-        </div>
-
-        <!-- Video Card 2 -->
-        <div class="video-card">
-            <div class="thumbnail">
-                <img src="https://picsum.photos/300/180?random=2" alt="ABC Song">
-            </div>
-            <div class="video-info">
-                <div class="video-title">ABC Song - Learn Alphabet</div>
-                <div class="channel-name">Little Learners</div>
-                <div class="views">5.1M views</div>
-            </div>
-        </div>
-
-        <!-- Video Card 3 -->
-        <div class="video-card">
-            <div class="thumbnail">
-                <img src="https://picsum.photos/300/180?random=3" alt="Paw Patrol">
-            </div>
-            <div class="video-info">
-                <div class="video-title">Paw Patrol New Episodes</div>
-                <div class="channel-name">Nick Jr.</div>
-                <div class="views">3.8M views</div>
-            </div>
-        </div>
-
-        <!-- Video Card 4 -->
-        <div class="video-card">
-            <div class="thumbnail">
-                <img src="https://picsum.photos/300/180?random=4" alt="Play Doh">
-            </div>
-            <div class="video-info">
-                <div class="video-title">Play Doh Creations</div>
-                <div class="channel-name">Toy Time</div>
-                <div class="views">1.2M views</div>
-            </div>
-        </div>
-
-        <!-- Video Card 5 -->
-        <div class="video-card">
-            <div class="thumbnail">
-                <img src="https://picsum.photos/300/180?random=5" alt="Dinosaurs">
-            </div>
-            <div class="video-info">
-                <div class="video-title">Dinosaur Adventure</div>
-                <div class="channel-name">Jurassic Kids</div>
-                <div class="views">4.3M views</div>
-            </div>
-        </div>
-
-        <!-- Video Card 6 -->
-        <div class="video-card">
-            <div class="thumbnail">
-                <img src="https://picsum.photos/300/180?random=6" alt="Finger Family">
-            </div>
-            <div class="video-info">
-                <div class="video-title">Finger Family Song</div>
-                <div class="channel-name">Nursery Rhymes</div>
-                <div class="views">6.7M views</div>
-            </div>
-        </div>
+    <main class="video-grid" id="videoGrid">
+        <!-- Video cards will be populated by JavaScript (or you can keep static) -->
     </main>
 
     <footer class="footer">
         <p>🌟 KidsTube – Safe and fun videos for children 🌟</p>
-        <p>© 2025 | Designed with HTML5 & CSS3</p>
+        <p>© 2025 | Android Edition</p>
     </footer>
+
+    <script>
+        // Sample video data – replace with your own or fetch from an API
+        const videos = [
+            { title: 'Funny Cats Compilation', channel: 'Animal Fun', views: '2.5M', thumb: 'https://picsum.photos/300/180?random=1' },
+            { title: 'ABC Song - Learn Alphabet', channel: 'Little Learners', views: '5.1M', thumb: 'https://picsum.photos/300/180?random=2' },
+            { title: 'Paw Patrol New Episodes', channel: 'Nick Jr.', views: '3.8M', thumb: 'https://picsum.photos/300/180?random=3' },
+            { title: 'Play Doh Creations', channel: 'Toy Time', views: '1.2M', thumb: 'https://picsum.photos/300/180?random=4' },
+            { title: 'Dinosaur Adventure', channel: 'Jurassic Kids', views: '4.3M', thumb: 'https://picsum.photos/300/180?random=5' },
+            { title: 'Finger Family Song', channel: 'Nursery Rhymes', views: '6.7M', thumb: 'https://picsum.photos/300/180?random=6' }
+        ];
+
+        // Function to render video cards
+        function renderVideos(filter = 'all') {
+            const grid = document.getElementById('videoGrid');
+            grid.innerHTML = ''; // Clear existing
+            videos.forEach(video => {
+                // In a real app you'd filter based on category. Here we just show all.
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                card.setAttribute('onclick', "playVideo('" + video.title + "')");
+                card.innerHTML = `
+                    <div class="thumbnail">
+                        <img src="${video.thumb}" alt="${video.title}" loading="lazy">
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">${video.title}</div>
+                        <div class="channel-name">${video.channel}</div>
+                        <div class="views">${video.views} views</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Placeholder functions for interactivity
+        window.playVideo = function(title) {
+            alert('Playing: ' + title + '\n(Replace with actual video player)');
+            // In a real app, you'd launch a video activity or open a video view
+        };
+
+        window.filterVideos = function(category) {
+            alert('Filter by: ' + category + '\n(Implement your filtering logic)');
+            // For now, just re-render all (or you could filter the videos array)
+            renderVideos();
+        };
+
+        // Initial render
+        renderVideos();
+
+        // Optional: Add a small delay to simulate loading (not necessary)
+    </script>
 </body>
 </html>
