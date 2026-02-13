@@ -2,14 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Viewport settings for Android WebView: ensures proper scaling and disables user zoom (optional) -->
+    <!-- Android-friendly viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- If you prefer to allow zooming, replace the line above with:
-         <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    -->
-    <title>Kids YouTube - Android App</title>
+    <title>KidsTube - Your YouTube Collection</title>
     <style>
-        /* Reset and global styles with Android-friendly touch adjustments */
+        /* RESET & GLOBAL */
         * {
             margin: 0;
             padding: 0;
@@ -20,13 +17,11 @@
         body {
             background-color: #f0f8ff;
             padding: 20px;
-            /* Removes the gray highlight when tapping links/buttons on Android */
             -webkit-tap-highlight-color: transparent;
-            /* Improve touch scrolling */
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Header */
+        /* HEADER */
         .header {
             display: flex;
             flex-wrap: wrap;
@@ -67,11 +62,6 @@
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .search-bar input::placeholder {
-            color: #aaa;
-            font-style: italic;
-        }
-
         .user-icon {
             background-color: #ff6b6b;
             width: 50px;
@@ -90,7 +80,7 @@
             transform: scale(1.1) rotate(5deg);
         }
 
-        /* Categories */
+        /* CATEGORIES (optional filters – you can wire them later) */
         .categories {
             display: flex;
             flex-wrap: wrap;
@@ -109,7 +99,6 @@
             transition: all 0.2s;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             border: 2px solid transparent;
-            /* Better touch target */
             min-height: 48px;
             display: inline-flex;
             align-items: center;
@@ -123,7 +112,7 @@
             transform: translateY(-3px);
         }
 
-        /* Video grid */
+        /* VIDEO GRID */
         .video-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -131,7 +120,7 @@
             padding: 10px;
         }
 
-        /* Video card */
+        /* VIDEO CARD */
         .video-card {
             background-color: white;
             border-radius: 30px;
@@ -140,7 +129,6 @@
             transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
             border: 3px solid #fff;
-            /* Ensure touch feedback */
             -webkit-tap-highlight-color: rgba(255, 170, 58, 0.3);
         }
 
@@ -155,6 +143,11 @@
             overflow: hidden;
             height: 160px;
             background-color: #d3d3d3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #666;
         }
 
         .thumbnail img {
@@ -162,37 +155,11 @@
             height: 100%;
             object-fit: cover;
             transition: transform 0.5s;
-            pointer-events: none; /* Prevents image from interfering with tap */
+            pointer-events: none;
         }
 
         .video-card:active .thumbnail img {
             transform: scale(1.1);
-        }
-
-        /* Play button overlay */
-        .thumbnail::after {
-            content: "▶";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.7);
-            color: #ff4d4d;
-            font-size: 2.5rem;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            backdrop-filter: blur(2px);
-        }
-
-        .video-card:active .thumbnail::after {
-            opacity: 1;
         }
 
         .video-info {
@@ -209,7 +176,7 @@
             text-overflow: ellipsis;
         }
 
-        .channel-name {
+        .video-meta {
             color: #666;
             font-size: 1rem;
             display: flex;
@@ -217,25 +184,74 @@
             gap: 5px;
         }
 
-        .channel-name::before {
-            content: "👤";
+        .video-meta::before {
+            content: "📺";
             font-size: 1.1rem;
         }
 
-        .views {
-            color: #999;
-            font-size: 0.9rem;
-            margin-top: 6px;
+        /* MODAL for video player */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 800px;
+            background: transparent;
+            position: relative;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.3);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgba(255,255,255,0.2);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
+            transition: background 0.2s;
         }
 
-        .views::before {
-            content: "👁️";
+        .close-btn:active {
+            background: rgba(255,255,255,0.5);
         }
 
-        /* Footer */
+        /* FOOTER */
         .footer {
             margin-top: 40px;
             text-align: center;
@@ -246,7 +262,6 @@
             font-size: 1rem;
         }
 
-        /* Responsive adjustments */
         @media (max-width: 600px) {
             .header {
                 flex-direction: column;
@@ -272,81 +287,140 @@
             <h1>KidsTube</h1>
         </div>
         <div class="search-bar">
-            <input type="text" placeholder="Search for cartoons, songs, fun...">
+            <input type="text" placeholder="Search your videos... (static demo)">
         </div>
-        <div class="user-icon" onclick="alert('Profile page would open here')">
+        <div class="user-icon" onclick="alert('Profile')">
             😊
         </div>
     </header>
 
     <nav class="categories">
-        <span class="category" onclick="filterVideos('all')">All</span>
-        <span class="category" onclick="filterVideos('cartoons')">Cartoons</span>
-        <span class="category" onclick="filterVideos('songs')">Songs</span>
-        <span class="category" onclick="filterVideos('animals')">Animals</span>
-        <span class="category" onclick="filterVideos('learning')">Learning</span>
-        <span class="category" onclick="filterVideos('toys')">Toys</span>
+        <span class="category" onclick="filterItems('all')">All</span>
+        <span class="category" onclick="filterItems('video')">Videos</span>
+        <span class="category" onclick="filterItems('playlist')">Playlists</span>
+        <span class="category" onclick="filterItems('channel')">Channels</span>
     </nav>
 
-    <main class="video-grid" id="videoGrid">
-        <!-- Video cards will be populated by JavaScript (or you can keep static) -->
-    </main>
+    <main class="video-grid" id="videoGrid"></main>
+
+    <!-- Modal for playing YouTube content -->
+    <div id="playerModal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div id="playerContainer" class="video-container"></div>
+        </div>
+    </div>
 
     <footer class="footer">
-        <p>🌟 KidsTube – Safe and fun videos for children 🌟</p>
-        <p>© 2025 | Android Edition</p>
+        <p>🌟 KidsTube – Your own YouTube collection 🌟</p>
+        <p>© 2025 | Add your video/playlist/channel IDs below</p>
     </footer>
 
     <script>
-        // Sample video data – replace with your own or fetch from an API
-        const videos = [
-            { title: 'Funny Cats Compilation', channel: 'Animal Fun', views: '2.5M', thumb: 'https://picsum.photos/300/180?random=1' },
-            { title: 'ABC Song - Learn Alphabet', channel: 'Little Learners', views: '5.1M', thumb: 'https://picsum.photos/300/180?random=2' },
-            { title: 'Paw Patrol New Episodes', channel: 'Nick Jr.', views: '3.8M', thumb: 'https://picsum.photos/300/180?random=3' },
-            { title: 'Play Doh Creations', channel: 'Toy Time', views: '1.2M', thumb: 'https://picsum.photos/300/180?random=4' },
-            { title: 'Dinosaur Adventure', channel: 'Jurassic Kids', views: '4.3M', thumb: 'https://picsum.photos/300/180?random=5' },
-            { title: 'Finger Family Song', channel: 'Nursery Rhymes', views: '6.7M', thumb: 'https://picsum.photos/300/180?random=6' }
+        // =====================================================
+        // CONFIGURATION – EDIT THIS ARRAY WITH YOUR OWN IDs
+        // =====================================================
+        const items = [
+            // Video example (single video)
+            { type: 'video', id: 'dQw4w9WgXcQ', title: 'Never Gonna Give You Up', channel: 'Rick Astley' },
+            { type: 'video', id: 'tgbNymZ7vqY', title: 'Baby Shark Dance', channel: 'Pinkfong' },
+            // Playlist example (YouTube playlist ID)
+            { type: 'playlist', id: 'PLVDj1Gm7P7gw0Lh1k3g7pU8Zk8hVk8z8', title: 'Kids Songs Playlist', channel: 'Various Artists' },
+            // Channel example (YouTube channel ID – must start with UC)
+            { type: 'channel', id: 'UCX6OQ3DkcsbYNE6H8uQQuVA', title: 'Peppa Pig Official', channel: 'Peppa Pig' },
+            // Add more items as needed: copy the lines above and change type/id/title/channel
         ];
 
-        // Function to render video cards
-        function renderVideos(filter = 'all') {
+        // =====================================================
+        // HELPER: Get embed URL based on type and id
+        // =====================================================
+        function getEmbedUrl(item) {
+            if (item.type === 'video') {
+                return `https://www.youtube.com/embed/${item.id}?autoplay=1`;
+            } else if (item.type === 'playlist') {
+                return `https://www.youtube.com/embed?listType=playlist&list=${item.id}&autoplay=1`;
+            } else if (item.type === 'channel') {
+                // Convert channel ID to uploads playlist: replace UC with UU
+                // e.g., UCX6OQ3DkcsbYNE6H8uQQuVA -> UUX6OQ3DkcsbYNE6H8uQQuVA
+                const playlistId = 'UU' + item.id.substring(2);
+                return `https://www.youtube.com/embed?listType=playlist&list=${playlistId}&autoplay=1`;
+            }
+            return '';
+        }
+
+        // =====================================================
+        // Get thumbnail URL (for videos only; others use emoji)
+        // =====================================================
+        function getThumbnailHtml(item) {
+            if (item.type === 'video') {
+                return `<img src="https://img.youtube.com/vi/${item.id}/0.jpg" alt="${item.title}" loading="lazy">`;
+            } else if (item.type === 'playlist') {
+                return `<span style="font-size: 3rem;">📋</span>`; // playlist icon
+            } else if (item.type === 'channel') {
+                return `<span style="font-size: 3rem;">📺</span>`; // channel icon
+            }
+        }
+
+        // =====================================================
+        // Render grid based on current filter
+        // =====================================================
+        let currentFilter = 'all';
+
+        function renderGrid() {
             const grid = document.getElementById('videoGrid');
-            grid.innerHTML = ''; // Clear existing
-            videos.forEach(video => {
-                // In a real app you'd filter based on category. Here we just show all.
+            grid.innerHTML = '';
+            const filtered = currentFilter === 'all' ? items : items.filter(item => item.type === currentFilter);
+            filtered.forEach((item, index) => {
                 const card = document.createElement('div');
                 card.className = 'video-card';
-                card.setAttribute('onclick', "playVideo('" + video.title + "')");
+                card.setAttribute('onclick', `playItem(${index})`);
                 card.innerHTML = `
                     <div class="thumbnail">
-                        <img src="${video.thumb}" alt="${video.title}" loading="lazy">
+                        ${getThumbnailHtml(item)}
                     </div>
                     <div class="video-info">
-                        <div class="video-title">${video.title}</div>
-                        <div class="channel-name">${video.channel}</div>
-                        <div class="views">${video.views} views</div>
+                        <div class="video-title">${item.title}</div>
+                        <div class="video-meta">${item.channel || 'YouTube'}</div>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // Placeholder functions for interactivity
-        window.playVideo = function(title) {
-            alert('Playing: ' + title + '\n(Replace with actual video player)');
-            // In a real app, you'd launch a video activity or open a video view
+        // =====================================================
+        // Play item: open modal with embedded YouTube player
+        // =====================================================
+        window.playItem = function(index) {
+            const item = currentFilter === 'all' ? items[index] : items.filter(item => item.type === currentFilter)[index];
+            const embedUrl = getEmbedUrl(item);
+            const modal = document.getElementById('playerModal');
+            const container = document.getElementById('playerContainer');
+            container.innerHTML = `<iframe src="${embedUrl}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+            modal.style.display = 'flex';
         };
 
-        window.filterVideos = function(category) {
-            alert('Filter by: ' + category + '\n(Implement your filtering logic)');
-            // For now, just re-render all (or you could filter the videos array)
-            renderVideos();
+        // =====================================================
+        // Close modal when clicking outside or on close button
+        // =====================================================
+        window.closeModal = function(event) {
+            const modal = document.getElementById('playerModal');
+            if (!event || event.target === modal || event.target.classList.contains('close-btn')) {
+                modal.style.display = 'none';
+                // Stop video by removing iframe
+                document.getElementById('playerContainer').innerHTML = '';
+            }
+        };
+
+        // =====================================================
+        // Filter items by type
+        // =====================================================
+        window.filterItems = function(type) {
+            currentFilter = type;
+            renderGrid();
         };
 
         // Initial render
-        renderVideos();
-
-        // Optional: Add a small delay to simulate loading (not necessary)
+        renderGrid();
     </script>
 </body>
 </html>
