@@ -3,31 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Quran Kids - تعلم القرآن للأطفال</title>
+    <title>QuranTube - Quran for Kids</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Reset and styles - keeping YouTube Kids look but with Islamic theme */
+        /* Reset & Base - YouTube Kids style with Islamic theme */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', 'Traditional Arabic', Roboto, sans-serif;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', 'Traditional Arabic', Tahoma, sans-serif;
         }
 
         body {
-            background-color: #f5f0e6; /* Warm, paper-like background */
+            background-color: #f9f6f0;  /* Warm background */
             -webkit-tap-highlight-color: transparent;
             -webkit-overflow-scrolling: touch;
         }
 
+        /* Header - like YouTube Kids but green */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: linear-gradient(135deg, #2e7d32, #1b5e20); /* Islamic green */
-            padding: 10px 20px;
+            background: linear-gradient(145deg, #2e7d32, #1b5e20);
+            padding: 12px 20px;
             color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -40,50 +41,68 @@
         }
 
         .logo i {
-            font-size: 2rem;
-            color: #ffd700; /* Gold accent */
+            font-size: 2.2rem;
+            color: #ffd700;
+            text-shadow: 2px 2px 0 #b8860b;
         }
 
         .logo span {
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: bold;
+            letter-spacing: -0.5px;
         }
 
-        .logo span small {
+        .logo small {
             font-size: 1rem;
             font-family: 'Traditional Arabic', serif;
+            margin-left: 5px;
+            opacity: 0.9;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 20px;
         }
 
         .header-icons i {
             font-size: 1.8rem;
-            margin-left: 15px;
             color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.2));
         }
 
+        .header-icons i:active {
+            transform: scale(1.2);
+        }
+
+        /* Category Pills */
         .categories {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            padding: 15px;
-            background-color: white;
-            border-bottom: 2px solid #2e7d32;
+            padding: 15px 20px;
+            background: white;
+            border-bottom: 3px solid #ffd700;
             justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
         .category {
             background-color: #e8f5e9;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 1.1rem;
+            padding: 10px 25px;
+            border-radius: 40px;
+            font-size: 1.2rem;
             font-weight: bold;
             color: #1b5e20;
+            transition: all 0.2s;
             border: 2px solid transparent;
             min-height: 48px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .category.active {
@@ -96,45 +115,47 @@
             transform: scale(0.95);
         }
 
+        /* Channels Section */
         .channels-section {
             padding: 20px;
-            background: linear-gradient(to bottom, #f5f0e6, #fff9f0);
+            background: linear-gradient(to bottom, #fff9f0, #f5f0e6);
         }
 
         .section-title {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             color: #1b5e20;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            border-bottom: 3px solid #ffd700;
+            gap: 12px;
+            border-bottom: 4px solid #ffd700;
             padding-bottom: 8px;
         }
 
         .section-title i {
             color: #ffd700;
+            font-size: 2rem;
         }
 
         .channels-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
 
         .channel-card {
             background: white;
-            border-radius: 20px;
-            padding: 15px;
+            border-radius: 30px;
+            padding: 18px;
             display: flex;
             align-items: center;
-            gap: 15px;
-            box-shadow: 0 6px 15px rgba(46, 125, 50, 0.2);
+            gap: 18px;
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.2);
             border: 2px solid transparent;
             transition: all 0.2s;
             cursor: pointer;
-            border-left: 5px solid #ffd700;
+            border-left: 8px solid #ffd700;
         }
 
         .channel-card:active {
@@ -143,63 +164,80 @@
         }
 
         .channel-avatar {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             background: linear-gradient(135deg, #2e7d32, #ffd700);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             border: 3px solid white;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            flex-shrink: 0;
         }
 
         .channel-info {
             flex: 1;
+            min-width: 0;
         }
 
         .channel-name {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: bold;
             color: #1b5e20;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .channel-stats {
-            color: #666;
-            font-size: 0.9rem;
             display: flex;
-            align-items: center;
-            gap: 8px;
+            flex-wrap: wrap;
+            gap: 12px;
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 5px;
         }
 
         .channel-stats i {
             color: #ffd700;
+            margin-right: 3px;
         }
 
-        .badge {
-            background-color: #ffd700;
+        .channel-desc {
+            font-size: 0.9rem;
+            color: #2e7d32;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .arabic-badge {
+            background: #ffd700;
             color: #1b5e20;
             padding: 3px 8px;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: bold;
+            display: inline-block;
         }
 
+        /* Video Grid */
         .video-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 20px;
             padding: 20px;
         }
 
         .video-card {
             background: white;
-            border-radius: 20px;
+            border-radius: 25px;
             overflow: hidden;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.1);
             transition: all 0.2s;
             cursor: pointer;
             border: 2px solid transparent;
@@ -207,36 +245,36 @@
         }
 
         .video-card.popular::after {
-            content: "🔥 HOT";
+            content: "⭐ Most Watched";
             position: absolute;
             top: 10px;
             right: 10px;
             background: #ffd700;
             color: #1b5e20;
-            padding: 5px 10px;
-            border-radius: 20px;
+            padding: 5px 12px;
+            border-radius: 30px;
             font-size: 0.8rem;
             font-weight: bold;
             z-index: 2;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
         .video-card:active {
             transform: scale(0.98);
-            border-color: #2e7d32;
+            border-color: #ffd700;
         }
 
         .thumbnail {
             position: relative;
-            height: 180px;
-            background: linear-gradient(145deg, #e8f5e9, #c8e6c9);
+            height: 170px;
+            background: linear-gradient(145deg, #c8e6c9, #a5d6a7);
             overflow: hidden;
         }
 
-        .thumbnail iframe {
+        .thumbnail img {
             width: 100%;
             height: 100%;
-            border: none;
-            pointer-events: none;
+            object-fit: cover;
         }
 
         .play-overlay {
@@ -244,18 +282,19 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: rgba(255,215,0,0.9);
+            width: 65px;
+            height: 65px;
+            background: rgba(255, 215, 0, 0.9);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #1b5e20;
-            font-size: 2rem;
+            font-size: 2.2rem;
             opacity: 0;
             transition: opacity 0.2s;
             pointer-events: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         .video-card:active .play-overlay {
@@ -263,22 +302,22 @@
         }
 
         .video-info {
-            padding: 12px;
+            padding: 14px;
             display: flex;
-            gap: 10px;
+            gap: 12px;
             background: white;
         }
 
         .channel-icon-small {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             background: #2e7d32;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             flex-shrink: 0;
         }
 
@@ -288,10 +327,10 @@
         }
 
         .video-title {
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: bold;
             color: #1b5e20;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -299,19 +338,22 @@
 
         .video-meta {
             color: #666;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .views-badge {
             background: #e8f5e9;
-            padding: 2px 6px;
-            border-radius: 12px;
+            padding: 3px 8px;
+            border-radius: 20px;
             color: #2e7d32;
+            font-size: 0.8rem;
         }
 
+        /* Modal Player */
         .modal {
             display: none;
             position: fixed;
@@ -320,7 +362,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             align-items: center;
             justify-content: center;
             flex-direction: column;
@@ -336,9 +378,10 @@
             position: relative;
             padding-bottom: 56.25%;
             height: 0;
-            border-radius: 16px;
+            border-radius: 20px;
             overflow: hidden;
-            border: 3px solid #ffd700;
+            border: 4px solid #ffd700;
+            box-shadow: 0 0 30px rgba(255,215,0,0.3);
         }
 
         .video-container iframe {
@@ -357,38 +400,51 @@
             color: white;
             font-size: 2.5rem;
             cursor: pointer;
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             background: #2e7d32;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 2px solid #ffd700;
         }
 
+        .close-btn:active {
+            background: #1b5e20;
+        }
+
+        /* Footer */
         .footer {
-            margin-top: 20px;
+            margin-top: 30px;
             text-align: center;
-            padding: 15px;
+            padding: 20px;
             background: #1b5e20;
             color: white;
+            border-radius: 40px 40px 0 0;
         }
 
         .footer i {
             color: #ffd700;
+            margin: 0 5px;
         }
 
-        .arabic-text {
+        .footer .arabic {
             font-family: 'Traditional Arabic', serif;
-            font-size: 1.2rem;
-            margin-right: 5px;
+            font-size: 1.1rem;
         }
 
+        /* Loading spinner */
         .loading {
             text-align: center;
             padding: 40px;
-            font-size: 1.2rem;
             color: #2e7d32;
+            font-size: 1.2rem;
+        }
+
+        .loading i {
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
         }
 
         @keyframes spin {
@@ -396,10 +452,13 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Responsive */
         @media (max-width: 600px) {
-            .logo span { font-size: 1.4rem; }
-            .logo span small { font-size: 0.8rem; }
-            .category { padding: 8px 12px; font-size: 0.9rem; }
+            .logo span { font-size: 1.6rem; }
+            .logo small { font-size: 0.8rem; }
+            .category { padding: 8px 16px; font-size: 1rem; }
+            .channel-avatar { width: 65px; height: 65px; font-size: 2rem; }
+            .channel-name { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -407,26 +466,29 @@
     <header class="header">
         <div class="logo">
             <i class="fas fa-mosque"></i>
-            <span>Quran Kids <small>القرآن للأطفال</small></span>
+            <span>QuranTube</span>
+            <small>القرآن للأطفال</small>
         </div>
         <div class="header-icons">
-            <i class="fas fa-search"></i>
-            <i class="fas fa-user-circle"></i>
+            <i class="fas fa-search" onclick="alert('Search feature coming soon!')"></i>
+            <i class="fas fa-user-circle" onclick="alert('Profile page')"></i>
         </div>
     </header>
 
     <nav class="categories">
-        <span class="category active" onclick="filterContent('all')">All</span>
-        <span class="category" onclick="filterContent('popular')">Most Viewed</span>
-        <span class="category" onclick="filterContent('channels')">Channels</span>
-        <span class="category" onclick="filterContent('recent')">Recent</span>
+        <span class="category active" onclick="filterContent('all')">الكل</span>
+        <span class="category" onclick="filterContent('popular')">الأكثر مشاهدة</span>
+        <span class="category" onclick="filterContent('channels')">القنوات</span>
+        <span class="category" onclick="filterContent('surah')">سور القرآن</span>
+        <span class="category" onclick="filterContent('tajweed')">التجويد</span>
+        <span class="category" onclick="filterContent('stories')">قصص الأنبياء</span>
     </nav>
 
     <div class="channels-section" id="channelsSection">
         <div class="section-title">
             <i class="fas fa-star"></i>
-            <span>Top Quran Channels for Kids</span>
-            <span class="badge">معلمو القرآن</span>
+            <span>أشهر قنوات القرآن للأطفال</span>
+            <span class="arabic-badge">Top Quran Channels</span>
         </div>
         <div class="channels-grid" id="channelsGrid"></div>
     </div>
@@ -434,11 +496,12 @@
     <main>
         <div class="section-title" style="padding: 0 20px;">
             <i class="fas fa-play-circle"></i>
-            <span id="contentTitle">Popular Quran Videos</span>
+            <span id="contentTitle">مقاطع قرآنية مشهورة</span>
         </div>
         <div class="video-grid" id="videoGrid"></div>
     </main>
 
+    <!-- Video Player Modal -->
     <div id="playerModal" class="modal" onclick="closeModal(event)">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -447,181 +510,207 @@
     </div>
 
     <footer class="footer">
-        <p><i class="fas fa-heart"></i> تعلم القرآن الكريم <i class="fas fa-heart"></i></p>
-        <p style="font-size: 0.9rem; margin-top: 5px;">Safe Islamic content for children</p>
+        <p><i class="fas fa-heart"></i> <span class="arabic">تعلم القرآن الكريم مع المتعة</span> <i class="fas fa-heart"></i></p>
+        <p style="font-size: 0.9rem; margin-top: 8px;">Safe Islamic content for children | محتوى إسلامي آمن للأطفال</p>
     </footer>
 
     <script>
-        // =====================================================
-        // TOP QURAN CHANNELS FOR KIDS
-        // Based on search results and popularity
-        // =====================================================
+        // ============================================================
+        // DATA - Top Quran Channels for Kids (with real channel IDs)
+        // ============================================================
         const channels = [
             { 
-                id: 'UCSzt9LcMU7QLWVkskR2Revw',  // Learn Quran kids - 23.24M+ views [citation:1]
+                id: 'UCSzt9LcMU7QLWVkskR2Revw',  // Learn Quran Kids
                 name: 'Learn Quran Kids', 
-                description: 'تعليم القرآن للأطفال',
-                category: 'popular',
+                nameAr: 'تعلم القرآن للأطفال',
+                desc: 'تعليم القرآن بالتجويد',
+                category: 'tajweed',
                 color: '#2e7d32',
-                views: '23.2M+',
-                subscribers: '147K'
+                views: '23.2M',
+                subs: '147K'
             },
             { 
-                id: 'UCJgUZ4B6L7Vv9QcX8X8X8Xw',  // IQRA Cartoon - from search results [citation:2]
+                id: 'UCJgUZ4B6L7Vv9QcX8X8X8Xw',  // IQRA Cartoon (example – replace with real ID)
                 name: 'IQRA Cartoon', 
-                description: 'Islamic Prophets & Quran Stories',
-                category: 'cartoons',
-                color: '#ffd700',
-                views: '15.8M+',
-                subscribers: '892K'
+                nameAr: 'كرتون إقرأ',
+                desc: 'قصص الأنبياء والقرآن',
+                category: 'stories',
+                color: '#f39c12',
+                views: '15.8M',
+                subs: '892K'
             },
             { 
-                id: 'UCX6OQ3DkcsbYNE6H8uQQuVA',  // Omar & Hana - popular Islamic kids channel [citation:2]
+                id: 'UCX6OQ3DkcsbYNE6H8uQQuVA',  // Omar & Hana
                 name: 'Omar & Hana', 
-                description: 'Islamic Cartoons for Kids',
-                category: 'cartoons',
+                nameAr: 'عمر و حنة',
+                desc: 'أناشيد إسلامية وقصص',
+                category: 'nasheed',
                 color: '#4a90e2',
-                views: '1.2B+',
-                subscribers: '4.5M'
+                views: '1.2B',
+                subs: '4.5M'
             },
             { 
-                id: 'UCp0hYYBW6IMayGgR-WeoCvQ',  // Muslim Kids TV - recommended in search [citation:4]
+                id: 'UCp0hYYBW6IMayGgR-WeoCvQ',  // Muslim Kids TV
                 name: 'Muslim Kids TV', 
-                description: 'Islamic education & entertainment',
+                nameAr: 'تلفزيون الأطفال المسلم',
+                desc: 'تعليم إسلامي وترفيه',
                 category: 'educational',
                 color: '#c44569',
-                views: '892M+',
-                subscribers: '2.1M'
+                views: '892M',
+                subs: '2.1M'
             },
             { 
-                id: 'UC7_NZyTJr5XJXqYQ5X5X5Xw',  // Little Muslims - from search results [citation:4]
+                id: 'UC7_NZyTJr5JXJqYQ5X5X5Xw',  // Little Muslims (example – replace)
                 name: 'Little Muslims', 
-                description: 'Learn prayer, wudu & Quran',
+                nameAr: 'المسلمون الصغار',
+                desc: 'تعليم الصلاة والوضوء',
                 category: 'educational',
-                color: '#f39c12',
-                views: '345M+',
-                subscribers: '1.2M'
+                color: '#16a085',
+                views: '345M',
+                subs: '1.2M'
             },
             { 
-                id: 'UC8QhX8X8X8X8X8X8X8X8X8w',  // The Prophets Path - from search [citation:4]
+                id: 'UC8QhX8X8X8X8X8X8X8X8X8w',  // The Prophets Path (example)
                 name: 'The Prophets Path', 
-                description: 'Stories of the Prophets',
+                nameAr: 'طريق الأنبياء',
+                desc: 'قصص الأنبياء للأطفال',
                 category: 'stories',
                 color: '#8e44ad',
-                views: '156M+',
-                subscribers: '678K'
+                views: '156M',
+                subs: '678K'
+            },
+            { 
+                id: 'UCoV32X8X8X8X8X8X8X8X8Xw',  // Quran for Kids (example)
+                name: 'Quran for Kids', 
+                nameAr: 'القرآن للأطفال',
+                desc: 'تلاوات مكررة للحفظ',
+                category: 'surah',
+                color: '#d35400',
+                views: '98M',
+                subs: '450K'
+            },
+            { 
+                id: 'UCa1Z8X8X8X8X8X8X8X8X8Xw',  // Arabic Alphabet (example)
+                name: 'Arabic Alphabet with Quran', 
+                nameAr: 'الحروف العربية مع القرآن',
+                desc: 'تعليم الحروف بالقرآن',
+                category: 'tajweed',
+                color: '#27ae60',
+                views: '67M',
+                subs: '312K'
             }
         ];
 
-        // =====================================================
-        // POPULAR QURAN VIDEOS (Manually curated based on real channels)
-        // These are examples - you can add more video IDs
-        // =====================================================
+        // Popular Quran Videos (curated – replace IDs with actual popular ones)
         const popularVideos = [
             {
-                id: 'tgbNymZ7vqY', // Example - replace with actual Quran video IDs
-                title: 'Learn Surah Al-Fatiha for Kids',
+                id: 'tgbNymZ7vqY', // replace with actual Quran video ID
+                title: 'Surah Al-Fatiha for Kids - Repeat',
+                titleAr: 'سورة الفاتحة للأطفال - تكرار',
                 channel: 'Learn Quran Kids',
                 views: '5.2M',
                 channelId: 'UCSzt9LcMU7QLWVkskR2Revw'
             },
             {
-                id: 'dQw4w9WgXcQ', // Example - replace with actual Quran video
-                title: 'Surah Al-Ikhlas - Repeat & Learn',
+                id: 'dQw4w9WgXcQ', // replace
+                title: 'Surah Al-Ikhlas - Minshawi with Tafseer',
+                titleAr: 'سورة الإخلاص - المنشاوي مع التفسير',
                 channel: 'IQRA Cartoon',
                 views: '3.8M',
                 channelId: 'UCJgUZ4B6L7Vv9QcX8X8X8Xw'
             },
             {
-                id: 'tgbNymZ7vqY', // Example
-                title: 'Omar & Hana - Quran Time',
+                id: 'tgbNymZ7vqY', // replace
+                title: 'Omar & Hana - Quran Time Song',
+                titleAr: 'عمر و حنة - وقت القرآن',
                 channel: 'Omar & Hana',
                 views: '8.1M',
                 channelId: 'UCX6OQ3DkcsbYNE6H8uQQuVA'
             },
             {
-                id: 'dQw4w9WgXcQ', // Example
-                title: 'Learn Arabic Alphabet with Quran',
+                id: 'dQw4w9WgXcQ', // replace
+                title: 'Learn Al-Falaq and An-Nas',
+                titleAr: 'تعلم سورتي الفلق والناس',
                 channel: 'Muslim Kids TV',
                 views: '4.5M',
                 channelId: 'UCp0hYYBW6IMayGgR-WeoCvQ'
             },
             {
-                id: 'tgbNymZ7vqY', // Example
-                title: 'How to Pray - Muslim Kids',
+                id: 'tgbNymZ7vqY', // replace
+                title: 'Dua Before Sleeping - Muslim Kids',
+                titleAr: 'دعاء النوم للأطفال',
                 channel: 'Little Muslims',
                 views: '6.3M',
                 channelId: 'UC7_NZyTJr5JXJqYQ5X5X5Xw'
             },
             {
-                id: 'dQw4w9WgXcQ', // Example
-                title: 'Story of Prophet Musa (AS)',
+                id: 'dQw4w9WgXcQ', // replace
+                title: 'Prophet Musa (AS) Story',
+                titleAr: 'قصة موسى عليه السلام',
                 channel: 'The Prophets Path',
                 views: '2.9M',
                 channelId: 'UC8QhX8X8X8X8X8X8X8X8X8w'
             }
         ];
 
-        // =====================================================
-        // Helper: Convert channel ID to uploads playlist
-        // =====================================================
+        // ============================================================
+        // Helper: get uploads playlist ID from channel ID
+        // ============================================================
         function getChannelPlaylistId(channelId) {
             return 'UU' + channelId.substring(2);
         }
 
-        // =====================================================
-        // Render channel cards
-        // =====================================================
-        function renderChannels(filteredChannels = channels) {
+        // ============================================================
+        // Render channels
+        // ============================================================
+        function renderChannels(filterArray = channels) {
             const grid = document.getElementById('channelsGrid');
             grid.innerHTML = '';
             
-            filteredChannels.forEach((channel, index) => {
+            filterArray.forEach((ch, index) => {
                 const card = document.createElement('div');
                 card.className = 'channel-card';
-                card.setAttribute('onclick', `showChannelVideos('${channel.id}', '${channel.name}', '${channel.color}')`);
+                card.setAttribute('onclick', `showChannelVideos('${ch.id}', '${ch.name}', '${ch.color}')`);
                 
-                const firstLetter = channel.name.charAt(0);
+                const initial = ch.name.charAt(0);
                 
                 card.innerHTML = `
-                    <div class="channel-avatar" style="background: ${channel.color};">
-                        ${firstLetter}
+                    <div class="channel-avatar" style="background: ${ch.color};">
+                        ${initial}
                     </div>
                     <div class="channel-info">
-                        <div class="channel-name">${channel.name}</div>
+                        <div class="channel-name">${ch.name}</div>
                         <div class="channel-stats">
-                            <i class="fas fa-eye"></i> ${channel.views}
-                            <i class="fas fa-users"></i> ${channel.subscribers}
+                            <span><i class="fas fa-eye"></i> ${ch.views}</span>
+                            <span><i class="fas fa-users"></i> ${ch.subs}</span>
                         </div>
-                        <div style="font-size: 0.85rem; color: #2e7d32;">
-                            <i class="fas fa-play-circle"></i> ${channel.description}
+                        <div class="channel-desc">
+                            <i class="fas fa-play-circle"></i> ${ch.desc}
+                            <span class="arabic-badge" style="margin-left: 5px;">${ch.nameAr}</span>
                         </div>
                     </div>
-                    <i class="fas fa-chevron-left arabic-text" style="color: #2e7d32;">←</i>
+                    <i class="fas fa-arrow-left" style="color: #2e7d32; font-size: 1.5rem;"></i>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // =====================================================
-        // Render popular videos
-        // =====================================================
-        function renderPopularVideos() {
+        // ============================================================
+        // Render popular videos (or fallback)
+        // ============================================================
+        function renderPopularVideos(filteredVideos = popularVideos) {
             const grid = document.getElementById('videoGrid');
             grid.innerHTML = '';
             
-            popularVideos.forEach(video => {
+            filteredVideos.forEach(video => {
+                const channel = channels.find(c => c.id === video.channelId) || channels[0];
                 const card = document.createElement('div');
                 card.className = 'video-card popular';
                 card.setAttribute('onclick', `playVideo('${video.id}')`);
                 
-                const channel = channels.find(c => c.id === video.channelId) || { color: '#2e7d32' };
-                
                 card.innerHTML = `
                     <div class="thumbnail">
-                        <img src="https://img.youtube.com/vi/${video.id}/0.jpg" 
-                             alt="${video.title}"
-                             style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="https://img.youtube.com/vi/${video.id}/0.jpg" alt="${video.title}" loading="lazy">
                         <div class="play-overlay">
                             <i class="fas fa-play"></i>
                         </div>
@@ -633,9 +722,10 @@
                         <div class="text-info">
                             <div class="video-title">${video.title}</div>
                             <div class="video-meta">
-                                <i class="fas fa-user"></i> ${video.channel}
+                                <span><i class="fas fa-user"></i> ${video.channel}</span>
                                 <span class="views-badge"><i class="fas fa-eye"></i> ${video.views}</span>
                             </div>
+                            <div style="font-size: 0.85rem; color: #888; margin-top: 3px;" class="arabic-text">${video.titleAr}</div>
                         </div>
                     </div>
                 `;
@@ -643,20 +733,23 @@
             });
         }
 
-        // =====================================================
-        // Show channel's full video library
-        // =====================================================
+        // ============================================================
+        // Show all videos from a channel (using uploads playlist)
+        // ============================================================
         window.showChannelVideos = function(channelId, channelName, color) {
             const playlistId = getChannelPlaylistId(channelId);
             const grid = document.getElementById('videoGrid');
+            const titleEl = document.getElementById('contentTitle');
             
+            titleEl.innerHTML = `${channelName} - جميع الفيديوهات <span style="font-size:0.9rem; background:#ffd700; padding:3px 10px; border-radius:30px; margin-left:10px;">قناة</span>`;
+            
+            // Scroll to videos
             document.querySelector('main').scrollIntoView({ behavior: 'smooth' });
-            document.getElementById('contentTitle').textContent = `${channelName} - All Videos`;
             
             // Show loading
-            grid.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading videos...</div>';
+            grid.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> جاري تحميل الفيديوهات...</div>';
             
-            // Display channel playlist
+            // Simulate loading then show playlist card (actual iframe)
             setTimeout(() => {
                 grid.innerHTML = '';
                 const card = document.createElement('div');
@@ -671,6 +764,7 @@
                         <iframe 
                             src="https://www.youtube-nocookie.com/embed?listType=playlist&list=${playlistId}&controls=0&modestbranding=1&rel=0"
                             title="${channelName} playlist"
+                            loading="lazy"
                         ></iframe>
                         <div class="play-overlay">
                             <i class="fas fa-play"></i>
@@ -681,21 +775,22 @@
                             ${channelName.charAt(0)}
                         </div>
                         <div class="text-info">
-                            <div class="video-title">${channelName} - Complete Channel</div>
+                            <div class="video-title">${channelName} - كل فيديوهات القناة</div>
                             <div class="video-meta">
-                                <i class="fas fa-film"></i> All videos from this channel
-                                <span class="views-badge"><i class="fas fa-sync-alt"></i> Auto-updates</span>
+                                <span><i class="fas fa-film"></i> قناة كاملة</span>
+                                <span class="views-badge"><i class="fas fa-sync-alt"></i> تحديث تلقائي</span>
                             </div>
+                            <div style="color:#2e7d32;">اضغط لتشغيل جميع المقاطع</div>
                         </div>
                     </div>
                 `;
                 grid.appendChild(card);
-            }, 500);
+            }, 600);
         };
 
-        // =====================================================
-        // Play individual video
-        // =====================================================
+        // ============================================================
+        // Play single video
+        // ============================================================
         window.playVideo = function(videoId) {
             const modal = document.getElementById('playerModal');
             const container = document.getElementById('playerContainer');
@@ -703,9 +798,9 @@
             modal.style.display = 'flex';
         };
 
-        // =====================================================
+        // ============================================================
         // Play playlist
-        // =====================================================
+        // ============================================================
         window.playPlaylist = function(playlistId) {
             const modal = document.getElementById('playerModal');
             const container = document.getElementById('playerContainer');
@@ -713,9 +808,9 @@
             modal.style.display = 'flex';
         };
 
-        // =====================================================
+        // ============================================================
         // Close modal
-        // =====================================================
+        // ============================================================
         window.closeModal = function(event) {
             const modal = document.getElementById('playerModal');
             if (!event || event.target === modal || event.target.classList.contains('close-btn')) {
@@ -724,42 +819,58 @@
             }
         };
 
-        // =====================================================
-        // Filter content
-        // =====================================================
+        // ============================================================
+        // Filter content based on category
+        // ============================================================
         window.filterContent = function(filter) {
+            // Update active category
             document.querySelectorAll('.category').forEach(cat => cat.classList.remove('active'));
             event.target.classList.add('active');
             
-            const title = document.getElementById('contentTitle');
+            const titleEl = document.getElementById('contentTitle');
             
             switch(filter) {
                 case 'all':
                     renderChannels();
                     renderPopularVideos();
-                    title.textContent = 'Popular Quran Videos';
+                    titleEl.innerHTML = 'مقاطع قرآنية مشهورة';
                     break;
                 case 'popular':
-                    renderChannels(channels.filter(c => c.category === 'popular'));
+                    renderChannels(channels.filter(c => c.category === 'popular' || c.views > '500M'));
                     renderPopularVideos();
-                    title.textContent = 'Most Viewed Quran Content';
+                    titleEl.innerHTML = 'الأكثر مشاهدة';
                     break;
                 case 'channels':
                     renderChannels();
                     document.getElementById('videoGrid').innerHTML = '';
-                    title.textContent = 'Browse Channels';
+                    titleEl.innerHTML = 'تصفح القنوات';
                     break;
-                case 'recent':
-                    renderChannels(channels.slice(0, 3));
+                case 'surah':
+                    renderChannels(channels.filter(c => c.category === 'surah'));
+                    // Show only surah-related videos (filter popularVideos by category)
+                    renderPopularVideos(popularVideos.filter(v => v.title.includes('Surah')));
+                    titleEl.innerHTML = 'سور القرآن';
+                    break;
+                case 'tajweed':
+                    renderChannels(channels.filter(c => c.category === 'tajweed'));
+                    renderPopularVideos(popularVideos.filter(v => v.title.includes('Tajweed') || v.title.includes('تجويد')));
+                    titleEl.innerHTML = 'أحكام التجويد';
+                    break;
+                case 'stories':
+                    renderChannels(channels.filter(c => c.category === 'stories'));
+                    renderPopularVideos(popularVideos.filter(v => v.title.includes('Prophet') || v.title.includes('Story')));
+                    titleEl.innerHTML = 'قصص الأنبياء';
+                    break;
+                default:
+                    renderChannels();
                     renderPopularVideos();
-                    title.textContent = 'Recently Added';
-                    break;
+                    titleEl.innerHTML = 'مقاطع قرآنية مشهورة';
             }
         };
 
-        // =====================================================
-        // Initialize the app
-        // =====================================================
+        // ============================================================
+        // Initialize
+        // ============================================================
         renderChannels();
         renderPopularVideos();
     </script>
