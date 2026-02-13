@@ -3,70 +3,93 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { margin: 0; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; background: #000; }
-        #player-container { flex: 1; position: relative; }
-        iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; }
+        /* Main Layout */
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #121212; color: white; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
-        .bottom-nav { 
-            display: flex; 
-            overflow-x: auto; 
-            background: #1a1a1a; 
-            color: white; 
-            padding: 10px 0;
-            border-top: 2px solid #333;
+        /* Video Player Area */
+        #player-container { width: 100%; height: 210px; background: #000; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* Grid Area */
+        .content-area { flex: 1; overflow-y: auto; padding: 15px; }
+        .grid-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #00ccff; }
+        
+        .video-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); /* 2 columns like YT Kids */
+            gap: 15px; 
         }
-        .nav-item { 
-            flex: 0 0 auto; 
-            padding: 12px 20px; 
-            text-align: center; 
-            cursor: pointer; 
-            font-weight: bold;
-            border-right: 1px solid #333;
-            text-transform: uppercase;
-            font-size: 12px;
-            color: #bbb;
+
+        /* Big Visual Buttons */
+        .grid-item { 
+            background: #1e1e1e; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            transition: transform 0.2s;
+            border: 1px solid #333;
         }
-        .nav-item:active { background: #00ccff; color: black; }
+        .grid-item:active { transform: scale(0.95); background: #333; }
+
+        .thumbnail-wrapper { width: 100%; position: relative; padding-top: 56.25%; /* 16:9 Aspect Ratio */ }
+        .thumbnail-wrapper img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+
+        .item-label { padding: 10px; font-size: 13px; text-align: center; font-weight: 600; }
     </style>
 </head>
 <body>
 
     <div id="player-container">
         <iframe id="main-player" 
-                src="https://www.youtube.com/embed/wiV-BpQ1odQ?si=lkKLZO2o5jzccmux" 
+                src="https://www.youtube.com/embed/Cm1v4bteXbI?autoplay=1&mute=1" 
                 allow="autoplay; encrypted-media" 
                 allowfullscreen>
         </iframe>
     </div>
 
-    <div class="bottom-nav" id="menu"></div>
+    <div class="content-area">
+        <div class="grid-title">Explore Quran Channels</div>
+        <div class="video-grid" id="menu-grid">
+            </div>
+    </div>
 
     <script>
-        // CLEANED IDS: Only the codes, no "watch?v="
         const channels = [
-            { name: "🕋 Live Makkah", id: "Cm1v4bteXbI", type: "video" },
-            { name: "📖 Al-Baqara", id: "dOvTkWpHNAc", type: "video" },
-            { name: "🕌 Tafsir", id: "PLJCHYvnjPCfGzwFLIwdWO7H0skJqkmZ9i", type: "playlist" }
+            { name: "Makkah Live", id: "Cm1v4bteXbI", type: "video", thumbId: "Cm1v4bteXbI" },
+            { name: "Madinah Live", id: "M7X9_6D_8S8", type: "video", thumbId: "M7X9_6D_8S8" },
+            { name: "Al-Baqara", id: "dOvTkWpHNAc", type: "video", thumbId: "dOvTkWpHNAc" },
+            { name: "Tafsir Series", id: "PLvc14zohWxi3gTNT_deSJY2LOksaY_fn_", type: "playlist", thumbId: "rqkAGOsBF0s" }
         ];
 
-        const menu = document.getElementById('menu');
+        const grid = document.getElementById('menu-grid');
         const player = document.getElementById('main-player');
 
         channels.forEach(item => {
-            let div = document.createElement('div');
-            div.className = 'nav-item';
-            div.innerText = item.name;
-            div.onclick = () => {
-                // If it's a playlist, we use 'videoseries?list='
-                // If it's a video, we just use the ID
+            // Create the grid element
+            let card = document.createElement('div');
+            card.className = 'grid-item';
+            
+            // Generate Thumbnail (using YT's image API)
+            let thumbUrl = `https://img.youtube.com/vi/${item.thumbId}/mqdefault.jpg`;
+            
+            card.innerHTML = `
+                <div class="thumbnail-wrapper">
+                    <img src="${thumbUrl}" alt="${item.name}">
+                </div>
+                <div class="item-label">${item.name}</div>
+            `;
+
+            card.onclick = () => {
                 let baseUrl = "https://www.youtube.com/embed/";
                 if (item.type === "playlist") {
                     player.src = baseUrl + "videoseries?list=" + item.id + "&autoplay=1";
                 } else {
                     player.src = baseUrl + item.id + "?autoplay=1";
                 }
+                // Scroll to top when a video is picked
+                window.scrollTo({top: 0, behavior: 'smooth'});
             };
-            menu.appendChild(div);
+
+            grid.appendChild(card);
         });
     </script>
 </body>
