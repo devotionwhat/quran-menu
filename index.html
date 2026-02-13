@@ -2,13 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Android-friendly viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KidsTube - YouTube Kids Style</title>
-    <!-- Font Awesome for icons (optional, but gives authentic look) -->
+    <title>KidsTube - Auto Channel Videos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* RESET & GLOBAL */
         * {
             margin: 0;
             padding: 0;
@@ -18,17 +15,15 @@
 
         body {
             background-color: #fafafa;
-            padding: 0;
             -webkit-tap-highlight-color: transparent;
             -webkit-overflow-scrolling: touch;
         }
 
-        /* HEADER - YouTube Kids red */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: #ff0000; /* YouTube red */
+            background-color: #ff0000;
             padding: 10px 20px;
             color: white;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -45,32 +40,19 @@
 
         .logo i {
             font-size: 2rem;
-            color: white;
         }
 
         .logo span {
             font-size: 1.8rem;
             font-weight: bold;
-            letter-spacing: -0.5px;
-        }
-
-        .header-icons {
-            display: flex;
-            gap: 20px;
         }
 
         .header-icons i {
             font-size: 1.8rem;
+            margin-left: 15px;
             color: white;
-            cursor: pointer;
-            transition: transform 0.2s;
         }
 
-        .header-icons i:active {
-            transform: scale(1.2);
-        }
-
-        /* CATEGORIES PILLS */
         .categories {
             display: flex;
             flex-wrap: wrap;
@@ -89,7 +71,6 @@
             font-weight: bold;
             color: #333;
             transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             border: 2px solid transparent;
             min-height: 48px;
             display: inline-flex;
@@ -101,111 +82,166 @@
         .category.active {
             background-color: #ff0000;
             color: white;
-            border-color: #cc0000;
         }
 
         .category:active {
             transform: scale(0.95);
         }
 
-        /* VIDEO GRID - like YouTube Kids */
+        .channels-section {
+            padding: 20px;
+            background: linear-gradient(to right, #f9f9f9, #ffffff);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #ff0000;
+        }
+
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .channel-card {
+            background: white;
+            border-radius: 20px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .channel-card:active {
+            border-color: #ff0000;
+            transform: scale(0.98);
+        }
+
+        .channel-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff0000, #ff6b6b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .channel-info {
+            flex: 1;
+        }
+
+        .channel-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .channel-stats {
+            color: #666;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .channel-stats i {
+            color: #ff0000;
+            font-size: 0.8rem;
+        }
+
         .video-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
             padding: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
         }
 
-        /* VIDEO CARD */
         .video-card {
-            background-color: white;
+            background: white;
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s;
             cursor: pointer;
             border: 2px solid transparent;
-            -webkit-tap-highlight-color: rgba(255, 0, 0, 0.2);
         }
 
         .video-card:active {
             transform: scale(0.98);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
             border-color: #ff0000;
         }
 
         .thumbnail {
             position: relative;
-            overflow: hidden;
             height: 180px;
-            background-color: #d3d3d3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: #666;
             background: linear-gradient(145deg, #f0f0f0, #d4d4d4);
+            overflow: hidden;
         }
 
-        .thumbnail img {
+        .thumbnail iframe {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s;
+            border: none;
             pointer-events: none;
         }
 
-        .video-card:active .thumbnail img {
-            transform: scale(1.05);
-        }
-
-        /* Play button overlay (like YouTube Kids) */
-        .thumbnail::after {
-            content: "\f04b"; /* Font Awesome play icon */
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
+        .play-overlay {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.8);
-            color: #ff0000;
-            font-size: 2.5rem;
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.9);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: #ff0000;
+            font-size: 2rem;
             opacity: 0;
             transition: opacity 0.2s;
             pointer-events: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        .video-card:active .thumbnail::after {
+        .video-card:active .play-overlay {
             opacity: 1;
         }
 
         .video-info {
             padding: 12px;
             display: flex;
-            align-items: center;
             gap: 10px;
         }
 
-        .channel-icon {
+        .channel-icon-small {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: #ff0000;
+            background: #ff0000;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             flex-shrink: 0;
         }
 
@@ -215,7 +251,7 @@
         }
 
         .video-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             color: #333;
             margin-bottom: 4px;
@@ -224,20 +260,11 @@
             text-overflow: ellipsis;
         }
 
-        .channel-name {
+        .video-channel {
             color: #666;
             font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
 
-        .channel-name i {
-            font-size: 0.8rem;
-            color: #999;
-        }
-
-        /* MODAL for video player */
         .modal {
             display: none;
             position: fixed;
@@ -246,7 +273,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.9);
             align-items: center;
             justify-content: center;
             flex-direction: column;
@@ -255,17 +282,15 @@
         .modal-content {
             width: 95%;
             max-width: 900px;
-            background: transparent;
             position: relative;
         }
 
         .video-container {
             position: relative;
-            padding-bottom: 56.25%; /* 16:9 */
+            padding-bottom: 56.25%;
             height: 0;
-            overflow: hidden;
             border-radius: 16px;
-            box-shadow: 0 20px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
         }
 
         .video-container iframe {
@@ -283,53 +308,46 @@
             right: 0;
             color: white;
             font-size: 2.5rem;
-            font-weight: bold;
             cursor: pointer;
-            background: rgba(255,255,255,0.2);
             width: 50px;
             height: 50px;
+            background: rgba(255,255,255,0.2);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
         }
 
-        .close-btn:active {
-            background: rgba(255,255,255,0.5);
-        }
-
-        /* FOOTER */
         .footer {
             margin-top: 20px;
             text-align: center;
             padding: 15px;
-            background-color: #333;
+            background: #333;
             color: white;
-            font-size: 1rem;
         }
 
-        .footer i {
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .loading i {
             color: #ff0000;
-            margin: 0 5px;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
         }
 
-        /* Responsive */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         @media (max-width: 600px) {
-            .logo span {
-                font-size: 1.5rem;
-            }
-            .header-icons i {
-                font-size: 1.5rem;
-            }
-            .categories {
-                gap: 8px;
-                padding: 10px;
-            }
-            .category {
-                padding: 8px 16px;
-                font-size: 1rem;
-            }
+            .logo span { font-size: 1.5rem; }
+            .category { padding: 8px 16px; font-size: 1rem; }
+            .channels-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -340,21 +358,34 @@
             <span>KidsTube</span>
         </div>
         <div class="header-icons">
-            <i class="fas fa-search" onclick="alert('Search')"></i>
-            <i class="fas fa-user-circle" onclick="alert('Profile')"></i>
+            <i class="fas fa-search"></i>
+            <i class="fas fa-user-circle"></i>
         </div>
     </header>
 
     <nav class="categories">
-        <span class="category active" onclick="filterItems('all'); makeActive(this)">All</span>
-        <span class="category" onclick="filterItems('video'); makeActive(this)">Videos</span>
-        <span class="category" onclick="filterItems('playlist'); makeActive(this)">Playlists</span>
-        <span class="category" onclick="filterItems('channel'); makeActive(this)">Channels</span>
+        <span class="category active" onclick="filterChannels('all')">All Channels</span>
+        <span class="category" onclick="filterChannels('popular')">Popular</span>
+        <span class="category" onclick="filterChannels('learning')">Learning</span>
+        <span class="category" onclick="filterChannels('fun')">Fun Videos</span>
     </nav>
 
-    <main class="video-grid" id="videoGrid"></main>
+    <div class="channels-section" id="channelsSection">
+        <div class="section-title">
+            <i class="fas fa-tv"></i>
+            <span>Your Channels</span>
+        </div>
+        <div class="channels-grid" id="channelsGrid"></div>
+    </div>
 
-    <!-- Modal for playing YouTube content -->
+    <main>
+        <div class="section-title" style="padding: 0 20px;">
+            <i class="fas fa-play-circle"></i>
+            <span>Latest Videos</span>
+        </div>
+        <div class="video-grid" id="videoGrid"></div>
+    </main>
+
     <div id="playerModal" class="modal" onclick="closeModal(event)">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -363,81 +394,111 @@
     </div>
 
     <footer class="footer">
-        <p><i class="fas fa-child"></i> Made for kids – safe and fun! <i class="fas fa-heart"></i></p>
+        <p><i class="fas fa-child"></i> Safe videos for kids <i class="fas fa-heart" style="color: #ff0000;"></i></p>
     </footer>
 
     <script>
         // =====================================================
-        // CONFIGURATION – EDIT THIS ARRAY WITH YOUR OWN IDs
+        // CONFIGURATION - ADD YOUR CHANNEL IDs HERE
         // =====================================================
-        const items = [
-            // Video example (single video)
-            { type: 'video', id: 'dQw4w9WgXcQ', title: 'Never Gonna Give You Up', channel: 'Rick Astley' },
-            { type: 'video', id: 'tgbNymZ7vqY', title: 'Baby Shark Dance', channel: 'Pinkfong' },
-            // Playlist example (YouTube playlist ID)
-            { type: 'playlist', id: 'PLVDj1Gm7P7gw0Lh1k3g7pU8Zk8hVk8z8', title: 'Kids Songs Playlist', channel: 'Various Artists' },
-            // Channel example (YouTube channel ID – must start with UC)
-            { type: 'channel', id: 'UCX6OQ3DkcsbYNE6H8uQQuVA', title: 'Peppa Pig Official', channel: 'Peppa Pig' },
-            // Add more items as needed: copy the lines above and change type/id/title/channel
+        const channels = [
+            { 
+                id: 'UCX6OQ3DkcsbYNE6H8uQQuVA',  // Peppa Pig
+                name: 'Peppa Pig Official', 
+                category: 'fun',
+                color: '#ff69b4'
+            },
+            { 
+                id: 'UCp0hYYBW6IMayGgR-WeoCvQ',  // Cocomelon
+                name: 'Cocomelon', 
+                category: 'learning',
+                color: '#4a90e2'
+            },
+            { 
+                id: 'UC5p8lK5wVH1OUKb1FfQ2i7g',  // Blippi
+                name: 'Blippi', 
+                category: 'learning',
+                color: '#ff6b6b'
+            },
+            { 
+                id: 'UC6L9DevVRezwq4S8QrJf0Lg',  // Little Baby Bum
+                name: 'Little Baby Bum', 
+                category: 'fun',
+                color: '#50c878'
+            }
         ];
 
         // =====================================================
-        // HELPER: Get embed URL based on type and id
+        // Convert channel ID to uploads playlist ID
+        // Replace UC with UU to get the uploads playlist
         // =====================================================
-        function getEmbedUrl(item) {
-            if (item.type === 'video') {
-                return `https://www.youtube.com/embed/${item.id}?autoplay=1`;
-            } else if (item.type === 'playlist') {
-                return `https://www.youtube.com/embed?listType=playlist&list=${item.id}&autoplay=1`;
-            } else if (item.type === 'channel') {
-                // Convert channel ID to uploads playlist: replace UC with UU
-                // e.g., UCX6OQ3DkcsbYNE6H8uQQuVA -> UUX6OQ3DkcsbYNE6H8uQQuVA
-                const playlistId = 'UU' + item.id.substring(2);
-                return `https://www.youtube.com/embed?listType=playlist&list=${playlistId}&autoplay=1`;
-            }
-            return '';
+        function getChannelPlaylistId(channelId) {
+            return 'UU' + channelId.substring(2);
         }
 
         // =====================================================
-        // Get thumbnail HTML (video thumbnails from YouTube)
+        // Render channel cards
         // =====================================================
-        function getThumbnailHtml(item) {
-            if (item.type === 'video') {
-                return `<img src="https://img.youtube.com/vi/${item.id}/0.jpg" alt="${item.title}" loading="lazy">`;
-            } else if (item.type === 'playlist') {
-                return `<i class="fas fa-list" style="font-size: 4rem; color: #ff0000;"></i>`;
-            } else if (item.type === 'channel') {
-                return `<i class="fas fa-tv" style="font-size: 4rem; color: #ff0000;"></i>`;
-            }
+        function renderChannels() {
+            const grid = document.getElementById('channelsGrid');
+            grid.innerHTML = '';
+            
+            channels.forEach((channel, index) => {
+                const card = document.createElement('div');
+                card.className = 'channel-card';
+                card.setAttribute('onclick', `showChannelVideos(${index})`);
+                
+                // Get first letter for avatar
+                const firstLetter = channel.name.charAt(0);
+                
+                card.innerHTML = `
+                    <div class="channel-avatar" style="background: ${channel.color};">
+                        ${firstLetter}
+                    </div>
+                    <div class="channel-info">
+                        <div class="channel-name">${channel.name}</div>
+                        <div class="channel-stats">
+                            <i class="fas fa-play-circle"></i>
+                            <span>Click to watch all videos</span>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: #999;"></i>
+                `;
+                grid.appendChild(card);
+            });
         }
 
         // =====================================================
-        // Render grid based on current filter
+        // Show videos from all channels in main grid
         // =====================================================
-        let currentFilter = 'all';
-
-        function renderGrid() {
+        function renderAllVideos() {
             const grid = document.getElementById('videoGrid');
             grid.innerHTML = '';
-            const filtered = currentFilter === 'all' ? items : items.filter(item => item.type === currentFilter);
-            filtered.forEach((item, index) => {
+            
+            channels.forEach(channel => {
+                const playlistId = getChannelPlaylistId(channel.id);
                 const card = document.createElement('div');
                 card.className = 'video-card';
-                card.setAttribute('onclick', `playItem(${index})`);
-                // Random color for channel icon (for fun)
-                const colors = ['#ff0000', '#00aaff', '#00cc88', '#ffaa00', '#ff66aa'];
-                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                card.setAttribute('onclick', `playPlaylist('${playlistId}', '${channel.name}')`);
+                
                 card.innerHTML = `
                     <div class="thumbnail">
-                        ${getThumbnailHtml(item)}
+                        <iframe 
+                            src="https://www.youtube-nocookie.com/embed?listType=playlist&list=${playlistId}&controls=0&modestbranding=1&rel=0&showinfo=0"
+                            loading="lazy"
+                            title="${channel.name} playlist"
+                        ></iframe>
+                        <div class="play-overlay">
+                            <i class="fas fa-play"></i>
+                        </div>
                     </div>
                     <div class="video-info">
-                        <div class="channel-icon" style="background-color: ${randomColor};">
-                            <i class="fas fa-${item.type === 'channel' ? 'users' : (item.type === 'playlist' ? 'list' : 'play')}"></i>
+                        <div class="channel-icon-small" style="background: ${channel.color};">
+                            ${channel.name.charAt(0)}
                         </div>
                         <div class="text-info">
-                            <div class="video-title">${item.title}</div>
-                            <div class="channel-name"><i class="fas fa-check-circle"></i> ${item.channel || 'YouTube'}</div>
+                            <div class="video-title">${channel.name} - All Videos</div>
+                            <div class="video-channel">${channel.name}</div>
                         </div>
                     </div>
                 `;
@@ -446,45 +507,121 @@
         }
 
         // =====================================================
-        // Play item: open modal with embedded YouTube player
+        // Show only one channel's videos
         // =====================================================
-        window.playItem = function(index) {
-            const filtered = currentFilter === 'all' ? items : items.filter(item => item.type === currentFilter);
-            const item = filtered[index];
-            const embedUrl = getEmbedUrl(item);
+        window.showChannelVideos = function(channelIndex) {
+            const channel = channels[channelIndex];
+            const playlistId = getChannelPlaylistId(channel.id);
+            const grid = document.getElementById('videoGrid');
+            
+            // Scroll to videos section
+            document.querySelector('main').scrollIntoView({ behavior: 'smooth' });
+            
+            // Update section title
+            document.querySelector('.section-title span').textContent = `${channel.name} Videos`;
+            
+            // Show loading
+            grid.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Loading videos...</div>';
+            
+            // Render single channel
+            setTimeout(() => {
+                grid.innerHTML = '';
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                card.style.gridColumn = '1 / -1';
+                card.style.maxWidth = '800px';
+                card.style.margin = '0 auto';
+                card.setAttribute('onclick', `playPlaylist('${playlistId}', '${channel.name}')`);
+                
+                card.innerHTML = `
+                    <div class="thumbnail" style="height: 300px;">
+                        <iframe 
+                            src="https://www.youtube-nocookie.com/embed?listType=playlist&list=${playlistId}&controls=0&modestbranding=1&rel=0&showinfo=0"
+                            loading="lazy"
+                            title="${channel.name} playlist"
+                        ></iframe>
+                        <div class="play-overlay">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <div class="channel-icon-small" style="background: ${channel.color};">
+                            ${channel.name.charAt(0)}
+                        </div>
+                        <div class="text-info">
+                            <div class="video-title">${channel.name} - All Videos</div>
+                            <div class="video-channel">${channel.name}</div>
+                            <div style="color: #666; margin-top: 5px; font-size: 0.9rem;">
+                                <i class="fas fa-film"></i> Full channel playlist • Auto-updates
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            }, 500);
+        };
+
+        // =====================================================
+        // Play playlist in modal
+        // =====================================================
+        window.playPlaylist = function(playlistId, channelName) {
             const modal = document.getElementById('playerModal');
             const container = document.getElementById('playerContainer');
-            container.innerHTML = `<iframe src="${embedUrl}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+            container.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed?listType=playlist&list=${playlistId}&autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
             modal.style.display = 'flex';
         };
 
         // =====================================================
-        // Close modal when clicking outside or on close button
+        // Close modal
         // =====================================================
         window.closeModal = function(event) {
             const modal = document.getElementById('playerModal');
             if (!event || event.target === modal || event.target.classList.contains('close-btn')) {
                 modal.style.display = 'none';
-                // Stop video by removing iframe
                 document.getElementById('playerContainer').innerHTML = '';
             }
         };
 
         // =====================================================
-        // Filter items by type and update active category
+        // Filter channels (simplified)
         // =====================================================
-        window.filterItems = function(type) {
-            currentFilter = type;
-            renderGrid();
-        };
-
-        window.makeActive = function(element) {
+        window.filterChannels = function(filter) {
             document.querySelectorAll('.category').forEach(cat => cat.classList.remove('active'));
-            element.classList.add('active');
+            event.target.classList.add('active');
+            
+            if (filter === 'all') {
+                renderChannels();
+                renderAllVideos();
+                document.querySelector('.section-title span').textContent = 'Latest Videos';
+            } else {
+                const filtered = channels.filter(c => c.category === filter);
+                const grid = document.getElementById('channelsGrid');
+                grid.innerHTML = '';
+                
+                filtered.forEach((channel, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'channel-card';
+                    card.setAttribute('onclick', `showChannelVideos(${channels.indexOf(channel)})`);
+                    card.innerHTML = `
+                        <div class="channel-avatar" style="background: ${channel.color};">
+                            ${channel.name.charAt(0)}
+                        </div>
+                        <div class="channel-info">
+                            <div class="channel-name">${channel.name}</div>
+                            <div class="channel-stats"><i class="fas fa-play-circle"></i> Click to watch</div>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color: #999;"></i>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
         };
 
-        // Initial render
-        renderGrid();
+        // =====================================================
+        // Initialize the app
+        // =====================================================
+        renderChannels();
+        renderAllVideos();
     </script>
 </body>
 </html>
