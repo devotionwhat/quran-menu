@@ -23,7 +23,8 @@
             font-weight: bold;
             border-right: 1px solid #333;
             text-transform: uppercase;
-            font-size: 14px;
+            font-size: 12px;
+            color: #bbb;
         }
         .nav-item:active { background: #00ccff; color: black; }
     </style>
@@ -32,20 +33,20 @@
 
     <div id="player-container">
         <iframe id="main-player" 
-                src="https://www.youtube.com/@ehabkanoo/" 
+                src="https://youtu.be/wiV-BpQ1odQ" 
                 allow="autoplay; encrypted-media" 
                 allowfullscreen>
         </iframe>
     </div>
 
-    <div class="bottom-nav" id="menu">
-        </div>
+    <div class="bottom-nav" id="menu"></div>
 
     <script>
+        // CLEANED IDS: Only the codes, no "watch?v="
         const channels = [
-            { name: "🕋 Live Makkah", id: "watch?v=Cm1v4bteXbI" },
-            { name: "📖 Al-Baqara Recitations", id: "watch?v=dOvTkWpHNAc" },
-            { name: "🕌 Tafsir", id: "watch?v=wwYvlgv7A0k&list=PLJCHYvnjPCfGzwFLIwdWO7H0skJqkmZ9i&pp=sAgC" }
+            { name: "🕋 Live Makkah", id: "Cm1v4bteXbI", type: "video" },
+            { name: "📖 Al-Baqara", id: "dOvTkWpHNAc", type: "video" },
+            { name: "🕌 Tafsir", id: "PLJCHYvnjPCfGzwFLIwdWO7H0skJqkmZ9i", type: "playlist" }
         ];
 
         const menu = document.getElementById('menu');
@@ -56,8 +57,14 @@
             div.className = 'nav-item';
             div.innerText = item.name;
             div.onclick = () => {
-                // When clicking a button, we add autoplay=1 so it starts immediately
-                player.src = "https://www.youtube.com/embed/" + item.id + "&autoplay=1";
+                // If it's a playlist, we use 'videoseries?list='
+                // If it's a video, we just use the ID
+                let baseUrl = "https://www.youtube.com/embed/";
+                if (item.type === "playlist") {
+                    player.src = baseUrl + "videoseries?list=" + item.id + "&autoplay=1";
+                } else {
+                    player.src = baseUrl + item.id + "?autoplay=1";
+                }
             };
             menu.appendChild(div);
         });
