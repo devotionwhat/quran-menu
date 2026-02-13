@@ -2,111 +2,354 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Quran Hub - Premium UI</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids YouTube - Fun & Safe Videos</title>
     <style>
-        /* ADDED: Styles to make the video player look good in this UI */
-        .video-container {
-            width: 100%;
-            height: 200px;
-            background: #000;
-            margin-bottom: 10px;
+        /* CSS3: reset, variables, and global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
         }
-        iframe { width: 100%; height: 100%; border: none; }
-        
-        /* Ensure the app is scrollable but the header/player stays useful */
-        .screen { overflow-y: auto; height: 100vh; padding-bottom: 80px; }
-        
-        /* Make video items clickable */
-        .video__item { cursor: pointer; transition: 0.2s; }
-        .video__item:active { opacity: 0.7; transform: scale(0.98); }
+
+        body {
+            background-color: #f0f8ff;  /* Light blue */
+            padding: 20px;
+        }
+
+        /* Header area */
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #ffd966, #ffb347); /* CSS3 gradient */
+            padding: 15px 25px;
+            border-radius: 50px; /* CSS3 rounded corners */
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            color: #fff;
+            text-shadow: 3px 3px 0 #3b9cff; /* CSS3 text shadow */
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 500px;
+            margin: 10px 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            outline: none;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .search-bar input::placeholder {
+            color: #aaa;
+            font-style: italic;
+        }
+
+        .user-icon {
+            background-color: #ff6b6b;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.2s; /* CSS3 transition */
+        }
+
+        .user-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* Navigation categories */
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+
+        .category {
+            background-color: #a4e0ff;
+            padding: 10px 25px;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #1e3c72;
+            cursor: default;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 2px solid transparent;
+        }
+
+        .category:hover {
+            background-color: #ffb3ba;
+            color: #fff;
+            border-color: #ff4d4d;
+            transform: translateY(-3px);
+        }
+
+        /* Video grid using CSS Grid (CSS3) */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            padding: 10px;
+        }
+
+        /* Video card */
+        .video-card {
+            background-color: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: 3px solid #fff;
+        }
+
+        .video-card:hover {
+            transform: scale(1.02) translateY(-5px);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.15);
+            border-color: #ffaa3a;
+        }
+
+        .thumbnail {
+            position: relative;
+            overflow: hidden;
+            height: 160px;
+            background-color: #d3d3d3;
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .video-card:hover .thumbnail img {
+            transform: scale(1.1);
+        }
+
+        /* Play button overlay (CSS3 pseudo-elements) */
+        .thumbnail::after {
+            content: "▶";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.7);
+            color: #ff4d4d;
+            font-size: 2.5rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            backdrop-filter: blur(2px); /* CSS3 backdrop filter */
+        }
+
+        .video-card:hover .thumbnail::after {
+            opacity: 1;
+        }
+
+        .video-info {
+            padding: 15px;
+        }
+
+        .video-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .channel-name {
+            color: #666;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .channel-name::before {
+            content: "👤";
+            font-size: 1.1rem;
+        }
+
+        .views {
+            color: #999;
+            font-size: 0.9rem;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .views::before {
+            content: "👁️";
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            padding: 20px;
+            background-color: #c1e1ff;
+            border-radius: 60px 60px 20px 20px;
+            color: #2b4f7b;
+            font-size: 1rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .logo {
+                justify-content: center;
+            }
+            .search-bar {
+                margin: 15px 0;
+                max-width: 100%;
+            }
+            .user-icon {
+                align-self: center;
+            }
+        }
     </style>
 </head>
 <body>
-<div class="app">
-    <div class="screen">
-        <header class="header">
-            <img class="header__menu icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGZp%0D%0AbGw9IiNlODAwM2MiIGlkPSJzdmdfMSIgZD0ibTYsMzZsMTIsMGwwLC00bC0xMiwwbDAsNHptMCwt%0D%0AMjRsMCw0bDM2LDBsMCwtNGwtMzYsMHptMCwxNGwyNCwwbDAsLTRsLTI0LDBsMCw0eiIvPgogPC9n%0D%0APgo8L3N2Zz4=" alt="menu"/>
-            <div class="header__logo">
-                <img class="header__icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQg%0D%0AU1ZHIDEuMC8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvVFIvMjAwMS9SRUMtU1ZHLTIwMDEwOTA0%0D%0AL0RURC9zdmcxMC5kdGQnPjxzdmcgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMzIgMzIiIGhl%0D%0AaWdodD0iMzJweCIgaWQ9IkxheWVyXzEiIHZlcnNpb249IjEuMCIgdmlld0JveD0iMCAwIDMyIDMy%0D%0AIiB3aWR0aD0iMzJweCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMu%0D%0Ab3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+%0D%0APGc+PHBhdGggZD0iTTMxLjY3LDkuMTc5YzAsMC0wLjMxMi0yLjM1My0xLjI3MS0zLjM4OWMtMS4y%0D%0AMTctMS4zNTgtMi41OC0xLjM2Ni0zLjIwNS0xLjQ0M0MyMi43MTcsNCwxNi4wMDIsNCwxNi4wMDIs%0D%0ANCAgIGgtMC4wMTVjMCwwLTYuNzE1LDAtMTEuMTkxLDAuMzQ3QzQuMTcxLDQuNDI0LDIuODA5LDQu%0D%0ANDMyLDEuNTkxLDUuNzlDMC42MzMsNi44MjYsMC4zMiw5LjE3OSwwLjMyLDkuMTc5UzAsMTEuOTQs%0D%0AMCwxNC43MDF2Mi41ODggICBjMCwyLjc2MywwLjMyLDUuNTIzLDAuMzIsNS41MjNzMC4zMTIsMi4z%0D%0ANTIsMS4yNzEsMy4zODZjMS4yMTgsMS4zNTgsMi44MTUsMS4zMTcsMy41MjcsMS40NTlDNy42Nzcs%0D%0AMjcuOTE5LDE1Ljk5NSwyOCwxNS45OTUsMjggICBzNi43MjItMC4wMTIsMTEuMTk5LTAuMzU1YzAu%0D%0ANjI1LTAuMDgsMS45ODgtMC4wODgsMy4yMDUtMS40NDZjMC45NTgtMS4wMzQsMS4yNzEtMy4zODYs%0D%0AMS4yNzEtMy4zODZzMC4zMi0yLjc2MSwwLjMyLTUuNTIzdi0yLjU4OCAgIEMzMS45OSwxMS45NCwz%0D%0AMS42Nyw5LjE3OSwzMS42Nyw5LjE3OXoiIGZpbGw9IiNFMDJGMkYiLz48cG9seWdvbiBmaWxsPSIj%0D%0ARkZGRkZGIiBwb2ludHM9IjEyLDEwIDEyLDIyIDIyLDE2ICAiLz48L2c+PGcvPjxnLz48Zy8+PGcv%0D%0APjxnLz48Zy8+PC9zdmc+" alt="youtube"/>
-                <h1 class="header__title">Quran Hub</h1>
-            </div>
-            <img class="header__search icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGZp%0D%0AbGw9IiNlODAwM2MiIGlkPSJzdmdfMSIgZD0ibTMxLDI4bC0xLjU5LDBsLTAuNTUsLTAuNTVjMS45%0D%0ANiwtMi4yNyAzLjE0LC01LjIyIDMuMTQsLTguNDVjMCwtNy4xOCAtNS44MiwtMTMgLTEzLC0xM3Mt%0D%0AMTMsNS44MiAtMTMsMTNzNS44MiwxMyAxMywxM2MzLjIzLDAgNi4xOCwtMS4x     OCw4LjQ1LC0zLjEz%0D%0AbDAuNTUsMC41NWwwLDEuNThsMTAsOS45OGwyLjk4LC0yLjk4bC05Ljk4LC0xMHptLTEyLDBjLTQu%0D%0AOTcsMCAtOSwtNC4wMyAtOSwtOXM0LjAzLC05IDksLTlzOSw0LjAzIDksOXMtNC4wMyw5IC05L      OXoiCi8+CiA8L2c+Cjwvc3ZnPg==" alt="search"/>
-        </header>
+    <header class="header">
+        <div class="logo">
+            <span style="font-size: 2.5rem;">🎥</span>
+            <h1>KidsTube</h1>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search for cartoons, songs, fun...">
+        </div>
+        <div class="user-icon">
+            😊
+        </div>
+    </header>
 
-        <div class="video-container">
-            <iframe id="main-player" 
-                    src="https://www.youtube.com/embed/Cm1v4bteXbI?autoplay=1&mute=1" 
-                    allowfullscreen>
-            </iframe>
+    <nav class="categories">
+        <span class="category">All</span>
+        <span class="category">Cartoons</span>
+        <span class="category">Songs</span>
+        <span class="category">Animals</span>
+        <span class="category">Learning</span>
+        <span class="category">Toys</span>
+    </nav>
+
+    <main class="video-grid">
+        <!-- Video Card 1 -->
+        <div class="video-card">
+            <div class="thumbnail">
+                <img src="https://picsum.photos/300/180?random=1" alt="Funny Cat">
+            </div>
+            <div class="video-info">
+                <div class="video-title">Funny Cats Compilation</div>
+                <div class="channel-name">Animal Fun</div>
+                <div class="views">2.5M views</div>
+            </div>
         </div>
 
-        <div class="categories">
-            <a class="categories__link" href="#"><span class="categories__text">Live</span></a>
-            <a class="categories__link" href="#"><span class="categories__text">Recitation</span></a>
-            <a class="categories__link" href="#"><span class="categories__text">Tafsir</span></a>
-            <a class="categories__link" href="#"><span class="categories__text">All</span></a>
+        <!-- Video Card 2 -->
+        <div class="video-card">
+            <div class="thumbnail">
+                <img src="https://picsum.photos/300/180?random=2" alt="ABC Song">
+            </div>
+            <div class="video-info">
+                <div class="video-title">ABC Song - Learn Alphabet</div>
+                <div class="channel-name">Little Learners</div>
+                <div class="views">5.1M views</div>
+            </div>
         </div>
 
-        <div class="video" id="video-list"></div>
-
-        <nav class="menu">
-            <ul class="menu__list">
-                <li class="menu__item"><a class="menu__link" href="#"><span class="menu__txt">Home</span></a></li>
-                <li class="menu__item"><a class="menu__link" href="#"><span class="menu__txt">Quran</span></a></li>
-                <li class="menu__item"><a class="menu__link" href="#"><span class="menu__txt">Live</span></a></li>
-            </ul>
-        </nav>
-    </div>
-</div>
-
-<script>
-    // 1. ADD YOUR VIDEOS HERE
-    const quranVideos = [
-        { title: "Makkah Live 24/7", channel: "Haramain", id: "Cm1v4bteXbI", views: "LIVE", duration: "LIVE", type: "video" },
-        { title: "Surah Al-Baqara", channel: "Sudais", id: "dOvTkWpHNAc", views: "10M", duration: "2:04:12", type: "video" },
-        { title: "Full Quran Playlist", channel: "Quran Channel", id: "PLvc14zohWxi3gTNT_deSJY2LOksaY_fn_", views: "5M", duration: "Playlist", type: "playlist" }
-    ];
-
-    const videoList = document.getElementById('video-list');
-    const player = document.getElementById('main-player');
-
-    // 2. This function builds the UI for each video automatically
-    quranVideos.forEach(item => {
-        const thumbUrl = `https://img.youtube.com/vi/${item.type === 'video' ? item.id : 'rqkAGOsBF0s'}/mqdefault.jpg`;
-        
-        const videoItem = document.createElement('div');
-        videoItem.className = 'video__item';
-        videoItem.innerHTML = `
-            <div class="video__cover">
-                <img class="video__img" src="${thumbUrl}" alt="Thumbnail"/>
-                <div class="video__stats">
-                    <span class="video__views">${item.views}</span>
-                    <span class="video__duration">${item.duration}</span>
-                </div>
+        <!-- Video Card 3 -->
+        <div class="video-card">
+            <div class="thumbnail">
+                <img src="https://picsum.photos/300/180?random=3" alt="Paw Patrol">
             </div>
-            <div class="video__info">
-                <div class="video__description">
-                    <h2 class="video__title">${item.title}</h2>
-                    <h3 class="video__channel">${item.channel}</h3>
-                </div>
+            <div class="video-info">
+                <div class="video-title">Paw Patrol New Episodes</div>
+                <div class="channel-name">Nick Jr.</div>
+                <div class="views">3.8M views</div>
             </div>
-        `;
+        </div>
 
-        videoItem.onclick = () => {
-            let baseUrl = "https://www.youtube.com/embed/";
-            if (item.type === "playlist") {
-                player.src = `${baseUrl}videoseries?list=${item.id}&autoplay=1`;
-            } else {
-                player.src = `${baseUrl}${item.id}?autoplay=1`;
-            }
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        };
+        <!-- Video Card 4 -->
+        <div class="video-card">
+            <div class="thumbnail">
+                <img src="https://picsum.photos/300/180?random=4" alt="Play Doh">
+            </div>
+            <div class="video-info">
+                <div class="video-title">Play Doh Creations</div>
+                <div class="channel-name">Toy Time</div>
+                <div class="views">1.2M views</div>
+            </div>
+        </div>
 
-        videoList.appendChild(videoItem);
-    });
-</script>
+        <!-- Video Card 5 -->
+        <div class="video-card">
+            <div class="thumbnail">
+                <img src="https://picsum.photos/300/180?random=5" alt="Dinosaurs">
+            </div>
+            <div class="video-info">
+                <div class="video-title">Dinosaur Adventure</div>
+                <div class="channel-name">Jurassic Kids</div>
+                <div class="views">4.3M views</div>
+            </div>
+        </div>
+
+        <!-- Video Card 6 -->
+        <div class="video-card">
+            <div class="thumbnail">
+                <img src="https://picsum.photos/300/180?random=6" alt="Finger Family">
+            </div>
+            <div class="video-info">
+                <div class="video-title">Finger Family Song</div>
+                <div class="channel-name">Nursery Rhymes</div>
+                <div class="views">6.7M views</div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>🌟 KidsTube – Safe and fun videos for children 🌟</p>
+        <p>© 2025 | Designed with HTML5 & CSS3</p>
+    </footer>
 </body>
 </html>
