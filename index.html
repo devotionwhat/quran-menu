@@ -1,42 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: sans-serif; margin: 0; background: #f4f4f4; }
-        .sidebar { height: 100%; width: 200px; position: fixed; background: #2c3e50; padding-top: 20px; }
-        .sidebar a { padding: 15px; text-decoration: none; font-size: 18px; color: white; display: block; }
-        .content { margin-left: 200px; padding: 20px; }
-        iframe { width: 100%; height: 80vh; border: none; }
+        /* This creates the 'Bottom Menu' look */
+        body { margin: 0; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; }
+        #player-container { flex: 1; background: #000; }
+        iframe { width: 100%; height: 100%; border: none; }
+        
+        .bottom-nav { 
+            display: flex; 
+            overflow-x: auto; 
+            background: #2c3e50; 
+            color: white; 
+            padding: 10px 0;
+        }
+        .nav-item { 
+            flex: 0 0 auto; 
+            padding: 10px 20px; 
+            text-align: center; 
+            cursor: pointer; 
+            border-right: 1px solid #34495e;
+        }
+        .nav-item:active { background: #1abc9c; }
     </style>
 </head>
 <body>
-    <div class="sidebar" id="menu">
-        </div>
-    <div class="content">
-        <iframe id="player" src="ABOUT:BLANK"></iframe>
+
+    <div id="player-container">
+        <iframe id="main-player" src="https://www.youtube.com/@%D8%B4%D8%AC%D8%B1%D8%A9_%D9%85%D8%A8%D8%A7%D8%B1%D9%83%D8%A9"></iframe>
     </div>
 
+    <div class="bottom-nav" id="menu">
+        </div>
+
     <script>
-        // ADD YOUR LINKS HERE - THIS IS THE FASTEST WAY TO UPDATE
-        const playlists = [
-            { name: "Live Quran", url: "https://www.youtube.com/results?search_query=quran&sp=EgJAAQ%253D%253D" },
-            { name: "Recitations", url: "https://www.youtube.com/watch?v=nd74h_UjUmw" },
-            { name: "Tafsir Series", url: "https://www.youtube.com/@%D8%B4%D8%AC%D8%B1%D8%A9_%D8%B7%D9%8A%D8%A8%D8%A9" }
-            { name: "Beautiful Quran Recitation", url: "https://www.youtube.com/@%D8%A3%D8%AC%D9%85%D9%84%D8%AA%D9%84%D8%A7%D9%88%D8%A7%D8%AA%D8%A7%D9%84%D9%82%D8%B1%D8%A2%D9%86%D8%A7%D9%84%D9%83%D8%B1%D9%8A%D9%85-%D8%B68%D8%B8" }
+        // JUST ADD NEW LINKS HERE. THE MENU WILL AUTO-UPDATE.
+        const channels = [
+            { name: "🕋 Live Makkah", id: "results?search_query=quran" },
+            { name: "📖 Recitations", id: "Cm1v4bteXbI" },
+            { name: "🕌 Tafsir", id: "@ehabkanoo" },
+            { name: "🌙 Daily Reminders", id: "dOvTkWpHNAc" }
         ];
 
         const menu = document.getElementById('menu');
-        const player = document.getElementById('player');
+        const player = document.getElementById('main-player');
 
-        playlists.forEach(pl => {
-            let a = document.createElement('a');
-            a.innerText = pl.name;
-            a.href = "#";
-            a.onclick = () => { player.src = pl.url; };
-            menu.appendChild(a);
+        channels.forEach(item => {
+            let div = document.createElement('div');
+            div.className = 'nav-item';
+            div.innerText = item.name;
+            div.onclick = () => {
+                player.src = "https://www.youtube.com/embed/" + item.id;
+            };
+            menu.appendChild(div);
         });
-        // Load first one by default
-        player.src = playlists[0].url;
     </script>
 </body>
 </html>
