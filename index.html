@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>YouTube Kids · custom player</title>
-    <!-- Font Awesome 6 (free) for clean icons – matches playful style -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SummerPlayer · Web Edition (Kids UI)</title>
+    <!-- Font Awesome for icons (kids friendly) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- HLS.js for HLS support (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -14,501 +16,664 @@
         }
 
         body {
-            background: linear-gradient(145deg, #f9e7b3 0%, #f5d0b8 100%);
-            min-height: 100vh;
+            background: #e0f2e9;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
             font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-            padding: 16px;
-            margin: 0;
+            padding: 20px;
         }
 
-        /* main card – like YouTube Kids playful container */
-        .kids-player-wrapper {
-            max-width: 1000px;
+        /* Main player container – dynamic styling via theme */
+        .summer-player {
             width: 100%;
-            background: #2b3a67; /* deep blue background behind video */
-            border-radius: 48px 48px 32px 32px;
-            box-shadow: 0 25px 40px rgba(0,0,0,0.3), 0 0 0 8px #ffb347, 0 0 0 12px #4caf92;
-            padding: 20px 20px 25px 20px;
+            max-width: 1000px;
+            border-radius: 60px 60px 40px 40px;
+            overflow: hidden;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.3), 0 0 0 6px #ffb882, 0 0 0 12px #ffd966;
+            background: #1e3d58; /* fallback, will be overridden by theme */
             transition: all 0.2s;
         }
 
-        /* header with cute label */
-        .kids-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-            padding-left: 10px;
-        }
-
-        .kids-header h2 {
-            background: #ffde7d;
-            display: inline-block;
-            padding: 8px 24px 8px 24px;
-            border-radius: 60px;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #1e2b4a;
-            letter-spacing: -0.5px;
-            box-shadow: 0 6px 0 #c9a53b;
-            border: 3px solid white;
-            margin: 0;
-        }
-
-        .kids-header i {
-            font-size: 3rem;
-            color: #ff8a5c;
-            filter: drop-shadow(2px 4px 0 #b45f3a);
-        }
-
-        /* ----- video container (16:9) with absolute iframe and overlay controls ----- */
-        .video-container {
-            position: relative;
-            width: 100%;
-            border-radius: 40px;
-            overflow: hidden;
-            box-shadow: inset 0 0 0 4px white, 0 18px 25px -8px black;
-            background: #000; /* fallback */
-        }
-
-        .aspect-ratio-box {
+        /* video wrapper (keeps aspect ratio) */
+        .video-wrapper {
             position: relative;
             width: 100%;
             padding-top: 56.25%; /* 16:9 */
-            background: #d0e0f0;
+            background: #000;
         }
 
-        #youtube-player {
+        #summer-video {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: #000;
-            border: none;
+            outline: none;
         }
 
-        /* ----- custom controls overlay (always visible, like kids UI) ----- */
+        /* custom controls overlay */
         .custom-controls {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(90deg, #feac6d, #ff7b9c, #a0d6ff);
-            padding: 12px 16px;
+            background: linear-gradient(90deg, #f78b6e, #fcb045, #f5d742);
+            padding: 14px 18px;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 12px;
-            border-top: 5px solid white;
+            gap: 15px;
+            border-top: 6px solid white;
             border-radius: 0 0 40px 40px;
-            z-index: 30;
-            pointer-events: auto;  /* make buttons clickable above iframe */
+            z-index: 10;
             backdrop-filter: blur(4px);
-            box-shadow: 0 -4px 0 #fcca4b;
+            transition: background 0.2s;
         }
 
-        /* left area (play + time) */
-        .controls-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1 1 auto;
-        }
-
-        /* big round button – very touch friendly */
-        .control-button {
+        /* control buttons – big and round */
+        .ctrl-btn {
             background: white;
             border: none;
-            width: 54px;
-            height: 54px;
-            border-radius: 100px;
-            font-size: 2rem;
+            width: 58px;
+            height: 58px;
+            border-radius: 58px;
+            font-size: 2.2rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 6px 0 #b0b0b0, 0 8px 12px rgba(0,0,0,0.2);
-            transition: all 0.05s ease-in;
+            box-shadow: 0 7px 0 #baa89b, 0 8px 15px rgba(0,0,0,0.3);
+            transition: all 0.05s linear;
             color: #1f3a5f;
-            border: 3px solid #fff9e6;
-            line-height: 1;
-            padding: 0;
+            border: 4px solid #fff9e6;
+            flex-shrink: 0;
         }
 
-        .control-button:active {
-            transform: translateY(6px);
-            box-shadow: 0 2px 0 #909090, 0 5px 10px rgba(0,0,0,0.2);
+        .ctrl-btn:active {
+            transform: translateY(7px);
+            box-shadow: 0 2px 0 #9e8d7f, 0 5px 12px rgba(0,0,0,0.3);
         }
 
-        .control-button i {
-            font-size: 2rem;
+        .ctrl-btn i {
+            font-size: 2.2rem;
             color: #1f3a5f;
         }
 
-        /* time display – bold, friendly */
+        /* time display */
         .time-display {
-            background: #1e2f4a;
+            background: #162b40;
             color: white;
-            font-size: 1.6rem;
-            font-weight: 600;
-            padding: 6px 20px;
-            border-radius: 40px;
-            border: 3px solid #ffd966;
-            box-shadow: inset 0 -3px 0 #121f33;
-            letter-spacing: 1px;
-            white-space: nowrap;
+            font-size: 1.7rem;
+            font-weight: 700;
+            padding: 8px 20px;
+            border-radius: 50px;
+            border: 4px solid #ffe28a;
+            box-shadow: inset 0 -4px 0 #0e1f2e;
             font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
-        /* progress bar container – giant, easy to tap */
-        .progress-bar-container {
-            flex: 3 1 200px;
-            height: 26px;
-            background: #fbe3b0;
+        /* progress bar */
+        .progress-container {
+            flex: 3 1 250px;
+            height: 28px;
+            background: #fbe6c2;
             border-radius: 40px;
-            border: 4px solid white;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+            border: 5px solid white;
+            box-shadow: inset 0 3px 8px rgba(0,0,0,0.2);
             cursor: pointer;
             position: relative;
-            min-width: 150px;
+            min-width: 180px;
         }
 
         .progress-fill {
             height: 100%;
-            background: #ff4d6d;
+            background: #ff576e;
             border-radius: 40px;
             width: 0%;
-            box-shadow: 0 0 0 2px white, 0 4px 0 #ac2440;
+            box-shadow: 0 0 0 3px white, 0 4px 0 #b32e40;
             transition: width 0.1s linear;
         }
 
-        /* right controls (mute + fullscreen) */
+        /* right side buttons */
         .controls-right {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        /* playlist toggle button */
+        .playlist-toggle {
+            background: #fee440;
+            border: 4px solid white;
+            color: #2b3a67;
+            font-size: 1.8rem;
+        }
+
+        /* playlist panel */
+        .playlist-panel {
+            background: #fef9e6;
+            border-radius: 0 0 40px 40px;
+            padding: 15px;
+            display: none; /* hidden by default */
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            border-top: 6px solid white;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .playlist-panel.open {
+            display: grid;
+        }
+
+        .playlist-item {
+            background: white;
+            border-radius: 40px;
+            padding: 10px 15px;
+            font-weight: bold;
+            color: #1e3d58;
+            box-shadow: 0 5px 0 #b0b0b0;
+            border: 3px solid #ffb347;
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
-            flex: 0 1 auto;
+            transition: 0.1s;
+            font-size: 1rem;
         }
 
-        /* extra cute little details */
-        .kids-footer {
+        .playlist-item.active {
+            background: #ffb851;
+            color: #1f2c45;
+            border-color: #ffeeaa;
+            box-shadow: 0 5px 0 #a05f20;
+        }
+
+        .playlist-item:active {
+            transform: translateY(5px);
+            box-shadow: 0 2px 0 #8b8b8b;
+        }
+
+        .playlist-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 30px;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+
+        /* header (optional title) */
+        .player-header {
+            padding: 15px 20px 0 20px;
             display: flex;
-            justify-content: space-between;
-            margin-top: 16px;
-            padding: 0 12px;
-            color: #fef9d7;
-            font-weight: bold;
-            text-shadow: 2px 2px 0 #2f4858;
+            align-items: center;
+            gap: 10px;
         }
 
-        .kids-footer span {
-            background: #57a773;
-            padding: 8px 20px;
-            border-radius: 60px;
-            font-size: 1.2rem;
-            border: 3px solid white;
+        .player-header h3 {
+            background: #ffe570;
+            display: inline-block;
+            padding: 8px 30px;
+            border-radius: 50px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #003153;
+            border: 4px solid white;
+            box-shadow: 0 5px 0 #b3953a;
+            margin: 0;
         }
 
-        /* make iframe click-through except controls zone */
-        #youtube-player {
-            pointer-events: auto;  /* video itself clickable (play/pause) */
+        .player-header i {
+            font-size: 3rem;
+            color: #ff9f1c;
+            filter: drop-shadow(2px 4px 0 #b2620f);
         }
 
-        /* mobile adjustments */
-        @media (max-width: 550px) {
-            .kids-player-wrapper {
-                padding: 12px 12px 18px 12px;
-                border-radius: 32px;
-            }
-            .control-button {
-                width: 48px;
-                height: 48px;
-                font-size: 1.8rem;
-            }
-            .control-button i {
-                font-size: 1.8rem;
-            }
-            .time-display {
-                font-size: 1.2rem;
-                padding: 4px 12px;
-            }
-            .progress-bar-container {
-                height: 22px;
-            }
+        /* small adaptations */
+        @media (max-width: 600px) {
+            .ctrl-btn { width: 48px; height: 48px; font-size: 1.8rem; }
+            .ctrl-btn i { font-size: 1.8rem; }
+            .time-display { font-size: 1.3rem; padding: 4px 12px; }
+            .progress-container { height: 22px; }
+            .player-header h3 { font-size: 1.4rem; }
         }
     </style>
 </head>
 <body>
-<div class="kids-player-wrapper">
-    <!-- header: playful & bright -->
-    <div class="kids-header">
-        <i class="fas fa-star"></i>
-        <h2>📺 KIDS player</h2>
-        <i class="fas fa-bolt" style="color: #f9d342;"></i>
-    </div>
+    <!-- The player will be injected here by JavaScript -->
+    <div id="player-container" style="width: 100%;"></div>
 
-    <!-- main video area with overlay controls -->
-    <div class="video-container">
-        <div class="aspect-ratio-box">
-            <!-- div that will be replaced by YouTube iframe -->
-            <div id="youtube-player"></div>
+    <script>
+        /**
+         * SummerPlayerView – Web Edition
+         * Mimics the iOS library API: configuration, theme, playlist, delegate.
+         */
+        class SummerPlayerView {
+            #targetElement;        // DOM element where player is attached
+            #config;               // user configuration
+            #theme;                // theme colors
+            #playlist = [];         // array of video items
+            #currentIndex = 0;      // index of currently playing video
+            #delegate = {};         // event callbacks (onPlay, onPause, etc.)
+            #hls = null;            // HLS.js instance
 
-            <!-- custom controls overlay (always visible, like YouTube Kids) -->
-            <div class="custom-controls" id="custom-controls">
-                <!-- left block: play/pause + time -->
-                <div class="controls-left">
-                    <button class="control-button" id="play-pause-btn" aria-label="Play/Pause">
-                        <i class="fas fa-play" id="play-pause-icon"></i>
-                    </button>
-                    <span class="time-display" id="time-display">0:00 / 0:00</span>
-                </div>
+            // UI elements
+            #container;             // main player div
+            #videoElement;          // <video>
+            #playPauseBtn;          // button
+            #playPauseIcon;         
+            #prevBtn;               
+            #nextBtn;               
+            #timeDisplay;           
+            #progressFill;          
+            #progressContainer;     
+            #volumeBtn;             
+            #volumeIcon;            
+            #fullscreenBtn;         
+            #playlistToggle;        
+            #playlistPanel;         
+            #loopBtn;               
+            #loopIcon;              
 
-                <!-- big progress bar (click to seek) -->
-                <div class="progress-bar-container" id="progress-bar">
-                    <div class="progress-fill" id="progress-fill"></div>
-                </div>
+            // internal state
+            #isPlaying = false;
+            #isMuted = false;
+            #isLoop = false;
+            #progressInterval = null;
 
-                <!-- right block: mute and fullscreen -->
-                <div class="controls-right">
-                    <button class="control-button" id="mute-btn" aria-label="Mute/Unmute">
-                        <i class="fas fa-volume-high" id="mute-icon"></i>
-                    </button>
-                    <button class="control-button" id="fullscreen-btn" aria-label="Fullscreen">
-                        <i class="fas fa-expand"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- footer – just for fun (like kids UI) -->
-    <div class="kids-footer">
-        <span><i class="fas fa-lock"></i> parent lock</span>
-        <span><i class="fas fa-hand"></i> safe mode</span>
-    </div>
-</div>
-
-<!-- YouTube IFrame API script -->
-<script>
-    // ---- global variables ----
-    let player;                // YouTube player object
-    let playerReady = false;   // true when API ready and player initialized
-    let progressInterval = null;
-    let isPlaying = false;     // track state for UI updates
-
-    // DOM elements
-    const playPauseBtn = document.getElementById('play-pause-btn');
-    const playPauseIcon = document.getElementById('play-pause-icon');
-    const timeDisplay = document.getElementById('time-display');
-    const progressFill = document.getElementById('progress-fill');
-    const progressBar = document.getElementById('progress-bar');
-    const muteBtn = document.getElementById('mute-btn');
-    const muteIcon = document.getElementById('mute-icon');
-    const fullscreenBtn = document.getElementById('fullscreen-btn');
-    const videoContainer = document.querySelector('.video-container'); // for fullscreen
-
-    // ---- helper functions ----
-    function formatTime(seconds) {
-        if (!seconds || isNaN(seconds)) return '0:00';
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-    }
-
-    // update progress bar and time display
-    function updateProgressAndTime() {
-        if (!player || !playerReady) return;
-        const currentTime = player.getCurrentTime();
-        const duration = player.getDuration();
-        if (duration && duration > 0) {
-            const percent = (currentTime / duration) * 100;
-            progressFill.style.width = percent + '%';
-            timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
-        } else {
-            // fallback if duration not ready
-            timeDisplay.textContent = `0:00 / 0:00`;
-        }
-    }
-
-    // clear progress interval
-    function stopProgressInterval() {
-        if (progressInterval) {
-            clearInterval(progressInterval);
-            progressInterval = null;
-        }
-    }
-
-    // start interval only if playing
-    function startProgressIntervalIfPlaying() {
-        stopProgressInterval(); // avoid duplicates
-        if (isPlaying && playerReady) {
-            progressInterval = setInterval(() => {
-                updateProgressAndTime();
-            }, 300); // smooth enough
-        }
-    }
-
-    // update play/pause icon based on state
-    function updatePlayPauseIcon(state) {
-        if (state === 1) { // playing
-            playPauseIcon.className = 'fas fa-pause';
-            isPlaying = true;
-        } else { // paused, ended, buffering etc
-            playPauseIcon.className = 'fas fa-play';
-            isPlaying = false;
-        }
-        // restart interval according to new state
-        startProgressIntervalIfPlaying();
-    }
-
-    // ---- YouTube API callback ----
-    function onYouTubeIframeAPIReady() {
-        player = new YT.Player('youtube-player', {
-            videoId: 'tgbNymZ7vqY',   // 🦈 Baby Shark – super kid-friendly
-            playerVars: {
-                controls: 0,           // hide default controls
-                disablekb: 1,
-                iv_load_policy: 3,     // no annotations
-                modestbranding: 1,
-                rel: 0,
-                showinfo: 0,
-                fs: 0,                 // we handle fullscreen manually
-                playsinline: 1,
-                origin: window.location.origin
-            },
-            events: {
-                'onReady': onPlayerReady,
-                'onStateChange': onPlayerStateChange,
-                'onError': onPlayerError
+            constructor(configuration, theme, targetView) {
+                this.#config = { 
+                    autoplay: false,
+                    loop: false,
+                    controls: true,
+                    showPlaylist: true,
+                    ...configuration 
+                };
+                this.#theme = {
+                    primaryColor: '#f78b6e',
+                    secondaryColor: '#fcb045',
+                    progressColor: '#ff576e',
+                    buttonColor: '#ffffff',
+                    headerColor: '#ffe570',
+                    ...theme
+                };
+                this.#targetElement = targetView;
+                this.#buildUI();
+                this.#attachEvents();
+                if (this.#config.autoplay) {
+                    this.play();
+                }
             }
-        });
-    }
 
-    function onPlayerReady(event) {
-        playerReady = true;
-        // Set initial duration after a short delay
-        setTimeout(() => {
-            updateProgressAndTime();
-        }, 500);
-        // set initial mute icon (not muted by default)
-        muteIcon.className = 'fas fa-volume-high';
-    }
+            // Build the complete player UI inside target element
+            #buildUI() {
+                // main container
+                this.#container = document.createElement('div');
+                this.#container.className = 'summer-player';
+                this.#container.style.background = this.#theme.primaryColor; // fallback gradient?
 
-    function onPlayerStateChange(event) {
-        // data: -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (cued)
-        const state = event.data;
-        updatePlayPauseIcon(state);
-        if (state === 0) { // ended
-            // reset progress to 0? the video ends at 100% anyway, but we want play icon
-            updateProgressAndTime(); // final update
-            stopProgressInterval();
-        } else if (state === 1) { // playing
-            startProgressIntervalIfPlaying();
-        } else if (state === 2) { // paused
-            stopProgressInterval();
-        }
-    }
+                // optional header (like sample theme)
+                const header = document.createElement('div');
+                header.className = 'player-header';
+                header.innerHTML = `
+                    <i class="fas fa-bolt" style="color: ${this.#theme.headerColor};"></i>
+                    <h3 style="background: ${this.#theme.headerColor};">📺 SummerPlayer</h3>
+                    <i class="fas fa-star" style="color: ${this.#theme.headerColor};"></i>
+                `;
+                this.#container.appendChild(header);
 
-    function onPlayerError(event) {
-        console.warn('YouTube error:', event.data);
-        // fallback: reset UI, show friendly message (optional)
-        timeDisplay.textContent = '😊 video error';
-    }
+                // video wrapper
+                const wrapper = document.createElement('div');
+                wrapper.className = 'video-wrapper';
+                this.#videoElement = document.createElement('video');
+                this.#videoElement.id = 'summer-video';
+                this.#videoElement.setAttribute('playsinline', '');
+                this.#videoElement.setAttribute('webkit-playsinline', '');
+                this.#videoElement.crossOrigin = 'anonymous';
+                wrapper.appendChild(this.#videoElement);
 
-    // ---- load YouTube iframe API ----
-    const tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+                // custom controls
+                const controls = document.createElement('div');
+                controls.className = 'custom-controls';
+                controls.style.background = `linear-gradient(90deg, ${this.#theme.primaryColor}, ${this.#theme.secondaryColor})`;
+                controls.innerHTML = `
+                    <button class="ctrl-btn" id="playPauseBtn"><i class="fas fa-play" id="playPauseIcon"></i></button>
+                    <button class="ctrl-btn" id="prevBtn"><i class="fas fa-backward"></i></button>
+                    <button class="ctrl-btn" id="nextBtn"><i class="fas fa-forward"></i></button>
+                    <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-fill" id="progressFill" style="background: ${this.#theme.progressColor};"></div>
+                    </div>
+                    <div class="controls-right">
+                        <button class="ctrl-btn" id="volumeBtn"><i class="fas fa-volume-high" id="volumeIcon"></i></button>
+                        <button class="ctrl-btn" id="fullscreenBtn"><i class="fas fa-expand"></i></button>
+                        <button class="ctrl-btn" id="loopBtn"><i class="fas fa-repeat" id="loopIcon"></i></button>
+                        <button class="ctrl-btn playlist-toggle" id="playlistToggle"><i class="fas fa-list"></i></button>
+                    </div>
+                `;
+                wrapper.appendChild(controls);
+                this.#container.appendChild(wrapper);
 
-    // ---- custom control event listeners (set up after API ready, but buttons exist) ----
+                // playlist panel
+                this.#playlistPanel = document.createElement('div');
+                this.#playlistPanel.className = 'playlist-panel';
+                this.#container.appendChild(this.#playlistPanel);
 
-    // Play/Pause
-    playPauseBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (!player || !playerReady) return;
-        const state = player.getPlayerState();
-        if (state === 1) { // playing
-            player.pauseVideo();
-        } else {
-            player.playVideo();
-        }
-    });
+                this.#targetElement.appendChild(this.#container);
 
-    // Mute toggle
-    muteBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (!player || !playerReady) return;
-        if (player.isMuted()) {
-            player.unMute();
-            muteIcon.className = 'fas fa-volume-high';
-        } else {
-            player.mute();
-            muteIcon.className = 'fas fa-volume-off';
-        }
-    });
-
-    // Fullscreen (on the video container, to include custom controls)
-    fullscreenBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (!document.fullscreenElement) {
-            if (videoContainer.requestFullscreen) {
-                videoContainer.requestFullscreen();
-            } else if (videoContainer.webkitRequestFullscreen) { // Safari
-                videoContainer.webkitRequestFullscreen();
-            } else if (videoContainer.msRequestFullscreen) { // IE/Edge
-                videoContainer.msRequestFullscreen();
+                // cache elements
+                this.#playPauseBtn = document.getElementById('playPauseBtn');
+                this.#playPauseIcon = document.getElementById('playPauseIcon');
+                this.#prevBtn = document.getElementById('prevBtn');
+                this.#nextBtn = document.getElementById('nextBtn');
+                this.#timeDisplay = document.getElementById('timeDisplay');
+                this.#progressFill = document.getElementById('progressFill');
+                this.#progressContainer = document.getElementById('progressContainer');
+                this.#volumeBtn = document.getElementById('volumeBtn');
+                this.#volumeIcon = document.getElementById('volumeIcon');
+                this.#fullscreenBtn = document.getElementById('fullscreenBtn');
+                this.#loopBtn = document.getElementById('loopBtn');
+                this.#loopIcon = document.getElementById('loopIcon');
+                this.#playlistToggle = document.getElementById('playlistToggle');
             }
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
+
+            #attachEvents() {
+                // video events
+                this.#videoElement.addEventListener('loadedmetadata', () => this.#updateTimeDisplay());
+                this.#videoElement.addEventListener('timeupdate', () => this.#updateProgress());
+                this.#videoElement.addEventListener('play', () => {
+                    this.#isPlaying = true;
+                    this.#playPauseIcon.className = 'fas fa-pause';
+                    this.#startProgressInterval();
+                    if (this.#delegate.onPlay) this.#delegate.onPlay(this.#getCurrentItem());
+                });
+                this.#videoElement.addEventListener('pause', () => {
+                    this.#isPlaying = false;
+                    this.#playPauseIcon.className = 'fas fa-play';
+                    this.#stopProgressInterval();
+                    if (this.#delegate.onPause) this.#delegate.onPause(this.#getCurrentItem());
+                });
+                this.#videoElement.addEventListener('ended', () => {
+                    if (this.#isLoop) {
+                        this.#videoElement.currentTime = 0;
+                        this.#videoElement.play();
+                    } else {
+                        // auto next if available
+                        if (this.#currentIndex < this.#playlist.length - 1) {
+                            this.next();
+                        } else {
+                            this.#isPlaying = false;
+                            this.#playPauseIcon.className = 'fas fa-play';
+                            this.#stopProgressInterval();
+                        }
+                    }
+                    if (this.#delegate.onEnded) this.#delegate.onEnded(this.#getCurrentItem());
+                });
+
+                // control buttons
+                this.#playPauseBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.togglePlayPause();
+                });
+                this.#prevBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.previous();
+                });
+                this.#nextBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.next();
+                });
+                this.#progressContainer.addEventListener('click', (e) => {
+                    const rect = this.#progressContainer.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const percent = Math.min(1, Math.max(0, x / rect.width));
+                    this.#videoElement.currentTime = percent * this.#videoElement.duration;
+                });
+                this.#volumeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.#videoElement.muted = !this.#videoElement.muted;
+                    this.#isMuted = this.#videoElement.muted;
+                    this.#volumeIcon.className = this.#isMuted ? 'fas fa-volume-off' : 'fas fa-volume-high';
+                    if (this.#delegate.onMute) this.#delegate.onMute(this.#isMuted);
+                });
+                this.#fullscreenBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggleFullscreen();
+                });
+                this.#loopBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.#isLoop = !this.#isLoop;
+                    this.#loopIcon.style.color = this.#isLoop ? '#ff0' : '';
+                    if (this.#delegate.onLoopChange) this.#delegate.onLoopChange(this.#isLoop);
+                });
+                this.#playlistToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.#playlistPanel.classList.toggle('open');
+                });
+            }
+
+            // Public API: setup playlist
+            setupPlayList(currentItem, items) {
+                this.#playlist = items;
+                // find index of currentItem (by url or object ref)
+                const index = items.findIndex(item => item.url === currentItem.url);
+                this.#currentIndex = index >= 0 ? index : 0;
+                this.#loadVideo(this.#playlist[this.#currentIndex]);
+                this.#renderPlaylist();
+            }
+
+            // load video source (handles HLS via hls.js if needed)
+            #loadVideo(item) {
+                if (!item) return;
+                const url = item.url;
+                // destroy previous hls instance
+                if (this.#hls) {
+                    this.#hls.destroy();
+                    this.#hls = null;
+                }
+
+                // if HLS (m3u8) and HLS.js is available
+                if (url.includes('.m3u8') && typeof Hls !== 'undefined' && Hls.isSupported()) {
+                    this.#hls = new Hls();
+                    this.#hls.loadSource(url);
+                    this.#hls.attachMedia(this.#videoElement);
+                    this.#hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        if (this.#config.autoplay) this.#videoElement.play();
+                    });
+                } else {
+                    // regular mp4 or other
+                    this.#videoElement.src = url;
+                    this.#videoElement.load();
+                }
+                this.#updateActivePlaylistItem();
+                if (this.#delegate.onItemChange) this.#delegate.onItemChange(item);
+            }
+
+            // Playlist UI
+            #renderPlaylist() {
+                this.#playlistPanel.innerHTML = '';
+                this.#playlist.forEach((item, idx) => {
+                    const div = document.createElement('div');
+                    div.className = 'playlist-item';
+                    div.setAttribute('data-index', idx);
+                    if (idx === this.#currentIndex) div.classList.add('active');
+                    div.innerHTML = `
+                        <img src="${item.thumbnail || 'https://via.placeholder.com/40'}" alt="thumb">
+                        <span>${item.title || 'Video ' + (idx+1)}</span>
+                    `;
+                    div.addEventListener('click', () => {
+                        this.#currentIndex = idx;
+                        this.#loadVideo(item);
+                        if (this.#config.autoplay) this.#videoElement.play();
+                    });
+                    this.#playlistPanel.appendChild(div);
+                });
+            }
+
+            #updateActivePlaylistItem() {
+                const items = this.#playlistPanel.querySelectorAll('.playlist-item');
+                items.forEach((item, idx) => {
+                    if (idx === this.#currentIndex) item.classList.add('active');
+                    else item.classList.remove('active');
+                });
+            }
+
+            // playback controls
+            togglePlayPause() {
+                if (this.#videoElement.paused) {
+                    this.#videoElement.play();
+                } else {
+                    this.#videoElement.pause();
+                }
+            }
+
+            play() {
+                this.#videoElement.play();
+            }
+
+            pause() {
+                this.#videoElement.pause();
+            }
+
+            previous() {
+                if (this.#playlist.length === 0) return;
+                this.#currentIndex = (this.#currentIndex - 1 + this.#playlist.length) % this.#playlist.length;
+                this.#loadVideo(this.#playlist[this.#currentIndex]);
+                if (this.#config.autoplay) this.#videoElement.play();
+                if (this.#delegate.onPrevious) this.#delegate.onPrevious(this.#getCurrentItem());
+            }
+
+            next() {
+                if (this.#playlist.length === 0) return;
+                this.#currentIndex = (this.#currentIndex + 1) % this.#playlist.length;
+                this.#loadVideo(this.#playlist[this.#currentIndex]);
+                if (this.#config.autoplay) this.#videoElement.play();
+                if (this.#delegate.onNext) this.#delegate.onNext(this.#getCurrentItem());
+            }
+
+            toggleFullscreen() {
+                const container = this.#container;
+                if (!document.fullscreenElement) {
+                    if (container.requestFullscreen) container.requestFullscreen();
+                    else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+                    else if (container.msRequestFullscreen) container.msRequestFullscreen();
+                } else {
+                    if (document.exitFullscreen) document.exitFullscreen();
+                }
+            }
+
+            // progress & time
+            #updateProgress() {
+                if (this.#videoElement.duration) {
+                    const percent = (this.#videoElement.currentTime / this.#videoElement.duration) * 100;
+                    this.#progressFill.style.width = percent + '%';
+                }
+            }
+
+            #updateTimeDisplay() {
+                const format = (seconds) => {
+                    if (isNaN(seconds)) return '0:00';
+                    const m = Math.floor(seconds / 60);
+                    const s = Math.floor(seconds % 60);
+                    return `${m}:${s < 10 ? '0' : ''}${s}`;
+                };
+                const current = format(this.#videoElement.currentTime);
+                const total = format(this.#videoElement.duration);
+                this.#timeDisplay.textContent = `${current} / ${total}`;
+            }
+
+            #startProgressInterval() {
+                this.#stopProgressInterval();
+                this.#progressInterval = setInterval(() => {
+                    this.#updateTimeDisplay();
+                }, 300);
+            }
+
+            #stopProgressInterval() {
+                if (this.#progressInterval) {
+                    clearInterval(this.#progressInterval);
+                    this.#progressInterval = null;
+                }
+            }
+
+            #getCurrentItem() {
+                return this.#playlist[this.#currentIndex] || null;
+            }
+
+            // delegate setter
+            set delegate(callbacks) {
+                this.#delegate = { ...this.#delegate, ...callbacks };
+            }
+
+            // Allow theme update (simple)
+            updateTheme(newTheme) {
+                this.#theme = { ...this.#theme, ...newTheme };
+                // update UI
+                const controls = this.#container.querySelector('.custom-controls');
+                controls.style.background = `linear-gradient(90deg, ${this.#theme.primaryColor}, ${this.#theme.secondaryColor})`;
+                this.#progressFill.style.background = this.#theme.progressColor;
+                const header = this.#container.querySelector('.player-header h3');
+                if (header) header.style.background = this.#theme.headerColor;
             }
         }
-    });
 
-    // Seek via progress bar click
-    progressBar.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (!player || !playerReady) return;
-        const duration = player.getDuration();
-        if (!duration || duration <= 0) return;
+        // -----------------------------------------------------------------
+        // Example usage – exactly matching the Swift sample structure
+        // -----------------------------------------------------------------
+        (function() {
+            // Get the target view (container div)
+            const targetView = document.getElementById('player-container');
 
-        // calculate click position relative to progress bar width
-        const rect = progressBar.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        let percent = clickX / rect.width;
-        percent = Math.min(1, Math.max(0, percent)); // clamp 0-1
+            // Create configuration and theme (like DefaultConfig and ThemeMaker)
+            const defaultConfig = {
+                autoplay: false,
+                loop: false,
+                showPlaylist: true
+            };
 
-        const seekToTime = percent * duration;
-        player.seekTo(seekToTime, true);
-        // update progress immediately for better feedback
-        progressFill.style.width = (percent * 100) + '%';
-        // time display will be corrected by interval
-    });
+            const sampleTheme = {
+                primaryColor: '#ff8a5c',
+                secondaryColor: '#ffd93e',
+                progressColor: '#ff4d6d',
+                headerColor: '#f9d342'
+            };
 
-    // Optional: also update progress while dragging? for simplicity we skip drag,
-    // but click-to-seek is clear and kid-friendly.
+            // Generate some test contents (like ContentsMaker.getContents())
+            const testContents = [
+                { title: 'Baby Shark', url: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4', thumbnail: 'https://via.placeholder.com/40?text=🐟' },
+                { title: 'Fruit Colors', url: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_2MB.mp4', thumbnail: 'https://via.placeholder.com/40?text=🍎' },
+                { title: 'ABC Song', url: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_3MB.mp4', thumbnail: 'https://via.placeholder.com/40?text=🔤' },
+                { title: 'HLS Sample', url: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8', thumbnail: 'https://via.placeholder.com/40?text=📡' } // HLS stream
+            ];
 
-    // Make sure the interval stops when not needed; also clean on page unload
-    window.addEventListener('beforeunload', () => {
-        stopProgressInterval();
-    });
+            // Instantiate SummerPlayerView (just like the iOS version)
+            const summerPlayerView = new SummerPlayerView(defaultConfig, sampleTheme, targetView);
 
-    // If player not ready after some time, show a hint (but usually works)
-    setTimeout(() => {
-        if (!playerReady) {
-            timeDisplay.textContent = 'loading...';
-        }
-    }, 3000);
-</script>
+            // Set delegate to receive events
+            summerPlayerView.delegate = {
+                onPlay: (item) => console.log('Playing:', item?.title),
+                onPause: (item) => console.log('Paused:', item?.title),
+                onNext: (item) => console.log('Next:', item?.title),
+                onPrevious: (item) => console.log('Previous:', item?.title),
+                onEnded: (item) => console.log('Ended:', item?.title),
+                onMute: (muted) => console.log('Muted:', muted),
+                onLoopChange: (loop) => console.log('Loop:', loop)
+            };
 
-<!-- extra fallback for old browsers: show friendly message -->
-<noscript>
-    <div style="padding: 2rem; text-align: center;">JavaScript required for YouTube Kids player</div>
-</noscript>
+            // Set up playlist (currentItem and items)
+            if (testContents.length > 0) {
+                summerPlayerView.setupPlayList(testContents[0], testContents);
+            }
+
+            // Optional: later update theme
+            // summerPlayerView.updateTheme({ primaryColor: '#b983ff' });
+        })();
+    </script>
 </body>
 </html>
