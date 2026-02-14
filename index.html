@@ -19,6 +19,9 @@
             max-width: 1000px;
             margin: 0 auto;
         }
+        h1 {
+            margin-bottom: 20px;
+        }
         #video-player {
             background: #000;
             border-radius: 8px;
@@ -81,42 +84,11 @@
             color: #fff;
             text-shadow: 0 0 4px black;
         }
-        #channel-input-area {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            background: #222;
-            padding: 15px;
-            border-radius: 8px;
-            align-items: center;
-        }
-        #channel-id {
-            flex: 1;
-            padding: 10px 12px;
-            border-radius: 4px;
-            border: 1px solid #444;
-            background: #333;
-            color: #fff;
-            font-size: 1rem;
-            min-width: 250px;
-        }
-        #load-button {
-            padding: 10px 24px;
-            background: #c00;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1rem;
-        }
-        #load-button:hover {
-            background: #e00;
-        }
-        #load-button:disabled {
-            background: #666;
-            cursor: not-allowed;
+        .loading {
+            color: #aaa;
+            padding: 20px;
+            text-align: center;
+            font-style: italic;
         }
         .error-message {
             color: #ff8080;
@@ -125,70 +97,39 @@
             border-radius: 4px;
             margin-top: 10px;
         }
-        .loading {
-            color: #aaa;
-            padding: 20px;
-            text-align: center;
-            font-style: italic;
-        }
-        .example {
-            color: #aaa;
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-        .example a {
-            color: #6cf;
-            cursor: pointer;
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
 <div class="parent-container">
-    <h1 style="margin-bottom: 20px;">YouTube Channel Video Player</h1>
-    <div id="channel-input-area">
-        <input type="text" id="channel-id" placeholder="Enter YouTube Channel ID (e.g. UCXuqSBlHAE6Xw-yeJA0Tunw)" value="UCXuqSBlHAE6Xw-yeJA0Tunw">
-        <button id="load-button">Load Videos</button>
-        <div class="example">Examples: <a class="example-link" data-channel="UCXuqSBlHAE6Xw-yeJA0Tunw">Linus Tech Tips</a> · <a class="example-link" data-channel="UCBR8-60-B28hp2BmDPdntcQ">YouTube Music</a> · <a class="example-link" data-channel="UC-9-kyTW8ZkZNDHQJ6FgpwQ">Music</a></div>
-    </div>
-
+    <h1>YouTube Channel Video Player</h1>
     <div id="video-player">
         <iframe id="YouTube-Iframe" class="lazyload" src="https://www.youtube.com/embed/3YHVC1DcHmo?enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         <div id="video-caption">Jon Batiste ♩ FREEDOM</div>
         <div id="playlist">
-            <!-- Static fallback buttons (optional) – they will be replaced when a channel is loaded -->
-            <button class="playlist-button active" data-bg="//img.youtube.com/vi/3YHVC1DcHmo/sddefault.jpg" data-iframe="https://www.youtube.com/embed/3YHVC1DcHmo?autoplay=1" data-caption="Jon Batiste ♩ FREEDOM" style="background-image: url('//img.youtube.com/vi/3YHVC1DcHmo/sddefault.jpg');"><span class="title">Jon Batiste</span></button>
-            <button class="playlist-button" data-bg="//img.youtube.com/vi/1GupNeliuLA/sddefault.jpg" data-iframe="https://www.youtube.com/embed/1GupNeliuLA?autoplay=1" data-caption="Luke James ♩ SHINE ON" style="background-image: url('//img.youtube.com/vi/1GupNeliuLA/sddefault.jpg');"><span class="title">Luke James</span></button>
-            <!-- more static buttons... (they will be cleared when new videos load) -->
+            <!-- Playlist will be populated dynamically -->
+            <div class="loading">Loading videos...</div>
         </div>
     </div>
 </div>
 
 <script>
     (function() {
+        // ===== HARDCODED CHANNEL ID =====
+        // Change this to any YouTube channel ID you want
+        const CHANNEL_ID = 'UCXuqSBlHAE6Xw-yeJA0Tunw';  // Linus Tech Tips
+
         // DOM elements
-        const channelInput = document.getElementById('channel-id');
-        const loadButton = document.getElementById('load-button');
         const playlistDiv = document.getElementById('playlist');
         const youtubeIframe = document.getElementById('YouTube-Iframe');
         const videoCaption = document.getElementById('video-caption');
 
-        // Utility function to extract YouTube channel ID from various inputs (optional)
-        function extractChannelId(input) {
-            // If it's a full YouTube URL, try to extract the channel ID
-            const match = input.match(/(?:channel\/|user\/|@)?([a-zA-Z0-9_-]{24,})/);
-            return match ? match[1] : input;
-        }
-
         // Fetch and parse RSS feed for a channel ID
         async function loadChannelVideos(channelId) {
             if (!channelId) return;
-            const cleanId = extractChannelId(channelId);
-            const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${cleanId}`;
+            const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
 
             // Show loading state
             playlistDiv.innerHTML = '<div class="loading">Loading videos...</div>';
-            loadButton.disabled = true;
 
             try {
                 const response = await fetch(feedUrl);
@@ -197,7 +138,6 @@
 
                 // Parse XML manually with regex (simple and works without namespaces)
                 const videoEntries = [];
-                // Regular expression to find each <entry>...</entry>
                 const entryRegex = /<entry>([\s\S]*?)<\/entry>/gi;
                 let entryMatch;
                 while ((entryMatch = entryRegex.exec(xmlText)) !== null) {
@@ -211,10 +151,6 @@
                     // Extract title from <title>...</title>
                     const titleMatch = entryContent.match(/<title>([^<]+)<\/title>/i);
                     const title = titleMatch ? titleMatch[1] : 'Untitled';
-
-                    // Extract published date (optional, could be used for sorting)
-                    // const publishedMatch = entryContent.match(/<published>([^<]+)<\/published>/i);
-                    // const published = publishedMatch ? publishedMatch[1] : '';
 
                     videoEntries.push({ videoId, title });
                 }
@@ -230,8 +166,6 @@
             } catch (error) {
                 console.error('Error loading feed:', error);
                 playlistDiv.innerHTML = `<div class="error-message">Failed to load videos: ${error.message}. Make sure the channel ID is correct and the feed is accessible.</div>`;
-            } finally {
-                loadButton.disabled = false;
             }
         }
 
@@ -240,19 +174,17 @@
             // Clear playlist
             playlistDiv.innerHTML = '';
 
-            videos.forEach((video, index) => {
+            videos.forEach((video) => {
                 const videoId = video.videoId;
                 const title = video.title;
-                const thumbnail = `//img.youtube.com/vi/${videoId}/sddefault.jpg`; // or hqdefault.jpg
-                const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`; // autoplay on click
+                const thumbnail = `//img.youtube.com/vi/${videoId}/sddefault.jpg`;
+                const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
 
                 // Create button
                 const button = document.createElement('button');
-                button.className = 'playlist-button lazyload';
-                button.setAttribute('data-bg', thumbnail);
+                button.className = 'playlist-button';
                 button.setAttribute('data-iframe', embedUrl);
                 button.setAttribute('data-caption', title);
-                // Set background image inline for immediate display (or lazyload can handle)
                 button.style.backgroundImage = `url('${thumbnail}')`;
                 button.style.backgroundSize = 'cover';
                 button.style.backgroundPosition = 'center';
@@ -260,25 +192,18 @@
                 // Add title span
                 const titleSpan = document.createElement('span');
                 titleSpan.className = 'title';
-                // Truncate title if too long
                 titleSpan.textContent = title.length > 60 ? title.substring(0, 60) + '…' : title;
                 button.appendChild(titleSpan);
-
-                // If it's the first video, mark as active and update player? (optional)
-                if (index === 0) {
-                    // Do not auto-play first, just set as active? We'll keep existing iframe.
-                    // But we could optionally set the first video as the current.
-                }
 
                 playlistDiv.appendChild(button);
             });
 
-            // After building, ensure the first video is displayed? We'll leave the current video as is.
-            // Optionally update to first video:
-            // const firstButton = playlistDiv.querySelector('.playlist-button');
-            // if (firstButton) {
-            //     firstButton.click();
-            // }
+            // Optionally auto-click the first video after a short delay (so the user sees something)
+            // You can enable this if you want the first video to load immediately.
+            // setTimeout(() => {
+            //     const firstButton = playlistDiv.querySelector('.playlist-button');
+            //     if (firstButton) firstButton.click();
+            // }, 500);
         }
 
         // Event listener for playlist clicks (using event delegation)
@@ -303,31 +228,10 @@
             }
         });
 
-        // Load button click
-        loadButton.addEventListener('click', function() {
-            const channelId = channelInput.value.trim();
-            if (channelId) {
-                loadChannelVideos(channelId);
-            } else {
-                alert('Please enter a channel ID');
-            }
+        // Load videos on page load
+        window.addEventListener('load', function() {
+            loadChannelVideos(CHANNEL_ID);
         });
-
-        // Example links
-        document.querySelectorAll('.example-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const channel = this.getAttribute('data-channel');
-                channelInput.value = channel;
-                loadChannelVideos(channel);
-            });
-        });
-
-        // Optional: Auto-load a default channel on page load (comment out if not wanted)
-        // window.addEventListener('load', function() {
-        //     const defaultChannel = channelInput.value.trim();
-        //     if (defaultChannel) loadChannelVideos(defaultChannel);
-        // });
     })();
 </script>
 </body>
