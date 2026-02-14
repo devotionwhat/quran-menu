@@ -1,186 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <title>Responsive YouTube Player as Coverflow Slider with Swiper.js</title>
-    <link rel="stylesheet" href="https://public.codepenassets.com/css/normalize-5.0.0.min.css">
-<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.7/css/swiper.min.css'><link rel="stylesheet" href="./style.css">
-<script src="https://public.codepenassets.com/js/prefixfree-1.0.7.min.js"></script>
-
-  </head>
-    
-  <body>
-  <!-- 
-YouTube will not autoplay videos unless muted.  Videos are looped as a playlist.
-
-Note - images are called from YouTube in default high res.  See the following reference for YouTube Video thumbs.
-
-https://stackoverflow.com/questions/12788287/how-to-get-hq-youtube-thumbnails
-
-Simply change the YouTube Video ID in slides.
--->
-
-<!-- Swiper Container . -->
-
-<section class="swiper-container loading">
-
-  <div class="swiper-wrapper">
-    <!-- Begin Slide -->
-    <div class="swiper-slide">
-      <div class="videoWrapper js-videoWrapper">
-        <!-- YouTube iFrame Embed  -->
-
-        <iframe class="videoIframe js-videoIframe" src="" frameborder="0" allowTransparency="true" allowfullscreen data-src="https://www.youtube.com/embed/Cm1v4bteXbI?si=nUxiBrkOZB-LOrVs?" allow="autoplay; fullscreen"></iframe>
-        <!--  Video Poster - in the form of a button to make it keyboard accessible -->
-
-        <!-- Poster frame in the form of a button to make it keyboard accessible. Background is Youtube Image  -->
-        <button class="videoPoster js-videoPoster" style="background-image:url(//img.youtube.com/vi/Cm1v4bteXbI/maxresdefault.jpg);">
-          <svg class="play-vid" viewBox="0 0 100 100">
-            <path class="stroke-solid" fill="none" stroke="white" d="M49.9,2.5C23.6,2.8,2.1,24.4,2.5,50.4C2.9,76.5,24.7,98,50.3,97.5c26.4-0.6,47.4-21.8,47.2-47.7
-         C97.3,23.7,75.7,2.3,49.9,2.5" />
-            <path class="stroke-dotted" fill="none" stroke="white" d="M49.9,2.5C23.6,2.8,2.1,24.4,2.5,50.4C2.9,76.5,24.7,98,50.3,97.5c26.4-0.6,47.4-21.8,47.2-47.7
-         C97.3,23.7,75.7,2.3,49.9,2.5" />
-            <path class="vid-icon" fill="white" d="M38,69c-1,0.5-1.8,0-1.8-1.1V32.1c0-1.1,0.8-1.6,1.8-1.1l34,18c1,0.5,1,1.4,0,1.9L38,69z" />
-          </svg>
-        </button>
-      </div>
-      <div class="slide-caption">Makka Live</div>
-    </div>
-
-    <!-- BEGIN SLIDE -->
-    <div class="swiper-slide">
-      <div class="videoWrapper js-videoWrapper">
-        <!-- YouTube iframe. Embed -->
-
-        <iframe class="videoIframe js-videoIframe" src="" frameborder="0" allowTransparency="true" allowfullscreen data-src="https://www.youtube.com/playlist?list=PLJCHYvnjPCfGzwFLIwdWO7H0skJqkmZ9i" allow="autoplay; fullscreen"></iframe>
-        <!-- Poster frame in the form of a button to make it keyboard accessible. Background is Youtube Image  -->
-          <svg class="play-vid" viewBox="0 0 100 100">
-            <path class="stroke-solid" fill="none" stroke="white" d="M49.9,2.5C23.6,2.8,2.1,24.4,2.5,50.4C2.9,76.5,24.7,98,50.3,97.5c26.4-0.6,47.4-21.8,47.2-47.7
-         C97.3,23.7,75.7,2.3,49.9,2.5" />
-            <path class="stroke-dotted" fill="none" stroke="white" d="M49.9,2.5C23.6,2.8,2.1,24.4,2.5,50.4C2.9,76.5,24.7,98,50.3,97.5c26.4-0.6,47.4-21.8,47.2-47.7
-         C97.3,23.7,75.7,2.3,49.9,2.5" />
-            <path class="vid-icon" fill="white" d="M38,69c-1,0.5-1.8,0-1.8-1.1V32.1c0-1.1,0.8-1.6,1.8-1.1l34,18c1,0.5,1,1.4,0,1.9L38,69z" />
-          </svg>
-        </button>
-      </div>
-      <!-- Slide Caption -->
-      <div class="slide-caption">تفسير الشعراوي للقران الكريم</div>
-      <!-- // End Slide Container -->
-    </div>
-    <!-- // END  SLIDE ->
-    
-        <!-- BEGIN SLIDE -->
-    <div class="swiper-slide">
-      <div class="videoWrapper js-videoWrapper">
-
-        <!-- YouTube iFrame.Embed  -->
-
-        <iframe class="videoIframe js-videoIframe" src="" frameborder="0" allowTransparency="true" allowfullscreen data-src="https://www.youtube.com/embed/Ke3sXO6zlok?enablejsapi=1&autoplay=1&modestbranding=1&rel=0&playlist=Ke3sXO6zlok&loop=1&mute=1" allow="autoplay; fullscreen"></iframe>
-        <!-- Poster frame in the form of a button to make it keyboard accessible. Background is Youtube Image  -->
-        <button class="videoPoster js-videoPoster" style="background-image:url(//img.youtube.com/vi/Ke3sXO6zlok/sddefault.jpg);">
-          <svg class="play-vid" viewBox="0 0 100 100">
-            <path class="stroke-solid" fill="none" stroke="white" d="M49.9,2.5C23.6,2.8,2.1,24.4,2.5,50.4C2.9,76.5,24.7,98,50.3,97.5c26.4-0.6,47.4-21.8,47.2-47.7
-         C97.3,23.7,75.7,2.3,49.9,2.5" />
-            <path class="stroke-dotted" fill="none" stroke="white" d="M49.9,2.5C23.6,2.8,2.1,24.4,2.5,50.4C2.9,76.5,24.7,98,50.3,97.5c26.4-0.6,47.4-21.8,47.2-47.7
-         C97.3,23.7,75.7,2.3,49.9,2.5" />
-            <path class="vid-icon" fill="white" d="M38,69c-1,0.5-1.8,0-1.8-1.1V32.1c0-1.1,0.8-1.6,1.8-1.1l34,18c1,0.5,1,1.4,0,1.9L38,69z" />
-          </svg>
-        </button>
-      </div>
-      <!-- Slide Caption -->
-      <div class="slide-caption">luke james - colours [Official Audio]</div>
-      <!-- // End Slide Container -->
-    </div>
-    <!-- // END  SLIDE ->
-    
-   <!-- BEGIN SLIDE -->
-    <div class="swiper-slide">
-      <div class="videoWrapper js-videoWrapper">
-
-        <!-- YouTube iFrame.Embed  -->
-
-        <iframe class="videoIframe js-videoIframe" src="" frameborder="0" allowTransparency="true" allowfullscreen data-src="https://www.youtube.com/embed/ybxKtPrK6xA?enablejsapi=1&autoplay=1&modestbranding=1&rel=0&playlist=ybxKtPrK6xA&loop=1&mute=1" allow="autoplay; fullscreen"></iframe>
-        <!-- Poster frame in the form of a button to make it keyboard accessible. Background is Youtube Image  -->
-        <button class="videoPoster js-videoPoster" style="background-image:url(//img.youtube.com/vi/ybxKtPrK6xA/sddefault.jpg);">
-          <svg class="play-vid" viewBox="0 0 100 100">
-            <path class="stroke-solid" fill="none" stroke="white" d="M49.9,2.5C23.6,2.8,2.1,24.4,2.5,50.4C2.9,76.5,24.7,98,50.3,97.5c26.4-0.6,47.4-21.8,47.2-47.7
-         C97.3,23.7,75.7,2.3,49.9,2.5" />
-            <path class="stroke-dotted" fill="none" stroke="white" d="M49.9,2.5C23.6,2.8,2.1,24.4,2.5,50.4C2.9,76.5,24.7,98,50.3,97.5c26.4-0.6,47.4-21.8,47.2-47.7
-         C97.3,23.7,75.7,2.3,49.9,2.5" />
-            <path class="vid-icon" fill="white" d="M38,69c-1,0.5-1.8,0-1.8-1.1V32.1c0-1.1,0.8-1.6,1.8-1.1l34,18c1,0.5,1,1.4,0,1.9L38,69z" />
-          </svg>
-        </button>
-      </div>
-      <!-- Slide Caption -->
-      <div class="slide-caption">luke james - go girl (feat. Ro James & BJ The Chicago Kid) [Official Audio]</div>
-      <!-- // End Slide Container -->
-    </div>
-    <!-- // END  SLIDE ->
-
-   <!-- BEGIN SLIDE -->
-    <div class="swiper-slide">
-      <div class="videoWrapper js-videoWrapper">
-
-        <!-- YouTube iFrame.Embed  -->
-
-        <iframe class="videoIframe js-videoIframe" src="" frameborder="0" allowTransparency="true" allowfullscreen data-src="https://www.youtube.com/embed/2hssZ7dUdBQ?enablejsapi=1&autoplay=1&modestbranding=1&rel=0&playlist=2hssZ7dUdBQ&loop=1&mute=1" allow="autoplay; fullscreen"></iframe>
-        <!-- Poster frame in the form of a button to make it keyboard accessible. Background is Youtube Image  -->
-        <button class="videoPoster js-videoPoster" style="background-image:url(//img.youtube.com/vi/2hssZ7dUdBQ/sddefault.jpg);">
-          <svg class="play-vid" viewBox="0 0 100 100">
-            <path class="stroke-solid" fill="none" stroke="white" d="M49.9,2.5C23.6,2.8,2.1,24.4,2.5,50.4C2.9,76.5,24.7,98,50.3,97.5c26.4-0.6,47.4-21.8,47.2-47.7
-         C97.3,23.7,75.7,2.3,49.9,2.5" />
-            <path class="stroke-dotted" fill="none" stroke="white" d="M49.9,2.5C23.6,2.8,2.1,24.4,2.5,50.4C2.9,76.5,24.7,98,50.3,97.5c26.4-0.6,47.4-21.8,47.2-47.7
-         C97.3,23.7,75.7,2.3,49.9,2.5" />
-            <path class="vid-icon" fill="white" d="M38,69c-1,0.5-1.8,0-1.8-1.1V32.1c0-1.1,0.8-1.6,1.8-1.1l34,18c1,0.5,1,1.4,0,1.9L38,69z" />
-          </svg>
-        </button>
-      </div>
-      <!-- Slide Caption -->
-      <div class="slide-caption">luke james - gratitude [Official Audio]</div>
-      <!-- // End Slide Container -->
-    </div>
-    <!-- // END  SLIDE ->
-   <!-- BEGIN SLIDE -->
-    <div class="swiper-slide">
-      <div class="videoWrapper js-videoWrapper">
-
-        <!-- YouTube iFrame.Embed  -->
-
-        <iframe class="videoIframe js-videoIframe" src="" frameborder="0" allowTransparency="true" allowfullscreen data-src="https://www.youtube.com/embed/VXe_2zFCyGw?enablejsapi=1&autoplay=1&modestbranding=1&rel=0&playlist=VXe_2zFCyGw&loop=1&mute=1" allow="autoplay; fullscreen"></iframe>
-        <!-- Poster frame in the form of a button to make it keyboard accessible. Background is Youtube Image  -->
-        <button class="videoPoster js-videoPoster" style="background-image:url(//img.youtube.com/vi/VXe_2zFCyGw/sddefault.jpg);">
-          <svg class="play-vid" viewBox="0 0 100 100">
-            <path class="stroke-solid" fill="none" stroke="white" d="M49.9,2.5C23.6,2.8,2.1,24.4,2.5,50.4C2.9,76.5,24.7,98,50.3,97.5c26.4-0.6,47.4-21.8,47.2-47.7
-         C97.3,23.7,75.7,2.3,49.9,2.5" />
-            <path class="stroke-dotted" fill="none" stroke="white" d="M49.9,2.5C23.6,2.8,2.1,24.4,2.5,50.4C2.9,76.5,24.7,98,50.3,97.5c26.4-0.6,47.4-21.8,47.2-47.7
-         C97.3,23.7,75.7,2.3,49.9,2.5" />
-            <path class="vid-icon" fill="white" d="M38,69c-1,0.5-1.8,0-1.8-1.1V32.1c0-1.1,0.8-1.6,1.8-1.1l34,18c1,0.5,1,1.4,0,1.9L38,69z" />
-          </svg>
-        </button>
-      </div>
-      <!-- Slide Caption -->
-      <div class="slide-caption">luke james - all of your love [Official Audio]</div>
-      <!-- // End Slide Container -->
-    </div>
-    <!-- // END  SLIDE ->
-
-
-  <!--  // END SWIPER WRAPPER. -->
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Effet Scroll</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #1d1f33, #1a1e3a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    .scroll-list__wrp {
+      width: 360px;
+      height: 360px;
+      overflow-y: scroll;
+      background: linear-gradient(to bottom, #14213d, #1a1e3a);
+      border-radius: 16px;
+      box-shadow: 0 10px 50px rgba(0, 0, 0, 0.4);
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .scroll-list__wrp::-webkit-scrollbar {
+      display: none;
+    }
+    .scroll-list__item {
+      height: 80px;
+      margin: 25px;
+      background: linear-gradient(to bottom, #3a86ff, #265cc5);
+      border-radius: 12px;
+      transition: transform 0.2s ease-out, opacity 0.2s ease-out, box-shadow 0.2s ease, border 0.2s ease;
+      transform: scale(0.5);
+      opacity: 0.2;
+      border: 2px solid transparent;
+    }
+    .scroll-list__item.active {
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="scroll-list__wrp" id="scrollList">
+    <div class="scroll-list__item"></div>
+    <div class="scroll-list__item"></div>
+    <div class="scroll-list__item"></div>
+    <div class="scroll-list__item"></div>
+    <div class="scroll-list__item"></div>
+    <div class="scroll-list__item"></div>
+    <div class="scroll-list__item"></div>
+    <div class="scroll-list__item"></div>
+    <div class="scroll-list__item"></div>
+    <div class="scroll-list__item"></div>
   </div>
+  <script>
+    const scrollContainer = document.getElementById("scrollList");
+    const items = scrollContainer.querySelectorAll(".scroll-list__item");
 
-  <!--  Bullets 
-  Uncomment and remove class hidden from css for bullets
-  <div class="swiper-pagination"></div>
--->
-  <!-- Navigation Arrows -->
-  <div class="swiper-button-prev swiper-button-white"></div>
-  <div class="swiper-button-next swiper-button-white"></div>
-</section>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.4.1/js/swiper.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js'></script>
-<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/191814/lazysizes.min.js'></script><script  src="./script.js"></script>
+    function updateEffects() {
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const containerCenter = containerRect.top + containerRect.height / 2;
+      items.forEach(item => {
+        const itemRect = item.getBoundingClientRect();
+        const itemCenter = itemRect.top + itemRect.height / 2;
+        const distance = Math.abs(containerCenter - itemCenter);
+        const ratio = Math.max(0, 1 - distance / (containerRect.height / 2));
+        item.style.transform = `scale(${0.5 + ratio * 0.7})`;
+        item.style.opacity = 0.2 + ratio * 0.8;
+        ratio > 0.95 ? item.classList.add("active") : item.classList.remove("active");
+      });
+    }
 
-  </body>
-  
+    scrollContainer.addEventListener("scroll", updateEffects);
+    window.addEventListener("load", updateEffects);
+  </script>
+</body>
 </html>
