@@ -2,700 +2,513 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QuranTube - Main Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>YouTube Kids · custom player</title>
+    <!-- Font Awesome 6 (free) for clean icons – matches playful style -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Reset & Base */
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', 'Traditional Arabic', Tahoma, sans-serif;
         }
 
         body {
-            background-color: #f9f6f0;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-overflow-scrolling: touch;
+            background: linear-gradient(145deg, #f9e7b3 0%, #f5d0b8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            padding: 16px;
+            margin: 0;
         }
 
-        /* Header */
-        .header {
+        /* main card – like YouTube Kids playful container */
+        .kids-player-wrapper {
+            max-width: 1000px;
+            width: 100%;
+            background: #2b3a67; /* deep blue background behind video */
+            border-radius: 48px 48px 32px 32px;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.3), 0 0 0 8px #ffb347, 0 0 0 12px #4caf92;
+            padding: 20px 20px 25px 20px;
+            transition: all 0.2s;
+        }
+
+        /* header with cute label */
+        .kids-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            background: linear-gradient(145deg, #2e7d32, #1b5e20);
-            padding: 12px 20px;
-            color: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-left: 10px;
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .logo i {
-            font-size: 2.2rem;
-            color: #ffd700;
-            text-shadow: 2px 2px 0 #b8860b;
-        }
-
-        .logo span {
-            font-size: 2rem;
-            font-weight: bold;
-            letter-spacing: -0.5px;
-        }
-
-        .logo small {
-            font-size: 1rem;
-            font-family: 'Traditional Arabic', serif;
-            margin-left: 5px;
-            opacity: 0.9;
-        }
-
-        .header-icons {
-            display: flex;
-            gap: 20px;
-        }
-
-        .header-icons i {
+        .kids-header h2 {
+            background: #ffde7d;
+            display: inline-block;
+            padding: 8px 24px 8px 24px;
+            border-radius: 60px;
             font-size: 1.8rem;
-            color: white;
-            cursor: pointer;
-            transition: transform 0.2s;
-            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.2));
+            font-weight: 700;
+            color: #1e2b4a;
+            letter-spacing: -0.5px;
+            box-shadow: 0 6px 0 #c9a53b;
+            border: 3px solid white;
+            margin: 0;
         }
 
-        .header-icons i:active {
-            transform: scale(1.2);
+        .kids-header i {
+            font-size: 3rem;
+            color: #ff8a5c;
+            filter: drop-shadow(2px 4px 0 #b45f3a);
         }
 
-        /* Category Pills */
-        .categories {
+        /* ----- video container (16:9) with absolute iframe and overlay controls ----- */
+        .video-container {
+            position: relative;
+            width: 100%;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: inset 0 0 0 4px white, 0 18px 25px -8px black;
+            background: #000; /* fallback */
+        }
+
+        .aspect-ratio-box {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 */
+            background: #d0e0f0;
+        }
+
+        #youtube-player {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border: none;
+        }
+
+        /* ----- custom controls overlay (always visible, like kids UI) ----- */
+        .custom-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(90deg, #feac6d, #ff7b9c, #a0d6ff);
+            padding: 12px 16px;
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            padding: 15px 20px;
-            background: white;
-            border-bottom: 3px solid #ffd700;
-            justify-content: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            align-items: center;
+            gap: 12px;
+            border-top: 5px solid white;
+            border-radius: 0 0 40px 40px;
+            z-index: 30;
+            pointer-events: auto;  /* make buttons clickable above iframe */
+            backdrop-filter: blur(4px);
+            box-shadow: 0 -4px 0 #fcca4b;
         }
 
-        .category {
-            background-color: #e8f5e9;
-            padding: 10px 25px;
-            border-radius: 40px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #1b5e20;
-            transition: all 0.2s;
-            border: 2px solid transparent;
-            min-height: 48px;
+        /* left area (play + time) */
+        .controls-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1 1 auto;
+        }
+
+        /* big round button – very touch friendly */
+        .control-button {
+            background: white;
+            border: none;
+            width: 54px;
+            height: 54px;
+            border-radius: 100px;
+            font-size: 2rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 0 #b0b0b0, 0 8px 12px rgba(0,0,0,0.2);
+            transition: all 0.05s ease-in;
+            color: #1f3a5f;
+            border: 3px solid #fff9e6;
+            line-height: 1;
+            padding: 0;
         }
 
-        .category.active {
-            background-color: #2e7d32;
+        .control-button:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #909090, 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        .control-button i {
+            font-size: 2rem;
+            color: #1f3a5f;
+        }
+
+        /* time display – bold, friendly */
+        .time-display {
+            background: #1e2f4a;
             color: white;
-            border-color: #ffd700;
-        }
-
-        .category:active {
-            transform: scale(0.95);
-        }
-
-        /* Main Content */
-        .main-content {
-            padding: 20px;
-        }
-
-        /* Featured Video (like the photo) */
-        .featured-video {
-            background: white;
-            border-radius: 30px;
-            overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            margin-bottom: 30px;
-            border: 2px solid #ffd700;
-        }
-
-        .featured-thumbnail {
-            position: relative;
-            height: 220px;
-            background: #c8e6c9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .featured-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .play-button-large {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 215, 0, 0.9);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #1b5e20;
-            font-size: 2.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            border: 3px solid white;
-        }
-
-        .featured-info {
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .featured-title {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #1b5e20;
-            line-height: 1.2;
-        }
-
-        .featured-meta {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            color: #666;
-            font-size: 1.1rem;
-        }
-
-        .featured-channel {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: #2e7d32;
-            font-weight: bold;
-        }
-
-        .featured-duration {
-            background: #e8f5e9;
-            padding: 4px 12px;
-            border-radius: 30px;
-            color: #1b5e20;
-        }
-
-        /* Related Videos Section */
-        .section-title {
-            font-size: 1.5rem;
-            color: #1b5e20;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 3px solid #ffd700;
-            padding-bottom: 8px;
-        }
-
-        .section-title i {
-            color: #ffd700;
-        }
-
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .video-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-            cursor: pointer;
-            border: 2px solid transparent;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .video-card:active {
-            transform: scale(0.98);
-            border-color: #ffd700;
-        }
-
-        .video-thumbnail {
-            position: relative;
-            height: 150px;
-            background: #d4d4d4;
-        }
-
-        .video-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .video-duration {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 3px 8px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-        }
-
-        .video-info {
-            padding: 12px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .channel-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #2e7d32;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-
-        .video-text {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .video-title {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #1b5e20;
-            margin-bottom: 4px;
+            font-size: 1.6rem;
+            font-weight: 600;
+            padding: 6px 20px;
+            border-radius: 40px;
+            border: 3px solid #ffd966;
+            box-shadow: inset 0 -3px 0 #121f33;
+            letter-spacing: 1px;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-variant-numeric: tabular-nums;
         }
 
-        .video-channel {
-            font-size: 0.9rem;
-            color: #666;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* Channels Grid (for category 'channels') */
-        .channels-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .channel-card {
-            background: white;
-            border-radius: 30px;
-            padding: 18px;
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.2);
-            border: 2px solid transparent;
-            transition: all 0.2s;
+        /* progress bar container – giant, easy to tap */
+        .progress-bar-container {
+            flex: 3 1 200px;
+            height: 26px;
+            background: #fbe3b0;
+            border-radius: 40px;
+            border: 4px solid white;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
             cursor: pointer;
-            border-left: 8px solid #ffd700;
+            position: relative;
+            min-width: 150px;
         }
 
-        .channel-card:active {
-            border-color: #2e7d32;
-            transform: scale(0.98);
+        .progress-fill {
+            height: 100%;
+            background: #ff4d6d;
+            border-radius: 40px;
+            width: 0%;
+            box-shadow: 0 0 0 2px white, 0 4px 0 #ac2440;
+            transition: width 0.1s linear;
         }
 
-        .channel-avatar {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #2e7d32, #ffd700);
+        /* right controls (mute + fullscreen) */
+        .controls-right {
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2.2rem;
-            border: 3px solid white;
-            flex-shrink: 0;
+            gap: 8px;
+            flex: 0 1 auto;
         }
 
-        .channel-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .channel-name {
-            font-size: 1.3rem;
+        /* extra cute little details */
+        .kids-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+            padding: 0 12px;
+            color: #fef9d7;
             font-weight: bold;
-            color: #1b5e20;
-            margin-bottom: 5px;
+            text-shadow: 2px 2px 0 #2f4858;
         }
 
-        .channel-desc {
-            font-size: 0.9rem;
-            color: #2e7d32;
-        }
-
-        /* Modal Player */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-
-        .modal-content {
-            width: 95%;
-            max-width: 900px;
-            position: relative;
-        }
-
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 4px solid #ffd700;
-            box-shadow: 0 0 30px rgba(255,215,0,0.3);
-        }
-
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: -50px;
-            right: 0;
-            color: white;
-            font-size: 2.5rem;
-            cursor: pointer;
-            width: 55px;
-            height: 55px;
-            background: #2e7d32;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid #ffd700;
-        }
-
-        .close-btn:active {
-            background: #1b5e20;
-        }
-
-        /* Footer */
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            padding: 20px;
-            background: #1b5e20;
-            color: white;
-            border-radius: 40px 40px 0 0;
-        }
-
-        .footer i {
-            color: #ffd700;
-        }
-
-        /* Loading spinner */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #2e7d32;
+        .kids-footer span {
+            background: #57a773;
+            padding: 8px 20px;
+            border-radius: 60px;
             font-size: 1.2rem;
-        }
-        .loading i {
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* Hide/show sections */
-        .hidden {
-            display: none !important;
+            border: 3px solid white;
         }
 
-        /* Responsive */
-        @media (max-width: 600px) {
-            .logo span { font-size: 1.6rem; }
-            .logo small { font-size: 0.8rem; }
-            .category { padding: 8px 16px; font-size: 1rem; }
-            .featured-title { font-size: 1.4rem; }
+        /* make iframe click-through except controls zone */
+        #youtube-player {
+            pointer-events: auto;  /* video itself clickable (play/pause) */
+        }
+
+        /* mobile adjustments */
+        @media (max-width: 550px) {
+            .kids-player-wrapper {
+                padding: 12px 12px 18px 12px;
+                border-radius: 32px;
+            }
+            .control-button {
+                width: 48px;
+                height: 48px;
+                font-size: 1.8rem;
+            }
+            .control-button i {
+                font-size: 1.8rem;
+            }
+            .time-display {
+                font-size: 1.2rem;
+                padding: 4px 12px;
+            }
+            .progress-bar-container {
+                height: 22px;
+            }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="logo">
-            <i class="fas fa-mosque"></i>
-            <span>QuranTube</span>
-            <small>القرآن للأطفال</small>
-        </div>
-        <div class="header-icons">
-            <i class="fas fa-search" onclick="alert('Search feature coming soon!')"></i>
-            <i class="fas fa-user-circle" onclick="alert('Profile page')"></i>
-        </div>
-    </header>
-
-    <nav class="categories">
-        <span class="category active" onclick="switchView('featured')">الرئيسية</span>
-        <span class="category" onclick="switchView('popular')">الأكثر مشاهدة</span>
-        <span class="category" onclick="switchView('channels')">القنوات</span>
-        <span class="category" onclick="switchView('surah')">سور القرآن</span>
-        <span class="category" onclick="switchView('tajweed')">التجويد</span>
-        <span class="category" onclick="switchView('stories')">قصص الأنبياء</span>
-    </nav>
-
-    <!-- Main content area -->
-    <div class="main-content" id="mainContent">
-        <!-- This will be populated by JavaScript -->
+<div class="kids-player-wrapper">
+    <!-- header: playful & bright -->
+    <div class="kids-header">
+        <i class="fas fa-star"></i>
+        <h2>📺 KIDS player</h2>
+        <i class="fas fa-bolt" style="color: #f9d342;"></i>
     </div>
 
-    <!-- Modal -->
-    <div id="playerModal" class="modal" onclick="closeModal(event)">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <div id="playerContainer" class="video-container"></div>
+    <!-- main video area with overlay controls -->
+    <div class="video-container">
+        <div class="aspect-ratio-box">
+            <!-- div that will be replaced by YouTube iframe -->
+            <div id="youtube-player"></div>
+
+            <!-- custom controls overlay (always visible, like YouTube Kids) -->
+            <div class="custom-controls" id="custom-controls">
+                <!-- left block: play/pause + time -->
+                <div class="controls-left">
+                    <button class="control-button" id="play-pause-btn" aria-label="Play/Pause">
+                        <i class="fas fa-play" id="play-pause-icon"></i>
+                    </button>
+                    <span class="time-display" id="time-display">0:00 / 0:00</span>
+                </div>
+
+                <!-- big progress bar (click to seek) -->
+                <div class="progress-bar-container" id="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+
+                <!-- right block: mute and fullscreen -->
+                <div class="controls-right">
+                    <button class="control-button" id="mute-btn" aria-label="Mute/Unmute">
+                        <i class="fas fa-volume-high" id="mute-icon"></i>
+                    </button>
+                    <button class="control-button" id="fullscreen-btn" aria-label="Fullscreen">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <footer class="footer">
-        <p><i class="fas fa-heart"></i> تعلم القرآن الكريم مع المتعة <i class="fas fa-heart"></i></p>
-        <p style="font-size: 0.9rem; margin-top: 8px;">Safe Islamic content for children</p>
-    </footer>
+    <!-- footer – just for fun (like kids UI) -->
+    <div class="kids-footer">
+        <span><i class="fas fa-lock"></i> parent lock</span>
+        <span><i class="fas fa-hand"></i> safe mode</span>
+    </div>
+</div>
 
-    <script>
-        // ============================================================
-        // DATA - Top Quran Channels & Videos
-        // ============================================================
-        const channels = [
-            { id: 'UCSzt9LcMU7QLWVkskR2Revw', name: 'Learn Quran Kids', nameAr: 'تعلم القرآن للأطفال', desc: 'تعليم القرآن بالتجويد', category: 'tajweed', color: '#2e7d32', views: '23.2M', subs: '147K' },
-            { id: 'UCJgUZ4B6L7Vv9QcX8X8X8Xw', name: 'IQRA Cartoon', nameAr: 'كرتون إقرأ', desc: 'قصص الأنبياء والقرآن', category: 'stories', color: '#f39c12', views: '15.8M', subs: '892K' },
-            { id: 'UCX6OQ3DkcsbYNE6H8uQQuVA', name: 'Omar & Hana', nameAr: 'عمر و حنة', desc: 'أناشيد إسلامية وقصص', category: 'nasheed', color: '#4a90e2', views: '1.2B', subs: '4.5M' },
-            { id: 'UCp0hYYBW6IMayGgR-WeoCvQ', name: 'Muslim Kids TV', nameAr: 'تلفزيون الأطفال المسلم', desc: 'تعليم إسلامي وترفيه', category: 'educational', color: '#c44569', views: '892M', subs: '2.1M' },
-            { id: 'UC7_NZyTJr5JXJqYQ5X5X5Xw', name: 'Little Muslims', nameAr: 'المسلمون الصغار', desc: 'تعليم الصلاة والوضوء', category: 'educational', color: '#16a085', views: '345M', subs: '1.2M' },
-            { id: 'UC8QhX8X8X8X8X8X8X8X8X8w', name: 'The Prophets Path', nameAr: 'طريق الأنبياء', desc: 'قصص الأنبياء للأطفال', category: 'stories', color: '#8e44ad', views: '156M', subs: '678K' }
-        ];
+<!-- YouTube IFrame API script -->
+<script>
+    // ---- global variables ----
+    let player;                // YouTube player object
+    let playerReady = false;   // true when API ready and player initialized
+    let progressInterval = null;
+    let isPlaying = false;     // track state for UI updates
 
-        // All videos (popular + extra)
-        const allVideos = [
-            { id: 'tgbNymZ7vqY', title: 'Surah Al-Fatiha for Kids - Repeat', titleAr: 'سورة الفاتحة للأطفال - تكرار', channel: 'Learn Quran Kids', channelId: 'UCSzt9LcMU7QLWVkskR2Revw', views: '5.2M', duration: '02:32' },
-            { id: 'dQw4w9WgXcQ', title: 'Surah Al-Ikhlas - Minshawi with Tafseer', titleAr: 'سورة الإخلاص - المنشاوي مع التفسير', channel: 'IQRA Cartoon', channelId: 'UCJgUZ4B6L7Vv9QcX8X8X8Xw', views: '3.8M', duration: '03:15' },
-            { id: 'tgbNymZ7vqY', title: 'Omar & Hana - Quran Time Song', titleAr: 'عمر و حنة - وقت القرآن', channel: 'Omar & Hana', channelId: 'UCX6OQ3DkcsbYNE6H8uQQuVA', views: '8.1M', duration: '02:52' },
-            { id: 'dQw4w9WgXcQ', title: 'Learn Al-Falaq and An-Nas', titleAr: 'تعلم سورتي الفلق والناس', channel: 'Muslim Kids TV', channelId: 'UCp0hYYBW6IMayGgR-WeoCvQ', views: '4.5M', duration: '04:20' },
-            { id: 'tgbNymZ7vqY', title: 'Dua Before Sleeping - Muslim Kids', titleAr: 'دعاء النوم للأطفال', channel: 'Little Muslims', channelId: 'UC7_NZyTJr5JXJqYQ5X5X5Xw', views: '6.3M', duration: '01:45' },
-            { id: 'dQw4w9WgXcQ', title: 'Prophet Musa (AS) Story', titleAr: 'قصة موسى عليه السلام', channel: 'The Prophets Path', channelId: 'UC8QhX8X8X8X8X8X8X8X8X8w', views: '2.9M', duration: '05:10' }
-        ];
+    // DOM elements
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const playPauseIcon = document.getElementById('play-pause-icon');
+    const timeDisplay = document.getElementById('time-display');
+    const progressFill = document.getElementById('progress-fill');
+    const progressBar = document.getElementById('progress-bar');
+    const muteBtn = document.getElementById('mute-btn');
+    const muteIcon = document.getElementById('mute-icon');
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    const videoContainer = document.querySelector('.video-container'); // for fullscreen
 
-        // Helper: get channel by ID
-        function getChannel(channelId) {
-            return channels.find(c => c.id === channelId) || channels[0];
+    // ---- helper functions ----
+    function formatTime(seconds) {
+        if (!seconds || isNaN(seconds)) return '0:00';
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    // update progress bar and time display
+    function updateProgressAndTime() {
+        if (!player || !playerReady) return;
+        const currentTime = player.getCurrentTime();
+        const duration = player.getDuration();
+        if (duration && duration > 0) {
+            const percent = (currentTime / duration) * 100;
+            progressFill.style.width = percent + '%';
+            timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+        } else {
+            // fallback if duration not ready
+            timeDisplay.textContent = `0:00 / 0:00`;
         }
+    }
 
-        // ============================================================
-        // Render functions
-        // ============================================================
-
-        // Render featured view (like the photo)
-        function renderFeaturedView() {
-            const featured = allVideos[0]; // pick first as featured
-            const channel = getChannel(featured.channelId);
-            const otherVideos = allVideos.slice(1); // rest for related
-
-            let html = `
-                <div class="featured-video" onclick="playVideo('${featured.id}')">
-                    <div class="featured-thumbnail">
-                        <img src="https://img.youtube.com/vi/${featured.id}/0.jpg" alt="${featured.title}">
-                        <div class="play-button-large"><i class="fas fa-play"></i></div>
-                    </div>
-                    <div class="featured-info">
-                        <div class="featured-title">${featured.title}</div>
-                        <div class="featured-meta">
-                            <span class="featured-channel"><i class="fas fa-user-circle"></i> ${featured.channel}</span>
-                            <span class="featured-duration"><i class="far fa-clock"></i> ${featured.duration}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="section-title">
-                    <i class="fas fa-list"></i>
-                    <span>مقاطع ذات صلة</span>
-                </div>
-                <div class="video-grid" id="videoGrid">
-            `;
-
-            otherVideos.forEach(video => {
-                const ch = getChannel(video.channelId);
-                html += `
-                    <div class="video-card" onclick="playVideo('${video.id}')">
-                        <div class="video-thumbnail">
-                            <img src="https://img.youtube.com/vi/${video.id}/0.jpg" alt="${video.title}">
-                            <span class="video-duration">${video.duration}</span>
-                        </div>
-                        <div class="video-info">
-                            <div class="channel-icon" style="background: ${ch.color};">${video.channel.charAt(0)}</div>
-                            <div class="video-text">
-                                <div class="video-title">${video.title}</div>
-                                <div class="video-channel"><i class="fas fa-user-circle"></i> ${video.channel}</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            html += `</div>`;
-            return html;
+    // clear progress interval
+    function stopProgressInterval() {
+        if (progressInterval) {
+            clearInterval(progressInterval);
+            progressInterval = null;
         }
+    }
 
-        // Render channels grid
-        function renderChannelsView() {
-            let html = `<div class="section-title"><i class="fas fa-star"></i><span>القنوات</span></div>`;
-            html += `<div class="channels-grid" id="channelsGrid">`;
-
-            channels.forEach(ch => {
-                html += `
-                    <div class="channel-card" onclick="showChannelVideos('${ch.id}', '${ch.name}', '${ch.color}')">
-                        <div class="channel-avatar" style="background: ${ch.color};">${ch.name.charAt(0)}</div>
-                        <div class="channel-info">
-                            <div class="channel-name">${ch.name}</div>
-                            <div class="channel-desc"><i class="fas fa-play-circle"></i> ${ch.desc}</div>
-                        </div>
-                        <i class="fas fa-arrow-left" style="color: #2e7d32;"></i>
-                    </div>
-                `;
-            });
-
-            html += `</div>`;
-            return html;
+    // start interval only if playing
+    function startProgressIntervalIfPlaying() {
+        stopProgressInterval(); // avoid duplicates
+        if (isPlaying && playerReady) {
+            progressInterval = setInterval(() => {
+                updateProgressAndTime();
+            }, 300); // smooth enough
         }
+    }
 
-        // Render videos grid (generic, for other categories)
-        function renderVideosGrid(filterCategory = null) {
-            let filtered = allVideos;
-            if (filterCategory === 'surah') filtered = allVideos.filter(v => v.title.includes('Surah'));
-            else if (filterCategory === 'tajweed') filtered = allVideos.filter(v => v.title.includes('Tajweed') || v.channel === 'Learn Quran Kids');
-            else if (filterCategory === 'stories') filtered = allVideos.filter(v => v.title.includes('Prophet') || v.channel === 'The Prophets Path');
-            else if (filterCategory === 'popular') filtered = allVideos; // just show all
-
-            let html = `<div class="section-title"><i class="fas fa-play-circle"></i><span>مقاطع</span></div>`;
-            html += `<div class="video-grid">`;
-
-            filtered.forEach(video => {
-                const ch = getChannel(video.channelId);
-                html += `
-                    <div class="video-card" onclick="playVideo('${video.id}')">
-                        <div class="video-thumbnail">
-                            <img src="https://img.youtube.com/vi/${video.id}/0.jpg" alt="${video.title}">
-                            <span class="video-duration">${video.duration}</span>
-                        </div>
-                        <div class="video-info">
-                            <div class="channel-icon" style="background: ${ch.color};">${video.channel.charAt(0)}</div>
-                            <div class="video-text">
-                                <div class="video-title">${video.title}</div>
-                                <div class="video-channel"><i class="fas fa-user-circle"></i> ${video.channel}</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            html += `</div>`;
-            return html;
+    // update play/pause icon based on state
+    function updatePlayPauseIcon(state) {
+        if (state === 1) { // playing
+            playPauseIcon.className = 'fas fa-pause';
+            isPlaying = true;
+        } else { // paused, ended, buffering etc
+            playPauseIcon.className = 'fas fa-play';
+            isPlaying = false;
         }
+        // restart interval according to new state
+        startProgressIntervalIfPlaying();
+    }
 
-        // ============================================================
-        // Navigation & Actions
-        // ============================================================
-        function switchView(view) {
-            // Update active category
-            document.querySelectorAll('.category').forEach(cat => cat.classList.remove('active'));
-            event.target.classList.add('active');
+    // ---- YouTube API callback ----
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('youtube-player', {
+            videoId: 'tgbNymZ7vqY',   // 🦈 Baby Shark – super kid-friendly
+            playerVars: {
+                controls: 0,           // hide default controls
+                disablekb: 1,
+                iv_load_policy: 3,     // no annotations
+                modestbranding: 1,
+                rel: 0,
+                showinfo: 0,
+                fs: 0,                 // we handle fullscreen manually
+                playsinline: 1,
+                origin: window.location.origin
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange,
+                'onError': onPlayerError
+            }
+        });
+    }
 
-            const main = document.getElementById('mainContent');
-            if (view === 'featured') {
-                main.innerHTML = renderFeaturedView();
-            } else if (view === 'channels') {
-                main.innerHTML = renderChannelsView();
-            } else {
-                main.innerHTML = renderVideosGrid(view);
+    function onPlayerReady(event) {
+        playerReady = true;
+        // Set initial duration after a short delay
+        setTimeout(() => {
+            updateProgressAndTime();
+        }, 500);
+        // set initial mute icon (not muted by default)
+        muteIcon.className = 'fas fa-volume-high';
+    }
+
+    function onPlayerStateChange(event) {
+        // data: -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (cued)
+        const state = event.data;
+        updatePlayPauseIcon(state);
+        if (state === 0) { // ended
+            // reset progress to 0? the video ends at 100% anyway, but we want play icon
+            updateProgressAndTime(); // final update
+            stopProgressInterval();
+        } else if (state === 1) { // playing
+            startProgressIntervalIfPlaying();
+        } else if (state === 2) { // paused
+            stopProgressInterval();
+        }
+    }
+
+    function onPlayerError(event) {
+        console.warn('YouTube error:', event.data);
+        // fallback: reset UI, show friendly message (optional)
+        timeDisplay.textContent = '😊 video error';
+    }
+
+    // ---- load YouTube iframe API ----
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    // ---- custom control event listeners (set up after API ready, but buttons exist) ----
+
+    // Play/Pause
+    playPauseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!player || !playerReady) return;
+        const state = player.getPlayerState();
+        if (state === 1) { // playing
+            player.pauseVideo();
+        } else {
+            player.playVideo();
+        }
+    });
+
+    // Mute toggle
+    muteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!player || !playerReady) return;
+        if (player.isMuted()) {
+            player.unMute();
+            muteIcon.className = 'fas fa-volume-high';
+        } else {
+            player.mute();
+            muteIcon.className = 'fas fa-volume-off';
+        }
+    });
+
+    // Fullscreen (on the video container, to include custom controls)
+    fullscreenBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!document.fullscreenElement) {
+            if (videoContainer.requestFullscreen) {
+                videoContainer.requestFullscreen();
+            } else if (videoContainer.webkitRequestFullscreen) { // Safari
+                videoContainer.webkitRequestFullscreen();
+            } else if (videoContainer.msRequestFullscreen) { // IE/Edge
+                videoContainer.msRequestFullscreen();
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
             }
         }
+    });
 
-        // Show channel videos (uploads playlist)
-        window.showChannelVideos = function(channelId, channelName, color) {
-            const playlistId = 'UU' + channelId.substring(2);
-            // For simplicity, we just play the playlist in modal
-            playPlaylist(playlistId);
-        };
+    // Seek via progress bar click
+    progressBar.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!player || !playerReady) return;
+        const duration = player.getDuration();
+        if (!duration || duration <= 0) return;
 
-        // Play single video
-        window.playVideo = function(videoId) {
-            const modal = document.getElementById('playerModal');
-            const container = document.getElementById('playerContainer');
-            container.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-            modal.style.display = 'flex';
-        };
+        // calculate click position relative to progress bar width
+        const rect = progressBar.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        let percent = clickX / rect.width;
+        percent = Math.min(1, Math.max(0, percent)); // clamp 0-1
 
-        // Play playlist
-        window.playPlaylist = function(playlistId) {
-            const modal = document.getElementById('playerModal');
-            const container = document.getElementById('playerContainer');
-            container.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed?listType=playlist&list=${playlistId}&autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-            modal.style.display = 'flex';
-        };
+        const seekToTime = percent * duration;
+        player.seekTo(seekToTime, true);
+        // update progress immediately for better feedback
+        progressFill.style.width = (percent * 100) + '%';
+        // time display will be corrected by interval
+    });
 
-        // Close modal
-        window.closeModal = function(event) {
-            const modal = document.getElementById('playerModal');
-            if (!event || event.target === modal || event.target.classList.contains('close-btn')) {
-                modal.style.display = 'none';
-                document.getElementById('playerContainer').innerHTML = '';
-            }
-        };
+    // Optional: also update progress while dragging? for simplicity we skip drag,
+    // but click-to-seek is clear and kid-friendly.
 
-        // Initial load
-        window.onload = () => {
-            switchView('featured');
-        };
-    </script>
+    // Make sure the interval stops when not needed; also clean on page unload
+    window.addEventListener('beforeunload', () => {
+        stopProgressInterval();
+    });
+
+    // If player not ready after some time, show a hint (but usually works)
+    setTimeout(() => {
+        if (!playerReady) {
+            timeDisplay.textContent = 'loading...';
+        }
+    }, 3000);
+</script>
+
+<!-- extra fallback for old browsers: show friendly message -->
+<noscript>
+    <div style="padding: 2rem; text-align: center;">JavaScript required for YouTube Kids player</div>
+</noscript>
 </body>
 </html>
