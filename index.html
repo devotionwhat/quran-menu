@@ -1,106 +1,334 @@
 <!DOCTYPE html>
 <html lang="en">
-
-  <head>
+<head>
     <meta charset="UTF-8">
-    <title>EASY! YouTube  Video Player  with Playlist - JQUERY</title>
-    <link rel="stylesheet" href="https://public.codepenassets.com/css/normalize-5.0.0.min.css">
-<link rel="stylesheet" href="./style.css">
-<script src="https://public.codepenassets.com/js/prefixfree-1.0.7.min.js"></script>
+    <title>YouTube Channel Video Player (No API Key)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            padding: 20px;
+        }
+        .parent-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        #video-player {
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        #YouTube-Iframe {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border: none;
+            display: block;
+        }
+        #video-caption {
+            padding: 12px 16px;
+            font-size: 1.2rem;
+            background: #222;
+            border-bottom: 1px solid #333;
+        }
+        #playlist {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            padding: 16px;
+            background: #111;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .playlist-button {
+            background: #2a2a2a;
+            border: none;
+            border-radius: 6px;
+            padding: 8px;
+            color: #fff;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            display: flex;
+            flex-direction: column;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            min-height: 120px;
+            border: 1px solid #444;
+        }
+        .playlist-button:hover {
+            background-color: #3a3a3a;
+            border-color: #888;
+        }
+        .playlist-button.active {
+            border-color: #ff0000;
+            box-shadow: 0 0 8px #ff0000;
+        }
+        .playlist-button .title {
+            background: rgba(0,0,0,0.7);
+            padding: 4px 6px;
+            border-radius: 4px;
+            margin-top: auto;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 4px black;
+        }
+        #channel-input-area {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            background: #222;
+            padding: 15px;
+            border-radius: 8px;
+            align-items: center;
+        }
+        #channel-id {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background: #333;
+            color: #fff;
+            font-size: 1rem;
+            min-width: 250px;
+        }
+        #load-button {
+            padding: 10px 24px;
+            background: #c00;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        #load-button:hover {
+            background: #e00;
+        }
+        #load-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .error-message {
+            color: #ff8080;
+            padding: 10px;
+            background: #330000;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .loading {
+            color: #aaa;
+            padding: 20px;
+            text-align: center;
+            font-style: italic;
+        }
+        .example {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        .example a {
+            color: #6cf;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="parent-container">
+    <h1 style="margin-bottom: 20px;">YouTube Channel Video Player</h1>
+    <div id="channel-input-area">
+        <input type="text" id="channel-id" placeholder="Enter YouTube Channel ID (e.g. UCXuqSBlHAE6Xw-yeJA0Tunw)" value="UCXuqSBlHAE6Xw-yeJA0Tunw">
+        <button id="load-button">Load Videos</button>
+        <div class="example">Examples: <a class="example-link" data-channel="UCXuqSBlHAE6Xw-yeJA0Tunw">Linus Tech Tips</a> · <a class="example-link" data-channel="UCBR8-60-B28hp2BmDPdntcQ">YouTube Music</a> · <a class="example-link" data-channel="UC-9-kyTW8ZkZNDHQJ6FgpwQ">Music</a></div>
+    </div>
 
-  </head>
-    
-  <body>
-  <section class="parent-container">
+    <div id="video-player">
+        <iframe id="YouTube-Iframe" class="lazyload" src="https://www.youtube.com/embed/3YHVC1DcHmo?enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <div id="video-caption">Jon Batiste ♩ FREEDOM</div>
+        <div id="playlist">
+            <!-- Static fallback buttons (optional) – they will be replaced when a channel is loaded -->
+            <button class="playlist-button active" data-bg="//img.youtube.com/vi/3YHVC1DcHmo/sddefault.jpg" data-iframe="https://www.youtube.com/embed/3YHVC1DcHmo?autoplay=1" data-caption="Jon Batiste ♩ FREEDOM" style="background-image: url('//img.youtube.com/vi/3YHVC1DcHmo/sddefault.jpg');"><span class="title">Jon Batiste</span></button>
+            <button class="playlist-button" data-bg="//img.youtube.com/vi/1GupNeliuLA/sddefault.jpg" data-iframe="https://www.youtube.com/embed/1GupNeliuLA?autoplay=1" data-caption="Luke James ♩ SHINE ON" style="background-image: url('//img.youtube.com/vi/1GupNeliuLA/sddefault.jpg');"><span class="title">Luke James</span></button>
+            <!-- more static buttons... (they will be cleared when new videos load) -->
+        </div>
+    </div>
+</div>
 
-  <aside id="video-player">
-    <!--  BEGIN PLAYER CONTAINER -->
+<script>
+    (function() {
+        // DOM elements
+        const channelInput = document.getElementById('channel-id');
+        const loadButton = document.getElementById('load-button');
+        const playlistDiv = document.getElementById('playlist');
+        const youtubeIframe = document.getElementById('YouTube-Iframe');
+        const videoCaption = document.getElementById('video-caption');
 
-    <!-- YouTube iFrame Embed -->
+        // Utility function to extract YouTube channel ID from various inputs (optional)
+        function extractChannelId(input) {
+            // If it's a full YouTube URL, try to extract the channel ID
+            const match = input.match(/(?:channel\/|user\/|@)?([a-zA-Z0-9_-]{24,})/);
+            return match ? match[1] : input;
+        }
 
-    <iframe id="YouTube-Iframe" class="lazyload" src="https://www.youtube.com/embed/3YHVC1DcHmo?enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        // Fetch and parse RSS feed for a channel ID
+        async function loadChannelVideos(channelId) {
+            if (!channelId) return;
+            const cleanId = extractChannelId(channelId);
+            const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${cleanId}`;
 
-    <!-- VIDEO CAPTION  -->
+            // Show loading state
+            playlistDiv.innerHTML = '<div class="loading">Loading videos...</div>';
+            loadButton.disabled = true;
 
-    <div id="video-caption">Jon Batiste ♩ FREEDOM</div>
+            try {
+                const response = await fetch(feedUrl);
+                if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+                const xmlText = await response.text();
 
-    <!-- BEGIN PLAYLIST CONTAINER  -->
+                // Parse XML manually with regex (simple and works without namespaces)
+                const videoEntries = [];
+                // Regular expression to find each <entry>...</entry>
+                const entryRegex = /<entry>([\s\S]*?)<\/entry>/gi;
+                let entryMatch;
+                while ((entryMatch = entryRegex.exec(xmlText)) !== null) {
+                    const entryContent = entryMatch[1];
 
-    <div id="playlist">
+                    // Extract videoId from <yt:videoId>...</yt:videoId>
+                    const videoIdMatch = entryContent.match(/<yt:videoId>([^<]+)<\/yt:videoId>/i);
+                    if (!videoIdMatch) continue;
+                    const videoId = videoIdMatch[1];
 
-      <!-- BUTTON MARK-UP  
+                    // Extract title from <title>...</title>
+                    const titleMatch = entryContent.match(/<title>([^<]+)<\/title>/i);
+                    const title = titleMatch ? titleMatch[1] : 'Untitled';
 
- Button has two data-attribtes that update the
- player when clicked.
+                    // Extract published date (optional, could be used for sorting)
+                    // const publishedMatch = entryContent.match(/<published>([^<]+)<\/published>/i);
+                    // const published = publishedMatch ? publishedMatch[1] : '';
 
-1.  data-iframe     = the url of the YouTube Video Embed
-2.  data-caption    = video caption
+                    videoEntries.push({ videoId, title });
+                }
 
-YouTube URL/SRC must end with ?autoplay=1 for videos to autoplay.
-Data caption is HTML - convert double quotes to single quotes
-in data attribute mark-up - i.e. ' not " - Probably Need to format
-your caption markup too. lol
+                if (videoEntries.length === 0) {
+                    playlistDiv.innerHTML = '<div class="error-message">No videos found or invalid channel ID.</div>';
+                    return;
+                }
 
-Playlist button image is called from YouTube.  Uses the Video ID.
+                // Build the playlist buttons
+                buildPlaylist(videoEntries);
 
-EASY WAY - copy a button and change out the
-YouTube video ID with the new one and edit the caption.  Done!
+            } catch (error) {
+                console.error('Error loading feed:', error);
+                playlistDiv.innerHTML = `<div class="error-message">Failed to load videos: ${error.message}. Make sure the channel ID is correct and the feed is accessible.</div>`;
+            } finally {
+                loadButton.disabled = false;
+            }
+        }
 
+        // Build playlist buttons from array of {videoId, title}
+        function buildPlaylist(videos) {
+            // Clear playlist
+            playlistDiv.innerHTML = '';
 
--->
+            videos.forEach((video, index) => {
+                const videoId = video.videoId;
+                const title = video.title;
+                const thumbnail = `//img.youtube.com/vi/${videoId}/sddefault.jpg`; // or hqdefault.jpg
+                const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`; // autoplay on click
 
-      <button class="lazyload active" data-bg="//img.youtube.com/vi/3YHVC1DcHmo/sddefault.jpg" data-iframe="https://www.youtube.com/embed/3YHVC1DcHmo?autoplay=1" data-caption="Jon Batiste ♩  FREEDOM">Jon Batiste</button>
+                // Create button
+                const button = document.createElement('button');
+                button.className = 'playlist-button lazyload';
+                button.setAttribute('data-bg', thumbnail);
+                button.setAttribute('data-iframe', embedUrl);
+                button.setAttribute('data-caption', title);
+                // Set background image inline for immediate display (or lazyload can handle)
+                button.style.backgroundImage = `url('${thumbnail}')`;
+                button.style.backgroundSize = 'cover';
+                button.style.backgroundPosition = 'center';
 
-      <!-- MORE VIDEO BUTTONS  -->
+                // Add title span
+                const titleSpan = document.createElement('span');
+                titleSpan.className = 'title';
+                // Truncate title if too long
+                titleSpan.textContent = title.length > 60 ? title.substring(0, 60) + '…' : title;
+                button.appendChild(titleSpan);
 
-      <button class="lazyload" data-bg="//img.youtube.com/vi/1GupNeliuLA/sddefault.jpg" data-iframe="https://www.youtube.com/embed/1GupNeliuLA?autoplay=1" data-caption="Luke James ♩ SHINE ON">Luke James</button>
+                // If it's the first video, mark as active and update player? (optional)
+                if (index === 0) {
+                    // Do not auto-play first, just set as active? We'll keep existing iframe.
+                    // But we could optionally set the first video as the current.
+                }
 
-      <button class="lazyload" data-bg="//img.youtube.com/vi/cGoguR2gYn8/sddefault.jpg" data-iframe="https://www.youtube.com/embed/cGoguR2gYn8?autoplay=1" data-caption="Luke James ♩ 2013 .  Beyoncé .  Mrs. Carter Show">Luke James</button>
+                playlistDiv.appendChild(button);
+            });
 
-      <button class="lazyload" data-bg="//img.youtube.com/vi/DjfMEE2krr4/sddefault.jpg" data-iframe="https://www.youtube.com/embed/DjfMEE2krr4?autoplay=1" data-caption="Chapal Hart ♩ American Pride">Chapal Hart</button>
+            // After building, ensure the first video is displayed? We'll leave the current video as is.
+            // Optionally update to first video:
+            // const firstButton = playlistDiv.querySelector('.playlist-button');
+            // if (firstButton) {
+            //     firstButton.click();
+            // }
+        }
 
+        // Event listener for playlist clicks (using event delegation)
+        playlistDiv.addEventListener('click', function(e) {
+            const button = e.target.closest('.playlist-button');
+            if (!button) return;
 
+            // Remove active class from all buttons
+            document.querySelectorAll('.playlist-button').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
 
-      <button class="lazyload" data-bg="//img.youtube.com/vi/QlOfJTeXqKU/sddefault.jpg" data-iframe="https://www.youtube.com/embed/QlOfJTeXqKU?autoplay=1" data-caption="Shamarr Allen ♩ Dance with Me">Shamarr Allen</button>
+            // Update iframe src
+            const iframeSrc = button.getAttribute('data-iframe');
+            if (iframeSrc) {
+                youtubeIframe.src = iframeSrc;
+            }
 
-      <button class="lazyload" data-bg="//img.youtube.com/vi/Hit10kFN2BQ/sddefault.jpg" data-iframe="https://www.youtube.com/embed/Hit10kFN2BQ?autoplay=1" data-caption="Shamarr Allen ♩ I LOVE YOU">Shamarr Allen</button>
+            // Update caption
+            const caption = button.getAttribute('data-caption');
+            if (caption) {
+                videoCaption.textContent = caption;
+            }
+        });
 
-      <button class="lazyload" data-bg="//img.youtube.com/vi/4WtmkES0X48/sddefault.jpg" data-iframe="https://www.youtube.com/embed/4WtmkES0X48?autoplay=1" data-caption="Kermit Ruffins ♩ Drop me Off in New Orleans">Kermit Ruffins</button>
+        // Load button click
+        loadButton.addEventListener('click', function() {
+            const channelId = channelInput.value.trim();
+            if (channelId) {
+                loadChannelVideos(channelId);
+            } else {
+                alert('Please enter a channel ID');
+            }
+        });
 
-      <button class="lazyload" data-bg="//img.youtube.com/vi/89Lum1zkRuU/sddefault.jpg" data-iframe="https://www.youtube.com/embed/89Lum1zkRuU?autoplay=1" data-caption="Luke James x Nu Deco Ensemble ♩ reprise two">Luke James</button>
+        // Example links
+        document.querySelectorAll('.example-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const channel = this.getAttribute('data-channel');
+                channelInput.value = channel;
+                loadChannelVideos(channel);
+            });
+        });
 
-      <!-- CODPEN IFRAME EMBED 
-           As we are simply swapping out iframes, the player will work for
-           any iframe embed so long as it fits the player container's 16/9 aspect ratio.
--->
-
-      <button class="lazyload" data-bg="https://assets.codepen.io/191814/palyer-codepen.jpg?width=300&height=216&format=auto" data-iframe="https://codepen.io/mark_sottek/embed/zYWKKmz?default-tab=result&theme-id=dark" data-caption="Oz Cylone ♩ Codepen Iframe Embed">Codepen</button>
-
-    </div> <!-- // END PLAYLIST CONTAINER  -->
-
-  </aside> <!--  // END PLAYER CONTAINER -->
-  
-  <!--  DEMO COPY  -->
-   <article>
-    <h2>YouTube Player + Playlist</h2>
-    <h3>Player Updated via Data Attributes</h3>
-
-    <p> Player uses native YouTube Iframe Embeds. jQuery. No additional libraries needed.</p>
-
-    <p>Videos in player are updated via jQuery data attributes.</p>
-
-    <p> Simply, when a button is clicked - the values of the data attributes in the button HTML mark-up are written to the respective player elements - #YouTube-Iframe (SRC) and #video-caption (HTML) - overriding the current values and updating the player. </p>
-    <p>Easy.</p>
-     <p>++ a few New Orleans 'Dreamers'</p>
-
-  </article>
-
-  
-
-</section>
-    <script src='https://assets.codepen.io/191814/lazysizes-v5.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script><script  src="./script.js"></script>
-
-  </body>
-  
+        // Optional: Auto-load a default channel on page load (comment out if not wanted)
+        // window.addEventListener('load', function() {
+        //     const defaultChannel = channelInput.value.trim();
+        //     if (defaultChannel) loadChannelVideos(defaultChannel);
+        // });
+    })();
+</script>
+</body>
 </html>
