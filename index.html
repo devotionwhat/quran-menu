@@ -2,245 +2,606 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>YouTube Channel Video Player (No API Key, with CORS Proxy)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Kids · Channel Player (No API Key)</title>
+    <!-- Font Awesome (same as last script) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* ---------- EXACT CSS FROM THE LAST SCRIPT (SummerPlayer style) ---------- */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #1a1a1a;
-            color: #fff;
+            background: #e0f2e9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
             padding: 20px;
         }
-        .parent-container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        h1 {
-            margin-bottom: 20px;
-        }
-        #video-player {
-            background: #000;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        #YouTube-Iframe {
+
+        .summer-player {
             width: 100%;
-            aspect-ratio: 16/9;
+            max-width: 1000px;
+            border-radius: 60px 60px 40px 40px;
+            overflow: hidden;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.3), 0 0 0 6px #ffb882, 0 0 0 12px #ffd966;
+            background: #1e3d58;
+            transition: all 0.2s;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 */
+            background: #000;
+        }
+
+        #youtube-player {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+        }
+
+        .custom-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(90deg, #f78b6e, #fcb045, #f5d742);
+            padding: 14px 18px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            border-top: 6px solid white;
+            border-radius: 0 0 40px 40px;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+
+        .ctrl-btn {
+            background: white;
             border: none;
-            display: block;
+            width: 58px;
+            height: 58px;
+            border-radius: 58px;
+            font-size: 2.2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 7px 0 #baa89b, 0 8px 15px rgba(0,0,0,0.3);
+            transition: all 0.05s linear;
+            color: #1f3a5f;
+            border: 4px solid #fff9e6;
+            flex-shrink: 0;
         }
-        #video-caption {
-            padding: 12px 16px;
-            font-size: 1.2rem;
-            background: #222;
-            border-bottom: 1px solid #333;
+
+        .ctrl-btn:active {
+            transform: translateY(7px);
+            box-shadow: 0 2px 0 #9e8d7f, 0 5px 12px rgba(0,0,0,0.3);
         }
-        #playlist {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+
+        .ctrl-btn i {
+            font-size: 2.2rem;
+            color: #1f3a5f;
+        }
+
+        .time-display {
+            background: #162b40;
+            color: white;
+            font-size: 1.7rem;
+            font-weight: 700;
+            padding: 8px 20px;
+            border-radius: 50px;
+            border: 4px solid #ffe28a;
+            box-shadow: inset 0 -4px 0 #0e1f2e;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .progress-container {
+            flex: 3 1 250px;
+            height: 28px;
+            background: #fbe6c2;
+            border-radius: 40px;
+            border: 5px solid white;
+            box-shadow: inset 0 3px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
+            position: relative;
+            min-width: 180px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #ff576e;
+            border-radius: 40px;
+            width: 0%;
+            box-shadow: 0 0 0 3px white, 0 4px 0 #b32e40;
+            transition: width 0.1s linear;
+        }
+
+        .controls-right {
+            display: flex;
             gap: 10px;
-            padding: 16px;
-            background: #111;
-            max-height: 400px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .playlist-toggle {
+            background: #fee440;
+            border: 4px solid white;
+            color: #2b3a67;
+            font-size: 1.8rem;
+        }
+
+        .playlist-panel {
+            background: #fef9e6;
+            border-radius: 0 0 40px 40px;
+            padding: 15px;
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            border-top: 6px solid white;
+            max-height: 250px;
             overflow-y: auto;
         }
-        .playlist-button {
-            background: #2a2a2a;
-            border: none;
-            border-radius: 6px;
-            padding: 8px;
-            color: #fff;
-            cursor: pointer;
-            text-align: left;
-            font-size: 0.9rem;
-            transition: background 0.2s;
-            display: flex;
-            flex-direction: column;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: relative;
-            min-height: 120px;
-            border: 1px solid #444;
+
+        .playlist-panel.open {
+            display: grid;
         }
-        .playlist-button:hover {
-            background-color: #3a3a3a;
-            border-color: #888;
-        }
-        .playlist-button.active {
-            border-color: #ff0000;
-            box-shadow: 0 0 8px #ff0000;
-        }
-        .playlist-button .title {
-            background: rgba(0,0,0,0.7);
-            padding: 4px 6px;
-            border-radius: 4px;
-            margin-top: auto;
+
+        .playlist-item {
+            background: white;
+            border-radius: 40px;
+            padding: 10px 15px;
             font-weight: bold;
-            color: #fff;
-            text-shadow: 0 0 4px black;
+            color: #1e3d58;
+            box-shadow: 0 5px 0 #b0b0b0;
+            border: 3px solid #ffb347;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.1s;
+            font-size: 1rem;
         }
-        .loading {
-            color: #aaa;
-            padding: 20px;
-            text-align: center;
-            font-style: italic;
+
+        .playlist-item.active {
+            background: #ffb851;
+            color: #1f2c45;
+            border-color: #ffeeaa;
+            box-shadow: 0 5px 0 #a05f20;
         }
-        .error-message {
-            color: #ff8080;
-            padding: 10px;
-            background: #330000;
-            border-radius: 4px;
-            margin-top: 10px;
+
+        .playlist-item:active {
+            transform: translateY(5px);
+            box-shadow: 0 2px 0 #8b8b8b;
+        }
+
+        .playlist-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 30px;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+
+        .player-header {
+            padding: 15px 20px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-header h3 {
+            background: #ffe570;
+            display: inline-block;
+            padding: 8px 30px;
+            border-radius: 50px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #003153;
+            border: 4px solid white;
+            box-shadow: 0 5px 0 #b3953a;
+            margin: 0;
+        }
+
+        .player-header i {
+            font-size: 3rem;
+            color: #ff9f1c;
+            filter: drop-shadow(2px 4px 0 #b2620f);
+        }
+
+        @media (max-width: 600px) {
+            .ctrl-btn { width: 48px; height: 48px; font-size: 1.8rem; }
+            .ctrl-btn i { font-size: 1.8rem; }
+            .time-display { font-size: 1.3rem; padding: 4px 12px; }
+            .progress-container { height: 22px; }
+            .player-header h3 { font-size: 1.4rem; }
         }
     </style>
 </head>
 <body>
-<div class="parent-container">
-    <h1>YouTube Channel Video Player</h1>
-    <div id="video-player">
-        <iframe id="YouTube-Iframe" class="lazyload" src="https://www.youtube.com/embed/3YHVC1DcHmo?enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <div id="video-caption">Jon Batiste ♩ FREEDOM</div>
-        <div id="playlist">
-            <div class="loading">Loading videos...</div>
-        </div>
-    </div>
-</div>
+    <div id="player-container" style="width: 100%;"></div>
 
-<script>
-    (function() {
-        // ===== CONFIGURATION =====
-        // Change this to any YouTube channel ID you want
-        const CHANNEL_ID = '@zadaljanah';  // Linus Tech Tips
+    <!-- YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
 
-        // Public CORS proxy (adds CORS headers to the response)
-        // You can change this to any proxy that returns raw data.
-        const PROXY_URL = 'https://api.allorigins.win/raw?url=';
+    <script>
+        // =================================================================
+        // CONFIGURATION – REPLACE WITH YOUR CHANNEL ID
+        // =================================================================
+        const CHANNEL_ID = 'UCkYQyL5v1oQxLO0UvRazz1w'; // Example: Baby Shark Official (replace with your channel)
+        // =================================================================
 
-        // DOM elements
-        const playlistDiv = document.getElementById('playlist');
-        const youtubeIframe = document.getElementById('YouTube-Iframe');
-        const videoCaption = document.getElementById('video-caption');
+        // Global variables
+        let player;                // YouTube player instance
+        let videos = [];           // Array of {videoId, title, thumbnail}
+        let currentIndex = 0;
+        let isPlaying = false;
+        let isMuted = false;
+        let isLoop = false;
+        let progressInterval = null;
 
-        // Fetch and parse RSS feed for a channel ID through a proxy
-        async function loadChannelVideos(channelId) {
-            if (!channelId) return;
+        // UI Elements (will be initialized after player built)
+        let container, videoWrapper, customControls, playPauseBtn, playPauseIcon;
+        let prevBtn, nextBtn, timeDisplay, progressFill, progressContainer;
+        let volumeBtn, volumeIcon, fullscreenBtn, loopBtn, loopIcon, playlistToggle, playlistPanel;
+
+        // -----------------------------------------------------------------
+        // 1. Fetch videos from channel RSS feed (no API key)
+        // -----------------------------------------------------------------
+        async function fetchChannelVideos(channelId) {
             const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-            const proxiedUrl = PROXY_URL + encodeURIComponent(feedUrl);
-
-            // Show loading state
-            playlistDiv.innerHTML = '<div class="loading">Loading videos...</div>';
-
             try {
-                const response = await fetch(proxiedUrl);
-                if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+                const response = await fetch(feedUrl);
                 const xmlText = await response.text();
-
-                // Check if the proxy returned an error (some proxies wrap errors)
-                if (xmlText.includes('"error"') || xmlText.includes('"status":"error"')) {
-                    throw new Error('Proxy returned an error. The feed might be temporarily unavailable.');
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(xmlText, 'text/xml');
+                const entries = xml.querySelectorAll('entry');
+                
+                if (entries.length === 0) {
+                    throw new Error('No videos found for this channel.');
                 }
 
-                // Parse XML manually with regex (simple and works without namespaces)
-                const videoEntries = [];
-                const entryRegex = /<entry>([\s\S]*?)<\/entry>/gi;
-                let entryMatch;
-                while ((entryMatch = entryRegex.exec(xmlText)) !== null) {
-                    const entryContent = entryMatch[1];
-
-                    // Extract videoId from <yt:videoId>...</yt:videoId>
-                    const videoIdMatch = entryContent.match(/<yt:videoId>([^<]+)<\/yt:videoId>/i);
-                    if (!videoIdMatch) continue;
-                    const videoId = videoIdMatch[1];
-
-                    // Extract title from <title>...</title>
-                    const titleMatch = entryContent.match(/<title>([^<]+)<\/title>/i);
-                    const title = titleMatch ? titleMatch[1] : 'Untitled';
-
-                    videoEntries.push({ videoId, title });
-                }
-
-                if (videoEntries.length === 0) {
-                    playlistDiv.innerHTML = '<div class="error-message">No videos found or invalid channel ID.</div>';
-                    return;
-                }
-
-                // Build the playlist buttons
-                buildPlaylist(videoEntries);
-
+                videos = [];
+                entries.forEach(entry => {
+                    const videoId = entry.querySelector('yt\\:videoId, videoId')?.textContent;
+                    const title = entry.querySelector('title')?.textContent;
+                    const thumbnail = `https://img.youtube.com/vi/${videoId}/default.jpg`;
+                    if (videoId && title) {
+                        videos.push({ videoId, title, thumbnail });
+                    }
+                });
+                return videos;
             } catch (error) {
-                console.error('Error loading feed:', error);
-                playlistDiv.innerHTML = `<div class="error-message">Failed to load videos: ${error.message}. Make sure the channel ID is correct and the proxy is accessible.</div>`;
+                console.error('RSS fetch error:', error);
+                // Fallback: show error in playlist panel
+                playlistPanel.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:red;">Failed to load videos. Check channel ID or try again later.</div>`;
+                return [];
             }
         }
 
-        // Build playlist buttons from array of {videoId, title}
-        function buildPlaylist(videos) {
-            // Clear playlist
-            playlistDiv.innerHTML = '';
+        // -----------------------------------------------------------------
+        // 2. Build the player UI (exactly as the last script)
+        // -----------------------------------------------------------------
+        function buildPlayerUI() {
+            container = document.createElement('div');
+            container.className = 'summer-player';
 
-            videos.forEach((video) => {
-                const videoId = video.videoId;
-                const title = video.title;
-                const thumbnail = `//img.youtube.com/vi/${videoId}/sddefault.jpg`;
-                const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+            // Header
+            const header = document.createElement('div');
+            header.className = 'player-header';
+            header.innerHTML = `
+                <i class="fas fa-bolt"></i>
+                <h3>📺 Kids Channel</h3>
+                <i class="fas fa-star"></i>
+            `;
+            container.appendChild(header);
 
-                // Create button
-                const button = document.createElement('button');
-                button.className = 'playlist-button';
-                button.setAttribute('data-iframe', embedUrl);
-                button.setAttribute('data-caption', title);
-                button.style.backgroundImage = `url('${thumbnail}')`;
-                button.style.backgroundSize = 'cover';
-                button.style.backgroundPosition = 'center';
+            // Video wrapper with YouTube player div and controls
+            videoWrapper = document.createElement('div');
+            videoWrapper.className = 'video-wrapper';
+            videoWrapper.innerHTML = `
+                <div id="youtube-player"></div>
+                <div class="custom-controls">
+                    <button class="ctrl-btn" id="playPauseBtn"><i class="fas fa-play" id="playPauseIcon"></i></button>
+                    <button class="ctrl-btn" id="prevBtn"><i class="fas fa-backward"></i></button>
+                    <button class="ctrl-btn" id="nextBtn"><i class="fas fa-forward"></i></button>
+                    <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="controls-right">
+                        <button class="ctrl-btn" id="volumeBtn"><i class="fas fa-volume-high" id="volumeIcon"></i></button>
+                        <button class="ctrl-btn" id="fullscreenBtn"><i class="fas fa-expand"></i></button>
+                        <button class="ctrl-btn" id="loopBtn"><i class="fas fa-repeat" id="loopIcon"></i></button>
+                        <button class="ctrl-btn playlist-toggle" id="playlistToggle"><i class="fas fa-list"></i></button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(videoWrapper);
 
-                // Add title span
-                const titleSpan = document.createElement('span');
-                titleSpan.className = 'title';
-                titleSpan.textContent = title.length > 60 ? title.substring(0, 60) + '…' : title;
-                button.appendChild(titleSpan);
+            // Playlist panel
+            playlistPanel = document.createElement('div');
+            playlistPanel.className = 'playlist-panel';
+            container.appendChild(playlistPanel);
 
-                playlistDiv.appendChild(button);
+            document.getElementById('player-container').appendChild(container);
+
+            // Cache DOM elements
+            playPauseBtn = document.getElementById('playPauseBtn');
+            playPauseIcon = document.getElementById('playPauseIcon');
+            prevBtn = document.getElementById('prevBtn');
+            nextBtn = document.getElementById('nextBtn');
+            timeDisplay = document.getElementById('timeDisplay');
+            progressFill = document.getElementById('progressFill');
+            progressContainer = document.getElementById('progressContainer');
+            volumeBtn = document.getElementById('volumeBtn');
+            volumeIcon = document.getElementById('volumeIcon');
+            fullscreenBtn = document.getElementById('fullscreenBtn');
+            loopBtn = document.getElementById('loopBtn');
+            loopIcon = document.getElementById('loopIcon');
+            playlistToggle = document.getElementById('playlistToggle');
+        }
+
+        // -----------------------------------------------------------------
+        // 3. Render playlist inside the panel
+        // -----------------------------------------------------------------
+        function renderPlaylist() {
+            playlistPanel.innerHTML = '';
+            if (videos.length === 0) {
+                playlistPanel.innerHTML = '<div style="grid-column:1/-1; text-align:center;">No videos available.</div>';
+                return;
+            }
+            videos.forEach((video, idx) => {
+                const item = document.createElement('div');
+                item.className = 'playlist-item';
+                if (idx === currentIndex) item.classList.add('active');
+                item.innerHTML = `
+                    <img src="${video.thumbnail}" alt="thumb" loading="lazy">
+                    <span>${video.title}</span>
+                `;
+                item.addEventListener('click', () => {
+                    currentIndex = idx;
+                    loadVideoById(video.videoId);
+                    if (player && player.playVideo) player.playVideo();
+                    updateActivePlaylistItem();
+                });
+                playlistPanel.appendChild(item);
             });
-
-            // Optionally auto-click the first video after a short delay
-            // setTimeout(() => {
-            //     const firstButton = playlistDiv.querySelector('.playlist-button');
-            //     if (firstButton) firstButton.click();
-            // }, 500);
         }
 
-        // Event listener for playlist clicks (using event delegation)
-        playlistDiv.addEventListener('click', function(e) {
-            const button = e.target.closest('.playlist-button');
-            if (!button) return;
+        function updateActivePlaylistItem() {
+            const items = playlistPanel.querySelectorAll('.playlist-item');
+            items.forEach((item, idx) => {
+                if (idx === currentIndex) item.classList.add('active');
+                else item.classList.remove('active');
+            });
+        }
 
-            // Remove active class from all buttons
-            document.querySelectorAll('.playlist-button').forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
+        // -----------------------------------------------------------------
+        // 4. YouTube player initialization (called by API)
+        // -----------------------------------------------------------------
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '100%',
+                width: '100%',
+                videoId: videos.length > 0 ? videos[0].videoId : '',
+                playerVars: {
+                    controls: 0,
+                    disablekb: 1,
+                    iv_load_policy: 3,
+                    modestbranding: 1,
+                    rel: 0,
+                    fs: 0,
+                    playsinline: 1
+                },
+                events: {
+                    onReady: onPlayerReady,
+                    onStateChange: onPlayerStateChange,
+                    onError: onPlayerError
+                }
+            });
+        }
 
-            // Update iframe src
-            const iframeSrc = button.getAttribute('data-iframe');
-            if (iframeSrc) {
-                youtubeIframe.src = iframeSrc;
+        function onPlayerReady(event) {
+            // Start with first video if available
+            if (videos.length > 0) {
+                loadVideoById(videos[0].videoId);
+            }
+            // Set up time update interval
+            startProgressInterval();
+        }
+
+        function onPlayerStateChange(event) {
+            const state = event.data;
+            if (state === YT.PlayerState.PLAYING) {
+                isPlaying = true;
+                playPauseIcon.className = 'fas fa-pause';
+                startProgressInterval();
+            } else {
+                isPlaying = false;
+                playPauseIcon.className = 'fas fa-play';
+                if (state === YT.PlayerState.ENDED) {
+                    if (isLoop) {
+                        player.playVideo();
+                    } else {
+                        // Auto next if available
+                        if (currentIndex < videos.length - 1) {
+                            nextVideo();
+                        }
+                    }
+                }
+                if (state !== YT.PlayerState.BUFFERING) {
+                    // Keep interval running for progress update? Actually timeupdate not needed when paused, but we'll keep it for time display.
+                }
+            }
+        }
+
+        function onPlayerError(event) {
+            console.error('YouTube error:', event.data);
+        }
+
+        // -----------------------------------------------------------------
+        // 5. Helper functions
+        // -----------------------------------------------------------------
+        function loadVideoById(videoId) {
+            if (player && player.loadVideoById) {
+                player.loadVideoById(videoId);
+            }
+        }
+
+        function playVideo() {
+            if (player && player.playVideo) player.playVideo();
+        }
+
+        function pauseVideo() {
+            if (player && player.pauseVideo) player.pauseVideo();
+        }
+
+        function togglePlayPause() {
+            if (isPlaying) pauseVideo();
+            else playVideo();
+        }
+
+        function previousVideo() {
+            if (videos.length === 0) return;
+            currentIndex = (currentIndex - 1 + videos.length) % videos.length;
+            loadVideoById(videos[currentIndex].videoId);
+            playVideo();
+            updateActivePlaylistItem();
+        }
+
+        function nextVideo() {
+            if (videos.length === 0) return;
+            currentIndex = (currentIndex + 1) % videos.length;
+            loadVideoById(videos[currentIndex].videoId);
+            playVideo();
+            updateActivePlaylistItem();
+        }
+
+        function updateProgressAndTime() {
+            if (player && player.getCurrentTime) {
+                const current = player.getCurrentTime();
+                const duration = player.getDuration();
+                if (duration > 0) {
+                    const percent = (current / duration) * 100;
+                    progressFill.style.width = percent + '%';
+                    timeDisplay.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+                }
+            }
+        }
+
+        function formatTime(seconds) {
+            if (!seconds || isNaN(seconds)) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        function startProgressInterval() {
+            stopProgressInterval();
+            progressInterval = setInterval(updateProgressAndTime, 300);
+        }
+
+        function stopProgressInterval() {
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+        }
+
+        function toggleMute() {
+            if (!player) return;
+            if (player.isMuted()) {
+                player.unMute();
+                volumeIcon.className = 'fas fa-volume-high';
+            } else {
+                player.mute();
+                volumeIcon.className = 'fas fa-volume-off';
+            }
+            isMuted = !isMuted;
+        }
+
+        function toggleFullscreen() {
+            const elem = container;
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) elem.requestFullscreen();
+                else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+                else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+
+        function toggleLoop() {
+            isLoop = !isLoop;
+            loopIcon.style.color = isLoop ? '#FFD700' : '';
+        }
+
+        // -----------------------------------------------------------------
+        // 6. Attach event listeners
+        // -----------------------------------------------------------------
+        function attachEvents() {
+            playPauseBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePlayPause(); });
+            prevBtn.addEventListener('click', (e) => { e.stopPropagation(); previousVideo(); });
+            nextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextVideo(); });
+            volumeBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleMute(); });
+            fullscreenBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleFullscreen(); });
+            loopBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleLoop(); });
+            playlistToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                playlistPanel.classList.toggle('open');
+            });
+            progressContainer.addEventListener('click', (e) => {
+                if (!player) return;
+                const rect = progressContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const percent = Math.min(1, Math.max(0, x / rect.width));
+                const duration = player.getDuration();
+                if (duration > 0) {
+                    player.seekTo(percent * duration, true);
+                }
+            });
+        }
+
+        // -----------------------------------------------------------------
+        // 7. Main initialization
+        // -----------------------------------------------------------------
+        (async function init() {
+            // Build UI first
+            buildPlayerUI();
+
+            // Fetch videos (will populate playlistPanel after fetch)
+            await fetchChannelVideos(CHANNEL_ID);
+
+            // Render playlist
+            renderPlaylist();
+
+            // YouTube IFrame API is already loaded, but player creation is automatic via onYouTubeIframeAPIReady
+            // However, we need to ensure the global function is set. It is already defined.
+            // Re-assign in case the API loaded before our script?
+            window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+
+            // If the API already loaded, trigger manually
+            if (window.YT && YT.Player) {
+                onYouTubeIframeAPIReady();
             }
 
-            // Update caption
-            const caption = button.getAttribute('data-caption');
-            if (caption) {
-                videoCaption.textContent = caption;
-            }
-        });
-
-        // Load videos on page load
-        window.addEventListener('load', function() {
-            loadChannelVideos(CHANNEL_ID);
-        });
-    })();
-</script>
+            // Attach control events
+            attachEvents();
+        })();
+    </script>
 </body>
 </html>
