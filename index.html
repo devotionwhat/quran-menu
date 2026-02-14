@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>YouTube Channel Video Player (No API Key)</title>
+    <title>YouTube Channel Video Player (No API Key, with CORS Proxy)</title>
     <style>
         * {
             box-sizing: border-box;
@@ -106,7 +106,6 @@
         <iframe id="YouTube-Iframe" class="lazyload" src="https://www.youtube.com/embed/3YHVC1DcHmo?enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         <div id="video-caption">Jon Batiste ♩ FREEDOM</div>
         <div id="playlist">
-            <!-- Playlist will be populated dynamically -->
             <div class="loading">Loading videos...</div>
         </div>
     </div>
@@ -114,27 +113,37 @@
 
 <script>
     (function() {
-        // ===== HARDCODED CHANNEL ID =====
+        // ===== CONFIGURATION =====
         // Change this to any YouTube channel ID you want
-        const CHANNEL_ID = 'UCh9y1HSLVkZJdk0MYznBraw';  // Linus Tech Tips
+        const CHANNEL_ID = 'UCXuqSBlHAE6Xw-yeJA0Tunw';  // Linus Tech Tips
+
+        // Public CORS proxy (adds CORS headers to the response)
+        // You can change this to any proxy that returns raw data.
+        const PROXY_URL = 'https://api.allorigins.win/raw?url=';
 
         // DOM elements
         const playlistDiv = document.getElementById('playlist');
         const youtubeIframe = document.getElementById('YouTube-Iframe');
         const videoCaption = document.getElementById('video-caption');
 
-        // Fetch and parse RSS feed for a channel ID
+        // Fetch and parse RSS feed for a channel ID through a proxy
         async function loadChannelVideos(channelId) {
             if (!channelId) return;
             const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+            const proxiedUrl = PROXY_URL + encodeURIComponent(feedUrl);
 
             // Show loading state
             playlistDiv.innerHTML = '<div class="loading">Loading videos...</div>';
 
             try {
-                const response = await fetch(feedUrl);
+                const response = await fetch(proxiedUrl);
                 if (!response.ok) throw new Error(`HTTP error ${response.status}`);
                 const xmlText = await response.text();
+
+                // Check if the proxy returned an error (some proxies wrap errors)
+                if (xmlText.includes('"error"') || xmlText.includes('"status":"error"')) {
+                    throw new Error('Proxy returned an error. The feed might be temporarily unavailable.');
+                }
 
                 // Parse XML manually with regex (simple and works without namespaces)
                 const videoEntries = [];
@@ -165,7 +174,7 @@
 
             } catch (error) {
                 console.error('Error loading feed:', error);
-                playlistDiv.innerHTML = `<div class="error-message">Failed to load videos: ${error.message}. Make sure the channel ID is correct and the feed is accessible.</div>`;
+                playlistDiv.innerHTML = `<div class="error-message">Failed to load videos: ${error.message}. Make sure the channel ID is correct and the proxy is accessible.</div>`;
             }
         }
 
@@ -198,8 +207,7 @@
                 playlistDiv.appendChild(button);
             });
 
-            // Optionally auto-click the first video after a short delay (so the user sees something)
-            // You can enable this if you want the first video to load immediately.
+            // Optionally auto-click the first video after a short delay
             // setTimeout(() => {
             //     const firstButton = playlistDiv.querySelector('.playlist-button');
             //     if (firstButton) firstButton.click();
