@@ -3,59 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Tabbed Website</title>
+    <title>SteveBrain Tabbed Layout with Playlist</title>
     <style>
-        /* CSS STYLES */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        /* CSS from SteveBrain's CodePen */
+        :root {
+            --primary: #2196F3;
+            --bg: #f4f4f4;
+            --text: #333;
         }
 
-        .container {
-            width: 90%;
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .tabs-container {
+            width: 100%;
             max-width: 800px;
-            margin-top: 50px;
-            background: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background: #fff;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             border-radius: 8px;
             overflow: hidden;
         }
 
-        /* Tab Header */
-        .tabs {
+        .tabs-header {
             display: flex;
-            background: #333;
+            background: #eee;
+            border-bottom: 2px solid #ddd;
         }
 
-        .tab-link {
+        .tab-btn {
             flex: 1;
             padding: 15px;
             border: none;
             outline: none;
             cursor: pointer;
-            color: white;
-            background: #333;
-            transition: 0.3s;
             font-size: 16px;
+            font-weight: 600;
+            transition: 0.3s;
+            background: #eee;
+            color: #777;
         }
 
-        .tab-link:hover {
-            background: #444;
+        .tab-btn:hover {
+            background: #e0e0e0;
         }
 
-        .tab-link.active {
-            background: #007bff;
+        .tab-btn.active {
+            background: #fff;
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
         }
 
-        /* Tab Content */
         .tab-content {
             display: none;
-            padding: 20px;
-            animation: fadeIn 0.5s ease;
+            padding: 30px;
+            animation: fadeIn 0.4s ease;
         }
 
         .tab-content.active {
@@ -63,22 +70,22 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Responsive Video Container */
-        .video-container {
+        /* YouTube Container (Responsive) */
+        .video-wrapper {
             position: relative;
             padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
             height: 0;
             overflow: hidden;
-            max-width: 100%;
+            margin-top: 20px;
+            border-radius: 8px;
             background: #000;
-            border-radius: 5px;
         }
 
-        .video-container iframe {
+        .video-wrapper iframe {
             position: absolute;
             top: 0;
             left: 0;
@@ -86,26 +93,26 @@
             height: 100%;
         }
 
-        h2 { color: #333; }
-        p { color: #666; line-height: 1.6; }
+        h2 { margin-top: 0; color: var(--text); }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="tabs">
-        <button class="tab-link active" onclick="openTab(event, 'Home')">Home</button>
-        <button class="tab-link" onclick="openTab(event, 'About')">About</button>
-        <button class="tab-link" onclick="openTab(event, 'Contact')">Contact</button>
+<div class="tabs-container">
+    <div class="tabs-header">
+        <button class="tab-btn active" onclick="showTab(event, 'home')">Home</button>
+        <button class="tab-btn" onclick="showTab(event, 'services')">Services</button>
+        <button class="tab-btn" onclick="showTab(event, 'about')">About</button>
     </div>
 
-    <div id="Home" class="tab-content active">
-        <h2>Welcome Home</h2>
-        <p>Check out our latest YouTube Playlist below:</p>
+    <div id="home" class="tab-content active">
+        <h2>Home Feed</h2>
+        <p>Check out our featured YouTube Playlist below:</p>
         
-        <div class="video-container">
+        <div class="video-wrapper">
             <iframe 
                 src="https://www.youtube.com/embed/videoseries?list=PLu0W_9lII9agICnT8t4iYNiMre1BC7fci" 
+                title="YouTube playlist player" 
                 frameborder="0" 
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                 allowfullscreen>
@@ -113,37 +120,36 @@
         </div>
     </div>
 
-    <div id="About" class="tab-content">
-        <h2>About Us</h2>
-        <p>This is a single-page HTML document containing CSS, JavaScript, and an embedded YouTube playlist.</p>
+    <div id="services" class="tab-content">
+        <h2>Our Services</h2>
+        <p>This content is dynamically switched using the logic from SteveBrain's CodePen.</p>
+        <ul>
+            <li>Web Design</li>
+            <li>UI/UX Research</li>
+            <li>Frontend Development</li>
+        </ul>
     </div>
 
-    <div id="Contact" class="tab-content">
-        <h2>Contact</h2>
-        <p>Email: example@email.com</p>
+    <div id="about" class="tab-content">
+        <h2>About Us</h2>
+        <p>This is a demonstration of combining HTML, CSS, and JS into one portable file.</p>
     </div>
 </div>
 
 <script>
-    /* JAVASCRIPT LOGIC */
-    function openTab(evt, tabName) {
-        var i, tabcontent, tablinks;
+    /* JS Logic from SteveBrain's CodePen */
+    function showTab(event, tabId) {
+        // Remove active class from all buttons
+        const buttons = document.querySelectorAll('.tab-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
 
-        // Hide all tab content
-        tabcontent = document.getElementsByClassName("tab-content");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].classList.remove("active");
-        }
+        // Hide all content sections
+        const contents = document.querySelectorAll('.tab-content');
+        contents.forEach(content => content.classList.remove('active'));
 
-        // Remove the "active" class from all buttons
-        tablinks = document.getElementsByClassName("tab-link");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].classList.remove("active");
-        }
-
-        // Show the current tab, and add an "active" class to the button that opened the tab
-        document.getElementById(tabName).classList.add("active");
-        evt.currentTarget.classList.add("active");
+        // Add active class to clicked button and target content
+        event.currentTarget.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
     }
 </script>
 
