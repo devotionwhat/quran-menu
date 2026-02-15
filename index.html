@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>YouTube Kids - WebView Optimized</title>
     <style>
         :root {
@@ -19,9 +19,10 @@
             font-family: 'Arial Rounded MT Bold', 'Helvetica', sans-serif;
             overflow: hidden;
             color: white;
+            /* Prevents blue highlight on tap in some WebViews */
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- THE PLAYER --- */
         .main-container {
             position: relative;
             width: 100vw;
@@ -34,26 +35,23 @@
             height: 100%;
         }
 
-        /* --- CLICK SHIELD --- 
-           This layer detects taps in the WebView to hide/show UI */
+        /* The layer that toggles UI visibility */
         #ui-trigger {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 5;
-            cursor: pointer;
+            z-index: 5; 
         }
 
-        /* --- UI OVERLAY --- */
         #video-ui {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Allows click through to trigger */
+            pointer-events: none; 
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -64,7 +62,6 @@
             transition: opacity 0.4s ease, visibility 0.4s;
         }
 
-        /* HIDING CLASS */
         .hidden-ui {
             opacity: 0;
             visibility: hidden;
@@ -74,29 +71,33 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            pointer-events: auto;
+            pointer-events: auto; /* Allow clicking buttons */
         }
 
         .back-btn { font-size: 28px; cursor: pointer; background: none; border: none; color: white; }
         .video-title { font-size: 18px; font-weight: bold; margin: 0; }
         .sub-btn { background: var(--yt-red); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; }
 
-        /* --- CAROUSEL & PROGRESS --- */
         .bottom-section {
-            pointer-events: auto;
+            pointer-events: auto; /* Allow interaction with carousel and progress */
             display: flex;
             flex-direction: column;
             gap: 15px;
+            z-index: 11; /* Sit above the ui-trigger */
         }
 
         .carousel-section {
             width: 100%;
             display: flex;
             align-items: center;
-            overflow-x: auto;
+            overflow-x: auto; /* Allows horizontal scroll */
             gap: 15px;
             scrollbar-width: none;
+            /* CRITICAL FOR WEBVIEW TOUCH SCROLLING */
+            -webkit-overflow-scrolling: touch; 
+            padding-bottom: 5px;
         }
+        
         .carousel-section::-webkit-scrollbar { display: none; }
 
         .thumb-card {
@@ -109,9 +110,8 @@
             border: 4px solid transparent;
         }
         .thumb-card.active { border-color: var(--yt-red); }
-        .thumb-card img { width: 100%; height: 100%; object-fit: cover; }
+        .thumb-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
-        /* --- PROGRESS BAR --- */
         .progress-row {
             width: 100%;
             display: flex;
@@ -159,13 +159,13 @@
             <div class="top-bar">
                 <button class="back-btn">←</button>
                 <div style="flex-grow:1">
-                    <div class="video-title" id="displayTitle">Grandma and Miles Go for a Spin</div>
+                    <div class="video-title" id="displayTitle">مكة المكرمة</div>
                 </div>
                 <button class="sub-btn">SUBSCRIBE</button>
             </div>
 
             <div class="bottom-section">
-                <div class="carousel-section">
+                <div class="carousel-section" id="carousel">
                     <div class="thumb-card active" onclick="changeVideo('V_UXI8BoPnw', 'مكة المكرمة', this)">
                         <img src="https://img.youtube.com/vi/V_UXI8BoPnw/mqdefault.jpg">
                     </div>
@@ -178,22 +178,7 @@
                     <div class="thumb-card" onclick="changeVideo('An-4fwvK7NU', 'الكهف', this)">
                         <img src="https://img.youtube.com/vi/An-4fwvK7NU/mqdefault.jpg">              
                     </div>
-
-       <div class="thumb-card active" onclick="changeVideo('V_UXI8BoPnw', 'مكة المكرمة', this)">
-                        <img src="https://img.youtube.com/vi/V_UXI8BoPnw/mqdefault.jpg">
                     </div>
-                    <div class="thumb-card" onclick="changeVideo('HQBygBpQCSM', 'المدينة المنورة', this)">
-                        <img src="https://img.youtube.com/vi/HQBygBpQCSM/mqdefault.jpg">
-                    </div>
-                    <div class="thumb-card" onclick="changeVideo('wiV-BpQ1odQ', 'الفاتحة', this)">
-                        <img src="https://img.youtube.com/vi/wiV-BpQ1odQ/mqdefault.jpg">
-                    </div>
-                    <div class="thumb-card" onclick="changeVideo('An-4fwvK7NU', 'الكهف', this)">
-                        <img src="https://img.youtube.com/vi/An-4fwvK7NU/mqdefault.jpg">              
-                    </div>
-
-                    
-                </div>
 
                 <div class="progress-row">
                     <span id="currentTime" style="font-size: 14px; min-width: 40px;">0:00</span>
@@ -222,8 +207,12 @@
             player = new YT.Player('youtube-player', {
                 videoId: 'V_UXI8BoPnw',
                 playerVars: { 
-                    'autoplay': 1, 'controls': 0, 'modestbranding': 1, 
-                    'rel': 0, 'iv_load_policy': 3, 'playsinline': 1 
+                    'autoplay': 1, 
+                    'controls': 0, 
+                    'modestbranding': 1, 
+                    'rel': 0, 
+                    'iv_load_policy': 3, 
+                    'playsinline': 1 
                 },
                 events: { 'onReady': onPlayerReady }
             });
@@ -233,8 +222,6 @@
             setInterval(updateProgressBar, 100);
         }
 
-        // --- NEW TOGGLE FUNCTION ---
-        // Clicking the screen hides everything for a clear view
         function toggleUI() {
             isUIVisible = !isUIVisible;
             if (isUIVisible) {
@@ -248,26 +235,34 @@
             if (player && player.getCurrentTime) {
                 const current = player.getCurrentTime();
                 const total = player.getDuration();
-                const pct = (current / total) * 100;
-                progressFill.style.width = pct + '%';
-                progressKnob.style.left = pct + '%';
-                document.getElementById('currentTime').innerText = formatTime(current);
-                document.getElementById('totalTime').innerText = formatTime(total);
+                if(total > 0) {
+                    const pct = (current / total) * 100;
+                    progressFill.style.width = pct + '%';
+                    progressKnob.style.left = pct + '%';
+                    document.getElementById('currentTime').innerText = formatTime(current);
+                    document.getElementById('totalTime').innerText = formatTime(total);
+                }
             }
         }
 
+        // Seek functionality
         document.getElementById('progressContainer').addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevents hiding UI when seeking
+            e.stopPropagation(); 
             const rect = e.currentTarget.getBoundingClientRect();
             const pos = (e.clientX - rect.left) / rect.width;
             player.seekTo(pos * player.getDuration(), true);
         });
 
         function changeVideo(id, title, element) {
-            event.stopPropagation(); // Prevents hiding UI when clicking thumb
+            // Important for WebView: prevent the click from hiding the UI
+            if (window.event) window.event.stopPropagation();
+            
             player.loadVideoById(id);
             document.getElementById('displayTitle').innerText = title;
-            document.querySelectorAll('.thumb-card').forEach(c => c.classList.remove('active'));
+            
+            // UI Update
+            const cards = document.querySelectorAll('.thumb-card');
+            cards.forEach(c => c.classList.remove('active'));
             element.classList.add('active');
         }
 
@@ -276,6 +271,11 @@
             const sec = Math.floor(seconds % 60);
             return min + ":" + (sec < 10 ? '0' : '') + sec;
         }
+
+        // Prevent accidental UI toggle while swiping the carousel
+        const carousel = document.getElementById('carousel');
+        carousel.addEventListener('touchstart', (e) => e.stopPropagation(), {passive: true});
+        carousel.addEventListener('touchmove', (e) => e.stopPropagation(), {passive: true});
     </script>
 </body>
 </html>
