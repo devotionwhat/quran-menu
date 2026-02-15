@@ -3,305 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Refined Youtube Mobile UI</title>
+    <title>YouTube UI - Playlists</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Reset and Base Styles */
-        *, *::after, *::before {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* --- Base Setup --- */
+        *, *::after, *::before { margin: 0; padding: 0; box-sizing: border-box; }
         body, html {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 14px;
-            background-color: #ddd;
-            user-select: none;
+            width: 100%; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Montserrat', sans-serif; background-color: #ddd;
         }
 
-        ul { list-style: none; }
-        a { text-decoration: none; }
-
-        /* Icon Effects */
-        .icon {
-            object-fit: contain;
-            height: 25px;
-            opacity: 0.5;
-            filter: grayscale(100%);
-            cursor: pointer;
-            transition: 0.4s ease;
-        }
-
-        .icon:hover {
-            filter: grayscale(0%);
-            opacity: 1;
-        }
-
-        /* Screen Container - Added Overflow for Scrolling */
+        /* --- Mobile Screen --- */
         .screen {
-            display: flex;
-            flex-direction: column;
-            width: 325px;
-            height: 617px;
-            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
-            border-radius: 30px;
-            background-color: #F9F9F9;
-            overflow: hidden; /* Clips the inner scrollable area */
-            position: relative;
-            border: 8px solid #333; /* Simulated phone bezel */
+            display: flex; flex-direction: column;
+            width: 325px; height: 617px;
+            box-shadow: 0px 20px 40px rgba(0,0,0,0.2);
+            border-radius: 30px; background-color: #F9F9F9;
+            overflow: hidden; border: 8px solid #333;
         }
 
-        /* Scrollable Content Area */
+        /* --- Scrollable Content --- */
         .content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px;
-            scrollbar-width: none; /* Firefox */
-        }
-
-        .content::-webkit-scrollbar {
-            display: none; /* Chrome/Safari */
-        }
-
-        /* Header Styles */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            padding: 15px 12px 5px;
-            background-color: #F9F9F9;
-        }
-
-        .header__logo {
-            display: flex;
-            align-items: center;
-        }
-
-        .header__icon {
-            height: 22px;
-            margin-right: 5px;
-        }
-
-        .header__title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #222;
-        }
-
-        /* Categories Section */
-        .categories {
-            display: flex;
-            gap: 10px;
-            padding: 10px 0;
-            overflow-x: auto;
+            flex: 1; overflow-y: auto; padding: 12px;
             scrollbar-width: none;
         }
+        .content::-webkit-scrollbar { display: none; }
 
-        .categories::-webkit-scrollbar { display: none; }
+        /* --- Header --- */
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 5px; background: #F9F9F9;
+        }
+        .header__title { font-size: 18px; font-weight: 700; color: #E8003C; }
 
-        .categories__link {
-            flex: 0 0 auto;
-            font-size: 10px;
-            padding: 6px 14px;
-            border-radius: 16px;
-            border: 1px solid #E8003C;
-            color: #E8003C;
-            font-weight: 600;
-            transition: 0.3s;
+        /* --- Playlists Section --- */
+        .section-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin: 15px 0 10px; font-weight: 700; font-size: 14px;
         }
 
-        .categories__link:hover {
-            background: #E8003C;
-            color: #fff;
+        /* Horizontal Playlist Row (Mixes) */
+        .playlist-row {
+            display: flex; gap: 12px; overflow-x: auto;
+            padding-bottom: 10px; scrollbar-width: none;
+        }
+        .playlist-row::-webkit-scrollbar { display: none; }
+
+        .playlist-card { width: 140px; flex: 0 0 auto; cursor: pointer; }
+        
+        .thumb-stack {
+            position: relative; width: 100%; height: 80px;
+            border-radius: 8px; overflow: hidden; background: #000;
         }
 
-        /* Video Item Styles */
-        .video__item {
-            margin-bottom: 20px;
+        .thumb-stack img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* The Overlay that shows video count */
+        .playlist-overlay {
+            position: absolute; right: 0; top: 0; bottom: 0;
+            width: 35%; background: rgba(0,0,0,0.8);
+            color: #fff; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; font-size: 10px;
         }
 
-        .video__cover {
-            position: relative;
-            width: 100%;
-        }
+        .playlist-info { margin-top: 6px; }
+        .playlist-title { font-size: 11px; font-weight: 700; line-height: 1.2; }
+        .playlist-meta { font-size: 9px; color: #777; margin-top: 2px; }
 
-        .video__img {
-            height: 160px;
-            width: 100%;
-            border-radius: 12px;
-            object-fit: cover;
-            display: block;
-        }
+        /* --- Video Item --- */
+        .video-item { margin-top: 20px; }
+        .video-thumb { width: 100%; height: 160px; border-radius: 12px; object-fit: cover; }
+        .video-details { display: flex; margin-top: 10px; gap: 10px; }
+        .avatar { width: 32px; height: 32px; border-radius: 50%; }
+        .video-text h4 { font-size: 12px; margin-bottom: 2px; }
+        .video-text p { font-size: 10px; color: #666; }
 
-        .video__views {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 9px;
-            padding: 3px 8px;
-            border-radius: 10px;
-            color: #fff;
-            background: rgba(232, 0, 60, 0.9);
+        /* --- Bottom Nav --- */
+        .nav {
+            display: flex; justify-content: space-around; padding: 12px;
+            background: #fff; border-top: 1px solid #eee;
         }
-
-        .video__duration {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            font-size: 9px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: #fff;
-            background: rgba(0, 0, 0, 0.7);
-        }
-
-        .video__info {
-            display: flex;
-            margin-top: 10px;
-        }
-
-        .video__photo {
-            height: 35px;
-            width: 35px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-        }
-
-        .video__title {
-            font-size: 13px;
-            color: #222;
-            margin-bottom: 2px;
-        }
-
-        .video__channel {
-            font-size: 10px;
-            color: #777;
-        }
-
-        /* Bottom Menu Styles */
-        .menu {
-            width: 100%;
-            background-color: #fff;
-            padding: 10px 15px;
-            border-top: 1px solid #eee;
-        }
-
-        .menu__list {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .menu__link {
-            text-align: center;
-            color: #8c8c8c;
-            transition: 0.3s;
-        }
-
-        .menu__link:hover { color: #E8003C; }
-
-        .menu__icon {
-            height: 20px;
-            display: block;
-            margin: 0 auto 4px;
-        }
-
-        .menu__txt {
-            font-size: 8px;
-            font-weight: 700;
-        }
-
-        @media (max-width: 800px) {
-            .screen { transform: scale(0.85); }
-        }
+        .nav-item { font-size: 9px; font-weight: 700; color: #888; text-align: center; }
+        .nav-item.active { color: #E8003C; }
     </style>
 </head>
 <body>
 
-<div class="app">
-    <div class="screen">
-        <header class="header">
-            <img class="header__menu icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGc+PHBhdGggZmlsbD0iI2U4MDAzYyIgZD0ibTYsMzZsMTIsMGwwLC00bC0xMiwwbDAsNHptMCwtMjRsMCw0bDM2LDBsMCwtNGwtMzYsMHptMCwxNGwyNCwwbDAsLTRsLTI0LDBsMCw0eiIvPjwvZz48L3N2Zz4=" alt="Menu" />
-            <div class="header__logo">
-                <img class="header__icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMzIgMzIiIGhlaWdodD0iMzJweCIgdmlld0JveD0iMCAwIDMyIDMyIiB3aWR0aD0iMzJweCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48cGF0aCBkPSJNMzEuNjcsOS4xNzljMCwwLTAuMzEyLTIuMzUzLTEuMjcxLTMuMzg5Yy0xLjIxNy0xLjM1OC0yLjU4LTEuMzY2LTMuMjA1LTEuNDQzQzIyLjcxNyw0LDE2LjAwMiw0LDE2LjAwMiw0ICAgaC0wLjAxNWMwLDAtNi43MTUsMC0xMS4xOTEsMC4zNDdDNC4xNzEsNC40MjQsMi44MDksNC40MzIsMS41OTEsNS43OUMwLjYzMyw2LjgyNiwwLjMyLDkuMTc5LDAuMzIsOS4xNzlTMCwxMS45NCwwLDE0LjcwMXYyLjU4OCAgIGMwLDIuNzYzLDAuMzIsNS41MjMsMC4zMiw1LjUyM3MwLjMxMiwyLjM1MiwxLjI3MSwzLjM4NmMxLjIxOCwxLjM1OCwyLjgxNSwxLjMxNywzLjUyNywxLjQ1OUM3LjY3NywyNy45MTksMTUuOTk1LDI4LDE1Ljk5NSwyOCAgIHM2LjcyMi0wLjAxMiwxMS4xOTktMC4zNTVjMC42MjUtMC4wOCwxLjk4OC0wLjA4OCwzLjIwNS0xLjQ0NmMwLjk1OC0xLjAzNCwxLjI3MS0zLjM4NiwxLjI3MS0zLjM4NnMwLjMyLTIuNzYxLDAuMzItNS41MjN2LTIuNTg4ICBDMzEuOTksMTEuOTQsMzEuNjcsOS4xNzksMzEuNjcsOS4xNzl6IiBmaWxsPSIjRTAyRjJGIn8+PHBvbHlnb24gZmlsbD0iI0ZGRkZGRiIgcG9pbnRzPSIxMiwxMCAxMiwyMiAyMiwxNiIvPjwvZz48L3N2Zz4=" alt="YouTube" />
-                <h1 class="header__title">YouTube</h1>
-            </div>
-            <img class="header__search icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGc+PHBhdGggZmlsbD0iI2U4MDAzYyIgZD0ibTMxLDI4bC0xLjU5LDBsLTAuNTUsLTAuNTVjMS45NiwtMi4yNyAzLjE0LC01LjIyIDMuMTQsLTguNDVjMCwtNy4xOCAtNS44MiwtMTMgLTEzLC0xM3MtMTMsNS44MiAtMTMsMTNzNS44MiwxMyAxMywxM2MzLjIzLDAgNi4xOCwtMS4xIDguNDUsLTMuMTNsMC41NSwwLjU1bDAsMS41OGwxMSw5Ljk4bDIuOTgsLTIuOThsLTkuOTgsLTEwek0xOSwyOGMtNC45NywwIC05LC00LjAzIC05LC05czQuMDMsLTkgOSwtOXM5LDQuMDMgOSw5cy00LjAzLDkgLTksOXoiLz48L2c+PC9zdmc+" alt="Search" />
-        </header>
+<div class="screen">
+    <header class="header">
+        <span class="header__title">YouTube</span>
+        <div style="display:flex; gap: 15px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#E8003C"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            <div style="width:20px; height:20px; background:#ccc; border-radius:50%"></div>
+        </div>
+    </header>
 
-        <div class="content">
-            <div class="categories">
-                <a class="categories__link" href="#">High tech</a>
-                <a class="categories__link" href="#">Gaming</a>
-                <a class="categories__link" href="#">Music</a>
-                <a class="categories__link" href="#">Live</a>
-                <a class="categories__link" href="#">Podcasts</a>
-            </div>
+    <div class="content">
+        <div class="section-header">
+            <span>Your Playlists</span>
+            <span style="color:#E8003C; font-size:10px;">View all</span>
+        </div>
 
-            <div class="video">
-                <div class="video__item">
-                    <div class="video__cover">
-                        <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-2.jpg?raw=true" alt="Video Thumbnail" />
-                        <span class="video__views">4.5M views</span>
-                        <span class="video__duration">10:43</span>
-                    </div>
-                    <div class="video__info">
-                        <img class="video__photo" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/channel-1.png?raw=true" alt="Channel" />
-                        <div class="video__description">
-                            <h2 class="video__title">Arkon Fly - Live Session</h2>
-                            <h3 class="video__channel">Song.FM • 2 hours ago</h3>
-                        </div>
+        <div class="playlist-row">
+            <a href="https://www.youtube.com/watch?v=0K4gb1iJ62M&list=PLcEPRvlLG_Jsmz6JZVEhDpP6hH8kznylQ" target="_blank" class="playlist-card">
+                <div class="thumb-stack">
+                    <img src="https://www.youtube.com/watch?v=0K4gb1iJ62M&" alt="playlist">
+                    <div class="playlist-overlay">
+                        <span>24</span>
+                        <svg width="12" height="12" fill="white" viewBox="0 0 24 24"><path d="M19 9H2V11H19V9ZM19 5H2V7H19V5ZM2 15H15V13H2V15ZM17 13V19L22 16L17 13Z"/></svg>
                     </div>
                 </div>
+                <div class="playlist-info">
+                    <div class="playlist-title">Coding Mix</div>
+                    <div class="playlist-meta">Updated yesterday</div>
+                </div>
+            </a>
 
-                <div class="video__item">
-                    <div class="video__cover">
-                        <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-1.jpg?raw=true" alt="Video Thumbnail" />
-                        <span class="video__views">1.2M views</span>
-                        <span class="video__duration">05:20</span>
-                    </div>
-                    <div class="video__info">
-                        <img class="video__photo" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/channel-2.png?raw=true" alt="Channel" />
-                        <div class="video__description">
-                            <h2 class="video__title">Multicolor - Abstract Visuals</h2>
-                            <h3 class="video__channel">Design Co. • 1 day ago</h3>
-                        </div>
+            <div class="playlist-card">
+                <div class="thumb-stack">
+                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200" alt="playlist">
+                    <div class="playlist-overlay">
+                        <span>50+</span>
+                        <svg width="12" height="12" fill="white" viewBox="0 0 24 24"><path d="M19 9H2V11H19V9ZM19 5H2V7H19V5ZM2 15H15V13H2V15ZM17 13V19L22 16L17 13Z"/></svg>
                     </div>
                 </div>
+                <div class="playlist-info">
+                    <div class="playlist-title">Lo-fi Beats</div>
+                    <div class="playlist-meta">Private</div>
+                </div>
+            </div>
 
-                <div class="video__item">
-                    <div class="video__cover">
-                        <img class="video__img" src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80" alt="Video Thumbnail" />
-                        <span class="video__views">890K views</span>
-                        <span class="video__duration">15:00</span>
+            <div class="playlist-card">
+                <div class="thumb-stack">
+                    <img src="https://images.unsplash.com/photo-1514525253361-b83f859b71c0?w=200" alt="playlist">
+                    <div class="playlist-overlay">
+                        <span>12</span>
+                        <svg width="12" height="12" fill="white" viewBox="0 0 24 24"><path d="M19 9H2V11H19V9ZM19 5H2V7H19V5ZM2 15H15V13H2V15ZM17 13V19L22 16L17 13Z"/></svg>
                     </div>
-                    <div class="video__info">
-                        <img class="video__photo" src="https://i.pravatar.cc/100?u=tech" alt="Channel" />
-                        <div class="video__description">
-                            <h2 class="video__title">Retro Gaming Setup 2026</h2>
-                            <h3 class="video__channel">TechGeek • 5 hours ago</h3>
-                        </div>
-                    </div>
+                </div>
+                <div class="playlist-info">
+                    <div class="playlist-title">Gym Hype</div>
+                    <div class="playlist-meta">8 new videos</div>
                 </div>
             </div>
         </div>
 
-        <nav class="menu">
-            <ul class="menu__list">
-                <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjRweCIgaGVpZ2h0PSIyNHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9IiNFODAwM0MiIGQ9Ik0xMCwyMEg0VjRINDVWMTZIMjBWMThIMTRWMjBIMTBaTTEyLDZMMiwyMEgyMkwxMiw2WiIvPjwvc3ZnPg==" alt="Home" /><span class="menu__txt">Home</span></a></li>
-                <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjRweCIgaGVpZ2h0PSIyNHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9IiNFODAwM0MiIGQ9Ik0xMiwxN0ExLDUsMCwwLDEsMTcsMTJaIi8+PC9zdmc+" alt="Shorts" /><span class="menu__txt">Shorts</span></a></li>
-                <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjRweCIgaGVpZ2h0PSIyNHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9IiNFODAwM0MiIGQ9Ik0xOSwxM2gxNHYyaC0xNHoiLz48L3N2Zz4=" alt="Subscriptions" /><span class="menu__txt">Subs</span></a></li>
-                <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjRweCIgaGVpZ2h0PSIyNHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9IiNFODAwM0MiIGQ9Ik00LDhoMTR2Mkg0eiIvPjwvc3ZnPg==" alt="Library" /><span class="menu__txt">Library</span></a></li>
-            </ul>
-        </nav>
+        <div class="section-header">Recommended</div>
+
+        <div class="video-item">
+            <img class="video-thumb" src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=400" alt="video">
+            <div class="video-details">
+                <img src="https://i.pravatar.cc/100?u=tech" class="avatar" alt="avatar">
+                <div class="video-text">
+                    <h4>Building a Modern UI in 2026</h4>
+                    <p>Creative Studio • 1.2M views • 3 days ago</p>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <nav class="nav">
+        <div class="nav-item active">Home</div>
+        <div class="nav-item">Shorts</div>
+        <div class="nav-item">Subs</div>
+        <div class="nav-item">Library</div>
+    </nav>
 </div>
 
 </body>
