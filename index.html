@@ -3,173 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube UI - Playlists</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <title>GameBoy Advance - CSS Art</title>
     <style>
-        /* --- Base Setup --- */
-        *, *::after, *::before { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html {
-            width: 100%; height: 100vh;
-            display: flex; justify-content: center; align-items: center;
-            font-family: 'Montserrat', sans-serif; background-color: #ddd;
+        /* CSS Variables & Reset */
+        :root {
+            --bg: #e3e3e3;
+            --gba-1: #605bd9;
+            --gba-2: #4b45cc;
+            --gba-3: #352eb9;
+            --screen-1: #23252d;
+            --screen-2: #16181b;
+            --glass: #6d6e7c;
+            --btn-1: #4e505d;
+            --btn-2: #343640;
+            --btn-3: #22232a;
+            --btn-red: #d1375b;
+            --btn-red-2: #9b1d3b;
+            --font-1: #ccc;
+            --font-2: #727383;
+            --font-3: #23252d;
+            --power-1: #35b349;
+            --power-2: #1e6e2b;
         }
 
-        /* --- Mobile Screen --- */
-        .screen {
-            display: flex; flex-direction: column;
-            width: 325px; height: 617px;
-            box-shadow: 0px 20px 40px rgba(0,0,0,0.2);
-            border-radius: 30px; background-color: #F9F9F9;
-            overflow: hidden; border: 8px solid #333;
+        *, *::after, *::before {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        /* --- Scrollable Content --- */
-        .content {
-            flex: 1; overflow-y: auto; padding: 12px;
-            scrollbar-width: none;
-        }
-        .content::-webkit-scrollbar { display: none; }
-
-        /* --- Header --- */
-        .header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 5px; background: #F9F9F9;
-        }
-        .header__title { font-size: 18px; font-weight: 700; color: #E8003C; }
-
-        /* --- Playlists Section --- */
-        .section-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin: 15px 0 10px; font-weight: 700; font-size: 14px;
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--bg);
+            font-family: sans-serif;
+            overflow: hidden;
         }
 
-        /* Horizontal Playlist Row (Mixes) */
-        .playlist-row {
-            display: flex; gap: 12px; overflow-x: auto;
-            padding-bottom: 10px; scrollbar-width: none;
+        /* Main Container */
+        .gba {
+            position: relative;
+            width: 580px;
+            height: 340px;
+            background-color: var(--gba-1);
+            border-radius: 40px 40px 100px 100px;
+            box-shadow: inset 0 -10px 0 var(--gba-3), 0 20px 40px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 8px solid var(--gba-3);
         }
-        .playlist-row::-webkit-scrollbar { display: none; }
 
-        .playlist-card { width: 140px; flex: 0 0 auto; cursor: pointer; }
+        /* L and R Buttons */
+        .gba::before, .gba::after {
+            content: "";
+            position: absolute;
+            top: -15px;
+            width: 120px;
+            height: 40px;
+            background: #d1d1d6;
+            z-index: -1;
+            border-radius: 20px 20px 0 0;
+            box-shadow: inset 0 5px 0 white;
+        }
+        .gba::before { left: 40px; }
+        .gba::after { right: 40px; }
+
+        /* Screen Area */
+        .screen-container {
+            position: relative;
+            width: 440px;
+            height: 280px;
+            background-color: var(--screen-1);
+            border-radius: 10px 10px 40px 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border: 4px solid var(--screen-2);
+        }
+
+        .glass {
+            width: 300px;
+            height: 200px;
+            background-color: #333;
+            border: 5px solid #111;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .glass iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Logo under screen */
+        .logo {
+            color: var(--font-1);
+            font-weight: bold;
+            font-style: italic;
+            font-size: 14px;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
+        .logo span { color: #888; font-style: normal; font-size: 10px; margin-left: 5px;}
+
+        /* Buttons Left (D-PAD) */
+        .controls-left {
+            position: absolute;
+            left: 20px;
+            top: 100px;
+        }
+
+        .d-pad {
+            position: relative;
+            width: 90px;
+            height: 90px;
+        }
+
+        .d-pad-hor, .d-pad-ver {
+            position: absolute;
+            background: var(--btn-1);
+            border-radius: 5px;
+            box-shadow: 0 4px var(--btn-3);
+        }
+
+        .d-pad-hor {
+            width: 90px;
+            height: 30px;
+            top: 30px;
+        }
+
+        .d-pad-ver {
+            width: 30px;
+            height: 90px;
+            left: 30px;
+        }
+
+        /* Buttons Right (A & B) */
+        .controls-right {
+            position: absolute;
+            right: 25px;
+            top: 110px;
+            display: flex;
+            gap: 15px;
+            transform: rotate(-15deg);
+        }
+
+        .btn-circle {
+            width: 45px;
+            height: 45px;
+            background: var(--btn-1);
+            border-radius: 50%;
+            box-shadow: 0 5px var(--btn-3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--font-2);
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .btn-circle:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px var(--btn-3);
+        }
+
+        /* Select and Start */
+        .controls-bottom {
+            position: absolute;
+            bottom: 40px;
+            right: 120px;
+            display: flex;
+            gap: 20px;
+            transform: rotate(-15deg);
+        }
+
+        .btn-pill {
+            width: 40px;
+            height: 10px;
+            background: var(--btn-1);
+            border-radius: 10px;
+            box-shadow: 0 3px var(--btn-3);
+        }
+
+        /* Power Light */
+        .power {
+            position: absolute;
+            right: 20px;
+            top: 50px;
+            text-align: center;
+        }
+
+        .light {
+            width: 10px;
+            height: 10px;
+            background: var(--power-1);
+            border-radius: 50%;
+            margin: 0 auto 5px;
+            box-shadow: 0 0 10px var(--power-1);
+        }
         
-        .thumb-stack {
-            position: relative; width: 100%; height: 80px;
-            border-radius: 8px; overflow: hidden; background: #000;
+        .power-text {
+            color: var(--font-1);
+            font-size: 8px;
+            text-transform: uppercase;
         }
 
-        .thumb-stack img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* The Overlay that shows video count */
-        .playlist-overlay {
-            position: absolute; right: 0; top: 0; bottom: 0;
-            width: 35%; background: rgba(0,0,0,0.8);
-            color: #fff; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; font-size: 10px;
+        /* Speaker holes */
+        .speaker {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            display: grid;
+            grid-template-columns: repeat(2, 6px);
+            gap: 8px;
         }
 
-        .playlist-info { margin-top: 6px; }
-        .playlist-title { font-size: 11px; font-weight: 700; line-height: 1.2; }
-        .playlist-meta { font-size: 9px; color: #777; margin-top: 2px; }
-
-        /* --- Video Item --- */
-        .video-item { margin-top: 20px; }
-        .video-thumb { width: 100%; height: 160px; border-radius: 12px; object-fit: cover; }
-        .video-details { display: flex; margin-top: 10px; gap: 10px; }
-        .avatar { width: 32px; height: 32px; border-radius: 50%; }
-        .video-text h4 { font-size: 12px; margin-bottom: 2px; }
-        .video-text p { font-size: 10px; color: #666; }
-
-        /* --- Bottom Nav --- */
-        .nav {
-            display: flex; justify-content: space-around; padding: 12px;
-            background: #fff; border-top: 1px solid #eee;
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--gba-3);
+            border-radius: 50%;
         }
-        .nav-item { font-size: 9px; font-weight: 700; color: #888; text-align: center; }
-        .nav-item.active { color: #E8003C; }
+
     </style>
 </head>
 <body>
 
-<div class="screen">
-    <header class="header">
-        <span class="header__title">YouTube</span>
-        <div style="display:flex; gap: 15px;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="#E8003C"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-            <div style="width:20px; height:20px; background:#ccc; border-radius:50%"></div>
-        </div>
-    </header>
-
-    <div class="content">
-        <div class="section-header">
-            <span>Your Playlists</span>
-            <span style="color:#E8003C; font-size:10px;">View all</span>
-        </div>
-
-        <div class="playlist-row">
-            <a href="https://www.youtube.com/watch?v=0K4gb1iJ62M&list=PLcEPRvlLG_Jsmz6JZVEhDpP6hH8kznylQ" target="_blank" class="playlist-card">
-                <div class="thumb-stack">
-                    <img src="https://www.youtube.com/watch?v=0K4gb1iJ62M&" alt="playlist">
-                    <div class="playlist-overlay">
-                        <span>24</span>
-                        <svg width="12" height="12" fill="white" viewBox="0 0 24 24"><path d="M19 9H2V11H19V9ZM19 5H2V7H19V5ZM2 15H15V13H2V15ZM17 13V19L22 16L17 13Z"/></svg>
-                    </div>
-                </div>
-                <div class="playlist-info">
-                    <div class="playlist-title">Coding Mix</div>
-                    <div class="playlist-meta">Updated yesterday</div>
-                </div>
-            </a>
-
-            <div class="playlist-card">
-                <div class="thumb-stack">
-                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200" alt="playlist">
-                    <div class="playlist-overlay">
-                        <span>50+</span>
-                        <svg width="12" height="12" fill="white" viewBox="0 0 24 24"><path d="M19 9H2V11H19V9ZM19 5H2V7H19V5ZM2 15H15V13H2V15ZM17 13V19L22 16L17 13Z"/></svg>
-                    </div>
-                </div>
-                <div class="playlist-info">
-                    <div class="playlist-title">Lo-fi Beats</div>
-                    <div class="playlist-meta">Private</div>
-                </div>
-            </div>
-
-            <div class="playlist-card">
-                <div class="thumb-stack">
-                    <img src="https://images.unsplash.com/photo-1514525253361-b83f859b71c0?w=200" alt="playlist">
-                    <div class="playlist-overlay">
-                        <span>12</span>
-                        <svg width="12" height="12" fill="white" viewBox="0 0 24 24"><path d="M19 9H2V11H19V9ZM19 5H2V7H19V5ZM2 15H15V13H2V15ZM17 13V19L22 16L17 13Z"/></svg>
-                    </div>
-                </div>
-                <div class="playlist-info">
-                    <div class="playlist-title">Gym Hype</div>
-                    <div class="playlist-meta">8 new videos</div>
-                </div>
+    <div class="gba">
+        <div class="controls-left">
+            <div class="d-pad">
+                <div class="d-pad-hor"></div>
+                <div class="d-pad-ver"></div>
             </div>
         </div>
 
-        <div class="section-header">Recommended</div>
-
-        <div class="video-item">
-            <img class="video-thumb" src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=400" alt="video">
-            <div class="video-details">
-                <img src="https://i.pravatar.cc/100?u=tech" class="avatar" alt="avatar">
-                <div class="video-text">
-                    <h4>Building a Modern UI in 2026</h4>
-                    <p>Creative Studio • 1.2M views • 3 days ago</p>
-                </div>
+        <div class="screen-container">
+            <div class="glass">
+                <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJndXh3ZzRyeXF4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/l41lTjJp9mH7Mv8Wk/giphy.gif" alt="Pokemon" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
+            <div class="logo">GAME BOY <span>ADVANCE</span></div>
+        </div>
+
+        <div class="controls-right">
+            <div class="btn-circle">B</div>
+            <div class="btn-circle">A</div>
+        </div>
+
+        <div class="controls-bottom">
+            <div class="btn-pill"></div>
+            <div class="btn-pill"></div>
+        </div>
+
+        <div class="power">
+            <div class="light"></div>
+            <div class="power-text">Power</div>
+        </div>
+
+        <div class="speaker">
+            <div class="dot"></div><div class="dot"></div>
+            <div class="dot"></div><div class="dot"></div>
+            <div class="dot"></div><div class="dot"></div>
         </div>
     </div>
 
-    <nav class="nav">
-        <div class="nav-item active">Home</div>
-        <div class="nav-item">Shorts</div>
-        <div class="nav-item">Subs</div>
-        <div class="nav-item">Library</div>
-    </nav>
-</div>
-
+    <script>
+        // Ricardo's JS usually handles small interactions.
+        // For this UI art, you can add button click sound effects or screen toggles here.
+        document.querySelectorAll('.btn-circle').forEach(button => {
+            button.addEventListener('click', () => {
+                console.log('Button pressed!');
+                button.style.backgroundColor = '#333';
+                setTimeout(() => {
+                    button.style.backgroundColor = '';
+                }, 100);
+            });
+        });
+    </script>
 </body>
 </html>
