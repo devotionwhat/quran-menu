@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Kids - Interactive Player</title>
+    <title>YouTube Kids - Auto-Hide UI</title>
     <style>
         :root {
             --yt-red: #FF0000;
@@ -22,60 +22,85 @@
         }
 
         /* --- PLAYER AREA --- */
-        .player-container {
+        .main-wrapper {
             position: relative;
             width: 100%;
-            height: 65vh;
+            height: 100vh;
             background: #000;
         }
 
         #youtube-player {
             width: 100%;
             height: 100%;
-            pointer-events: auto;
         }
 
-        /* --- UI OVERLAY --- */
-        .video-overlay {
+        /* --- UI OVERLAY CONTAINER --- */
+        #ui-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             padding: 20px;
             box-sizing: border-box;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.6) 100%);
+            background: rgba(0, 0, 0, 0.4);
             z-index: 10;
+            transition: opacity 0.5s ease, visibility 0.5s;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none; /* Allows clicks to reach the trigger layer */
         }
 
+        /* When active, show UI and allow interaction */
+        #ui-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* Invisible layer to catch clicks when UI is hidden */
+        #click-trigger {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            cursor: pointer;
+        }
+
+        /* --- TOP BAR --- */
         .top-bar {
             display: flex;
             align-items: center;
             gap: 15px;
-            pointer-events: auto;
         }
 
         .back-btn { font-size: 28px; cursor: pointer; background: none; border: none; color: white; }
         .video-title { font-size: 18px; font-weight: bold; margin: 0; }
         .channel-info { font-size: 13px; color: #ccc; }
-        .sub-btn { background: var(--yt-red); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; }
+        .sub-btn { background: var(--yt-red); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; }
 
-        /* --- FUNCTIONAL PROGRESS BAR --- */
-        .bottom-controls {
+        /* --- PROGRESS BAR --- */
+        .bottom-area {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .controls-row {
             width: 100%;
             display: flex;
             align-items: center;
             gap: 15px;
-            pointer-events: auto;
         }
 
         .progress-container {
             flex-grow: 1;
-            height: 20px; /* Larger hit area for clicking */
+            height: 20px;
             display: flex;
             align-items: center;
             cursor: pointer;
@@ -87,7 +112,6 @@
             height: 6px;
             background: rgba(255,255,255,0.3);
             border-radius: 3px;
-            overflow: hidden;
         }
 
         .progress-fill {
@@ -104,46 +128,48 @@
             position: absolute;
             left: 0%;
             transform: translateX(-50%);
-            box-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
 
         /* --- CAROUSEL --- */
         .carousel-section {
             width: 100%;
-            height: 35vh;
-            background-color: #000;
             display: flex;
             align-items: center;
             overflow-x: auto;
-            padding: 10px 20px;
-            box-sizing: border-box;
+            padding: 10px 0;
             gap: 15px;
             scrollbar-width: none;
         }
 
+        .carousel-section::-webkit-scrollbar { display: none; }
+
         .thumb-card {
             flex: 0 0 auto;
-            position: relative;
-            width: 220px;
-            height: 120px;
+            width: 180px;
+            height: 100px;
             border-radius: var(--card-radius);
             overflow: hidden;
             cursor: pointer;
             border: 4px solid transparent;
+            transition: transform 0.2s;
         }
 
+        .thumb-card:hover { transform: scale(1.05); }
         .thumb-card.active { border-color: var(--yt-red); }
         .thumb-card img { width: 100%; height: 100%; object-fit: cover; }
+
     </style>
 </head>
 <body>
 
-    <div class="player-container">
+    <div class="main-wrapper">
         <div id="youtube-player"></div>
 
-        <div class="video-overlay">
+        <div id="click-trigger" onclick="showUI()"></div>
+
+        <div id="ui-overlay" onclick="resetTimer()">
             <div class="top-bar">
-                <button class="back-btn">←</button>
+                <button class="back-btn" onclick="hideUI()">←</button>
                 <div style="flex-grow:1">
                     <div class="video-title" id="displayTitle">Grandma and Miles Go for a Spin</div>
                     <div class="channel-info">Gecko's Garage</div>
@@ -151,31 +177,33 @@
                 <button class="sub-btn">SUBSCRIBE</button>
             </div>
 
-            <div class="bottom-controls">
-                <span id="currentTime" style="font-size: 14px; min-width: 40px;">0:00</span>
-                <div class="progress-container" id="progressContainer">
-                    <div class="progress-bg">
-                        <div class="progress-fill" id="progressFill"></div>
+            <div class="bottom-area">
+                <div class="carousel-section" id="carousel">
+                    <div class="thumb-card active" onclick="changeVideo('dQw4w9WgXcQ', 'Grandma and Miles Go for a Spin', this)">
+                        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg">
                     </div>
-                    <div class="progress-knob" id="progressKnob"></div>
+                    <div class="thumb-card" onclick="changeVideo('9bZkp7q19f0', 'Blippi Skis on the Mountain', this)">
+                        <img src="https://img.youtube.com/vi/9bZkp7q19f0/mqdefault.jpg">
+                    </div>
+                    <div class="thumb-card" onclick="changeVideo('fHI8X4OXW-Q', 'Healthy Broccoli Song!', this)">
+                        <img src="https://img.youtube.com/vi/fHI8X4OXW-Q/mqdefault.jpg">
+                    </div>
+                    <div class="thumb-card" onclick="changeVideo('kJQP7kiw5Fk', 'Kids Dance Party', this)">
+                        <img src="https://img.youtube.com/vi/kJQP7kiw5Fk/mqdefault.jpg">
+                    </div>
                 </div>
-                <span id="totalTime" style="font-size: 14px; min-width: 40px;">0:00</span>
-            </div>
-        </div>
-    </div>
 
-    <div class="carousel-section" id="carousel">
-        <div class="thumb-card active" onclick="changeVideo('dQw4w9WgXcQ', 'Grandma and Miles Go for a Spin', this)">
-            <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg">
-        </div>
-        <div class="thumb-card" onclick="changeVideo('9bZkp7q19f0', 'Blippi Skis on the Mountain', this)">
-            <img src="https://img.youtube.com/vi/9bZkp7q19f0/mqdefault.jpg">
-        </div>
-        <div class="thumb-card" onclick="changeVideo('fHI8X4OXW-Q', 'Healthy Broccoli Song!', this)">
-            <img src="https://img.youtube.com/vi/fHI8X4OXW-Q/mqdefault.jpg">
-        </div>
-        <div class="thumb-card" onclick="changeVideo('kJQP7kiw5Fk', 'Kids Dance Party', this)">
-            <img src="https://img.youtube.com/vi/kJQP7kiw5Fk/mqdefault.jpg">
+                <div class="controls-row">
+                    <span id="currentTime" style="font-size: 14px; min-width: 40px;">0:00</span>
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bg">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-knob" id="progressKnob"></div>
+                    </div>
+                    <span id="totalTime" style="font-size: 14px; min-width: 40px;">0:00</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -183,53 +211,61 @@
 
     <script>
         let player;
+        let hideTimer;
+        const uiOverlay = document.getElementById('ui-overlay');
         const progressFill = document.getElementById('progressFill');
         const progressKnob = document.getElementById('progressKnob');
         const progressContainer = document.getElementById('progressContainer');
         const currentTimeText = document.getElementById('currentTime');
         const totalTimeText = document.getElementById('totalTime');
 
-        // Initialize Player
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-player', {
                 videoId: 'dQw4w9WgXcQ',
-                playerVars: { 
-                    'autoplay': 1, 
-                    'controls': 0, // We are building our own controls
-                    'modestbranding': 1,
-                    'rel': 0
-                },
-                events: {
-                    'onReady': onPlayerReady
-                }
+                playerVars: { 'autoplay': 1, 'controls': 0, 'modestbranding': 1, 'rel': 0, 'iv_load_policy': 3 },
+                events: { 'onReady': onPlayerReady }
             });
         }
 
-        function onPlayerReady(event) {
-            // Start updating progress bar every 100ms
+        function onPlayerReady() {
             setInterval(updateProgressBar, 100);
+            showUI(); // Show UI initially
         }
 
+        // --- SHOW / HIDE LOGIC ---
+        function showUI() {
+            uiOverlay.classList.add('visible');
+            resetTimer();
+        }
+
+        function hideUI() {
+            uiOverlay.classList.remove('visible');
+        }
+
+        function resetTimer() {
+            clearTimeout(hideTimer);
+            // Hide after 5 seconds of inactivity
+            hideTimer = setTimeout(hideUI, 5000);
+        }
+
+        // --- VIDEO LOGIC ---
         function updateProgressBar() {
             if (player && player.getCurrentTime) {
                 const current = player.getCurrentTime();
                 const total = player.getDuration();
                 const pct = (current / total) * 100;
-
                 progressFill.style.width = pct + '%';
                 progressKnob.style.left = pct + '%';
-                
                 currentTimeText.innerText = formatTime(current);
                 totalTimeText.innerText = formatTime(total);
             }
         }
 
-        // Seek functionality (Moving forward/backward)
         progressContainer.addEventListener('click', (e) => {
             const rect = progressContainer.getBoundingClientRect();
             const pos = (e.clientX - rect.left) / rect.width;
-            const seekTo = pos * player.getDuration();
-            player.seekTo(seekTo, true);
+            player.seekTo(pos * player.getDuration(), true);
+            resetTimer();
         });
 
         function changeVideo(id, title, element) {
@@ -237,6 +273,7 @@
             document.getElementById('displayTitle').innerText = title;
             document.querySelectorAll('.thumb-card').forEach(c => c.classList.remove('active'));
             element.classList.add('active');
+            resetTimer();
         }
 
         function formatTime(seconds) {
