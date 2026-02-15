@@ -1,0 +1,33 @@
+.videolist {
+  margin: 0 auto;
+  width: 855px;
+}
+.videolist .video-responsive {
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 56.25%;
+  position: relative;
+}
+.videolist .video-responsive iframe {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+#carousel .slides li {
+  position: relative;
+}
+#carousel .slides li:before {
+  background: url("https://cdn.freebiesupply.com/logos/thumbs/2x/youtube-icon-logo.png") 0 0 no-repeat;
+  background-size: cover;
+  content: "";
+  display: inline-block;
+  height: 60px;
+  left: 25%;
+  position: absolute;
+  top: 25%;
+  width: 80px;
+  z-index: 100;
+}
