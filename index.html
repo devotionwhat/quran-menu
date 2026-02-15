@@ -2,264 +2,150 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>YouTube Kids - Custom Playlist Player</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tabbed Website</title>
     <style>
-        :root {
-            --yt-red: #FF0000;
-            --card-radius: 12px;
-            --bg-color: #000;
+        /* CSS STYLES */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg-color);
-            font-family: 'Arial Rounded MT Bold', 'Helvetica', sans-serif;
-            overflow: hidden; color: white;
-            -webkit-tap-highlight-color: transparent;
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin-top: 50px;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
         }
 
-        /* Container & Player */
-        .main-container { position: relative; width: 100vw; height: 100vh; background: #000; }
-        #youtube-player { width: 100%; height: 100%; }
-
-        /* Invisible layer to catch taps and toggle UI */
-        #ui-trigger {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 5; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+        /* Tab Header */
+        .tabs {
+            display: flex;
+            background: #333;
         }
 
-        /* Status Icon Overlay */
-        #status-icon {
-            font-size: 60px; background: rgba(0,0,0,0.5);
-            width: 100px; height: 100px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.3s, transform 0.3s;
-            pointer-events: none; transform: scale(0.5);
-        }
-        #status-icon.show { opacity: 1; transform: scale(1); }
-
-        /* Main UI Overlay */
-        #video-ui {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; display: flex; flex-direction: column;
-            justify-content: space-between; padding: 20px; box-sizing: border-box;
-            background: rgba(0, 0, 0, 0.4); z-index: 10;
-            transition: opacity 0.4s ease, visibility 0.4s;
-        }
-        .hidden-ui { opacity: 0; visibility: hidden; }
-
-        .top-bar { display: flex; align-items: center; gap: 15px; pointer-events: auto; }
-        .video-title { font-size: 18px; font-weight: bold; flex-grow: 1; }
-
-        /* Carousel Section */
-        .bottom-section { pointer-events: auto; display: flex; flex-direction: column; gap: 15px; }
-        .carousel-section {
-            width: 100%; display: flex; align-items: center; overflow-x: auto;
-            gap: 15px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
-        }
-        .carousel-section::-webkit-scrollbar { display: none; }
-
-        .thumb-card {
-            flex: 0 0 auto; width: 180px; height: 100px; border-radius: var(--card-radius);
-            overflow: hidden; cursor: pointer; border: 4px solid transparent;
-            position: relative; transition: transform 0.2s;
-        }
-        .thumb-card:active { transform: scale(0.95); }
-        .thumb-card.active { border-color: var(--yt-red); }
-        .thumb-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-        
-        /* Playlist Label Overlay */
-        .playlist-label {
-            position: absolute; bottom: 0; width: 100%;
-            background: rgba(255, 0, 0, 0.8); color: white;
-            font-size: 10px; text-align: center; padding: 2px 0; font-weight: bold;
+        .tab-link {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            color: white;
+            background: #333;
+            transition: 0.3s;
+            font-size: 16px;
         }
 
-        /* Progress Bar */
-        .progress-row { width: 100%; display: flex; align-items: center; gap: 15px; }
-        .progress-container { flex-grow: 1; height: 40px; display: flex; align-items: center; cursor: pointer; position: relative; touch-action: none; }
-        .progress-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; }
-        .progress-fill { width: 0%; height: 100%; background: var(--yt-red); border-radius: 3px; }
-        .progress-knob { width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; left: 0%; transform: translateX(-50%); }
+        .tab-link:hover {
+            background: #444;
+        }
+
+        .tab-link.active {
+            background: #007bff;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive Video Container */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            background: #000;
+            border-radius: 5px;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        h2 { color: #333; }
+        p { color: #666; line-height: 1.6; }
     </style>
 </head>
 <body>
 
-    <div class="main-container">
-        <div id="youtube-player"></div>
+<div class="container">
+    <div class="tabs">
+        <button class="tab-link active" onclick="openTab(event, 'Home')">Home</button>
+        <button class="tab-link" onclick="openTab(event, 'About')">About</button>
+        <button class="tab-link" onclick="openTab(event, 'Contact')">Contact</button>
+    </div>
+
+    <div id="Home" class="tab-content active">
+        <h2>Welcome Home</h2>
+        <p>Check out our latest YouTube Playlist below:</p>
         
-        <div id="ui-trigger" onclick="handleMainClick()">
-            <div id="status-icon">▶</div>
-        </div>
-
-        <div id="video-ui">
-            <div class="top-bar">
-                <div class="video-title" id="displayTitle">Loading...</div>
-                <button style="background:var(--yt-red); color:white; border:none; padding:8px 15px; border-radius:20px; font-weight:bold;">SUBSCRIBE</button>
-            </div>
-
-            <div class="bottom-section">
-                <div class="carousel-section" onscroll="resetHideTimer()">
-                    
-                    <div class="thumb-card active" onclick="playSingleVideo('V_UXI8BoPnw', 'Makkah Live', this)">
-                        <img src="https://img.youtube.com/vi/V_UXI8BoPnw/mqdefault.jpg">
-                    </div>
-
-                    <div class="thumb-card" onclick="playPlaylist('PL689E464E62F766C2', 'Kids Songs Playlist', this)">
-                        <img src="https://img.youtube.com/vi/V_UXI8BoPnw/mqdefault.jpg"> <div class="playlist-label">PLAYLIST ☰</div>
-                    </div>
-
-                    <div class="thumb-card" onclick="playSingleVideo('HQBygBpQCSM', 'Madinah Live', this)">
-                        <img src="https://img.youtube.com/vi/HQBygBpQCSM/mqdefault.jpg">
-                    </div>
-
-                </div>
-
-                <div class="progress-row">
-                    <span id="currentTime" style="font-size: 12px; min-width: 35px;">0:00</span>
-                    <div class="progress-container" id="progressContainer">
-                        <div class="progress-bg"><div class="progress-fill" id="progressFill"></div></div>
-                        <div class="progress-knob" id="progressKnob"></div>
-                    </div>
-                    <span id="totalTime" style="font-size: 12px; min-width: 35px;">0:00</span>
-                </div>
-            </div>
+        <div class="video-container">
+            <iframe 
+                src="https://www.youtube.com/embed/videoseries?list=PLu0W_9lII9agICnT8t4iYNiMre1BC7fci" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
         </div>
     </div>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
+    <div id="About" class="tab-content">
+        <h2>About Us</h2>
+        <p>This is a single-page HTML document containing CSS, JavaScript, and an embedded YouTube playlist.</p>
+    </div>
 
-    <script>
-        let player;
-        let isUIVisible = true;
-        let isDragging = false;
-        let hideTimer;
-        
-        const uiElement = document.getElementById('video-ui');
-        const statusIcon = document.getElementById('status-icon');
-        const progressFill = document.getElementById('progressFill');
-        const progressKnob = document.getElementById('progressKnob');
-        const progressContainer = document.getElementById('progressContainer');
+    <div id="Contact" class="tab-content">
+        <h2>Contact</h2>
+        <p>Email: example@email.com</p>
+    </div>
+</div>
 
-        // Initialize Player
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('youtube-player', {
-                videoId: 'V_UXI8BoPnw',
-                playerVars: { 
-                    'autoplay': 1, 'controls': 0, 'modestbranding': 1, 
-                    'rel': 0, 'iv_load_policy': 3, 'playsinline': 1 
-                },
-                events: { 'onReady': onPlayerReady }
-            });
+<script>
+    /* JAVASCRIPT LOGIC */
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+
+        // Hide all tab content
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.remove("active");
         }
 
-        function onPlayerReady() {
-            document.getElementById('displayTitle').innerText = "Makkah Live";
-            setInterval(updateProgressBar, 100);
-            startHideTimer();
+        // Remove the "active" class from all buttons
+        tablinks = document.getElementsByClassName("tab-link");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
         }
 
-        // PLAYLIST LOGIC (No API Key needed)
-        function playPlaylist(listId, title, element) {
-            if (window.event) window.event.stopPropagation();
-            player.loadPlaylist({
-                list: listId,
-                listType: 'playlist',
-                index: 0
-            });
-            document.getElementById('displayTitle').innerText = title;
-            updateActiveCard(element);
-            hideUI();
-        }
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+</script>
 
-        function playSingleVideo(id, title, element) {
-            if (window.event) window.event.stopPropagation();
-            player.loadVideoById(id);
-            document.getElementById('displayTitle').innerText = title;
-            updateActiveCard(element);
-            hideUI();
-        }
-
-        function updateActiveCard(element) {
-            document.querySelectorAll('.thumb-card').forEach(c => c.classList.remove('active'));
-            element.classList.add('active');
-        }
-
-        // UI Management
-        function handleMainClick() {
-            if (isDragging) return;
-            if (!isUIVisible) {
-                showUI();
-            } else {
-                const state = player.getPlayerState();
-                if (state === 1) { // Playing -> Pause
-                    player.pauseVideo();
-                    showStatusIcon('Ⅱ');
-                    clearTimeout(hideTimer);
-                } else { // Paused -> Play
-                    player.playVideo();
-                    showStatusIcon('▶');
-                    hideUI();
-                }
-            }
-        }
-
-        function showStatusIcon(char) {
-            statusIcon.innerText = char;
-            statusIcon.classList.add('show');
-            setTimeout(() => statusIcon.classList.remove('show'), 600);
-        }
-
-        function startHideTimer() {
-            clearTimeout(hideTimer);
-            if (isUIVisible && !isDragging && player.getPlayerState() === 1) {
-                hideTimer = setTimeout(() => hideUI(), 4000);
-            }
-        }
-
-        function resetHideTimer() { if (isUIVisible) startHideTimer(); }
-        function hideUI() { isUIVisible = false; uiElement.classList.add('hidden-ui'); }
-        function showUI() { isUIVisible = true; uiElement.classList.remove('hidden-ui'); startHideTimer(); }
-
-        // Progress Bar Logic
-        function updateProgressBar() {
-            if (player && player.getCurrentTime && !isDragging) {
-                const current = player.getCurrentTime();
-                const total = player.getDuration();
-                if (total > 0) {
-                    const pct = (current / total) * 100;
-                    progressFill.style.width = pct + '%';
-                    progressKnob.style.left = pct + '%';
-                    document.getElementById('currentTime').innerText = formatTime(current);
-                    document.getElementById('totalTime').innerText = formatTime(total);
-                }
-            }
-        }
-
-        function formatTime(s) {
-            const m = Math.floor(s / 60);
-            const rs = Math.floor(s % 60);
-            return m + ":" + (rs < 10 ? '0' : '') + rs;
-        }
-
-        // Scrubbing/Seeking
-        function handleScrub(e) {
-            const rect = progressContainer.getBoundingClientRect();
-            const touchX = e.touches ? e.touches[0].clientX : e.clientX;
-            let pct = ((touchX - rect.left) / rect.width) * 100;
-            pct = Math.max(0, Math.min(100, pct));
-            progressFill.style.width = pct + '%';
-            progressKnob.style.left = pct + '%';
-            if (!isDragging) {
-                player.seekTo((pct / 100) * player.getDuration(), true);
-            }
-        }
-
-        progressContainer.addEventListener('mousedown', (e) => { isDragging = true; handleScrub(e); });
-        window.addEventListener('mousemove', (e) => { if (isDragging) handleScrub(e); });
-        window.addEventListener('mouseup', () => { isDragging = false; startHideTimer(); });
-    </script>
 </body>
 </html>
