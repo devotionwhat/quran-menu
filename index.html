@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Kids - Auto-Hide UI</title>
+    <title>YouTube Kids - WebView Optimized</title>
     <style>
         :root {
             --yt-red: #FF0000;
@@ -21,10 +21,10 @@
             color: white;
         }
 
-        /* --- PLAYER AREA --- */
-        .main-wrapper {
+        /* --- THE PLAYER --- */
+        .main-container {
             position: relative;
-            width: 100%;
+            width: 100vw;
             height: 100vh;
             background: #000;
         }
@@ -34,35 +34,9 @@
             height: 100%;
         }
 
-        /* --- UI OVERLAY CONTAINER --- */
-        #ui-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px;
-            box-sizing: border-box;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 10;
-            transition: opacity 0.5s ease, visibility 0.5s;
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none; /* Allows clicks to reach the trigger layer */
-        }
-
-        /* When active, show UI and allow interaction */
-        #ui-overlay.visible {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-        }
-
-        /* Invisible layer to catch clicks when UI is hidden */
-        #click-trigger {
+        /* --- CLICK SHIELD --- 
+           This layer detects taps in the WebView to hide/show UI */
+        #ui-trigger {
             position: absolute;
             top: 0;
             left: 0;
@@ -72,75 +46,57 @@
             cursor: pointer;
         }
 
-        /* --- TOP BAR --- */
+        /* --- UI OVERLAY --- */
+        #video-ui {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows click through to trigger */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            transition: opacity 0.4s ease, visibility 0.4s;
+        }
+
+        /* HIDING CLASS */
+        .hidden-ui {
+            opacity: 0;
+            visibility: hidden;
+        }
+
         .top-bar {
             display: flex;
             align-items: center;
             gap: 15px;
+            pointer-events: auto;
         }
 
         .back-btn { font-size: 28px; cursor: pointer; background: none; border: none; color: white; }
         .video-title { font-size: 18px; font-weight: bold; margin: 0; }
-        .channel-info { font-size: 13px; color: #ccc; }
-        .sub-btn { background: var(--yt-red); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        .sub-btn { background: var(--yt-red); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; }
 
-        /* --- PROGRESS BAR --- */
-        .bottom-area {
+        /* --- CAROUSEL & PROGRESS --- */
+        .bottom-section {
+            pointer-events: auto;
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
 
-        .controls-row {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .progress-container {
-            flex-grow: 1;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .progress-bg {
-            width: 100%;
-            height: 6px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 3px;
-        }
-
-        .progress-fill {
-            width: 0%;
-            height: 100%;
-            background: var(--yt-red);
-        }
-
-        .progress-knob {
-            width: 16px;
-            height: 16px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-            left: 0%;
-            transform: translateX(-50%);
-        }
-
-        /* --- CAROUSEL --- */
         .carousel-section {
             width: 100%;
             display: flex;
             align-items: center;
             overflow-x: auto;
-            padding: 10px 0;
             gap: 15px;
             scrollbar-width: none;
         }
-
         .carousel-section::-webkit-scrollbar { display: none; }
 
         .thumb-card {
@@ -151,34 +107,65 @@
             overflow: hidden;
             cursor: pointer;
             border: 4px solid transparent;
-            transition: transform 0.2s;
         }
-
-        .thumb-card:hover { transform: scale(1.05); }
         .thumb-card.active { border-color: var(--yt-red); }
         .thumb-card img { width: 100%; height: 100%; object-fit: cover; }
 
+        /* --- PROGRESS BAR --- */
+        .progress-row {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .progress-container {
+            flex-grow: 1;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+        .progress-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--yt-red);
+        }
+        .progress-knob {
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            left: 0%;
+            transform: translateX(-50%);
+        }
     </style>
 </head>
 <body>
 
-    <div class="main-wrapper">
+    <div class="main-container">
         <div id="youtube-player"></div>
+        
+        <div id="ui-trigger" onclick="toggleUI()"></div>
 
-        <div id="click-trigger" onclick="showUI()"></div>
-
-        <div id="ui-overlay" onclick="resetTimer()">
+        <div id="video-ui">
             <div class="top-bar">
-                <button class="back-btn" onclick="hideUI()">←</button>
+                <button class="back-btn">←</button>
                 <div style="flex-grow:1">
                     <div class="video-title" id="displayTitle">Grandma and Miles Go for a Spin</div>
-                    <div class="channel-info">Gecko's Garage</div>
                 </div>
                 <button class="sub-btn">SUBSCRIBE</button>
             </div>
 
-            <div class="bottom-area">
-                <div class="carousel-section" id="carousel">
+            <div class="bottom-section">
+                <div class="carousel-section">
                     <div class="thumb-card active" onclick="changeVideo('dQw4w9WgXcQ', 'Grandma and Miles Go for a Spin', this)">
                         <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg">
                     </div>
@@ -193,7 +180,7 @@
                     </div>
                 </div>
 
-                <div class="controls-row">
+                <div class="progress-row">
                     <span id="currentTime" style="font-size: 14px; min-width: 40px;">0:00</span>
                     <div class="progress-container" id="progressContainer">
                         <div class="progress-bg">
@@ -211,44 +198,37 @@
 
     <script>
         let player;
-        let hideTimer;
-        const uiOverlay = document.getElementById('ui-overlay');
+        let isUIVisible = true;
+        const uiElement = document.getElementById('video-ui');
         const progressFill = document.getElementById('progressFill');
         const progressKnob = document.getElementById('progressKnob');
-        const progressContainer = document.getElementById('progressContainer');
-        const currentTimeText = document.getElementById('currentTime');
-        const totalTimeText = document.getElementById('totalTime');
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-player', {
                 videoId: 'dQw4w9WgXcQ',
-                playerVars: { 'autoplay': 1, 'controls': 0, 'modestbranding': 1, 'rel': 0, 'iv_load_policy': 3 },
+                playerVars: { 
+                    'autoplay': 1, 'controls': 0, 'modestbranding': 1, 
+                    'rel': 0, 'iv_load_policy': 3, 'playsinline': 1 
+                },
                 events: { 'onReady': onPlayerReady }
             });
         }
 
         function onPlayerReady() {
             setInterval(updateProgressBar, 100);
-            showUI(); // Show UI initially
         }
 
-        // --- SHOW / HIDE LOGIC ---
-        function showUI() {
-            uiOverlay.classList.add('visible');
-            resetTimer();
+        // --- NEW TOGGLE FUNCTION ---
+        // Clicking the screen hides everything for a clear view
+        function toggleUI() {
+            isUIVisible = !isUIVisible;
+            if (isUIVisible) {
+                uiElement.classList.remove('hidden-ui');
+            } else {
+                uiElement.classList.add('hidden-ui');
+            }
         }
 
-        function hideUI() {
-            uiOverlay.classList.remove('visible');
-        }
-
-        function resetTimer() {
-            clearTimeout(hideTimer);
-            // Hide after 5 seconds of inactivity
-            hideTimer = setTimeout(hideUI, 5000);
-        }
-
-        // --- VIDEO LOGIC ---
         function updateProgressBar() {
             if (player && player.getCurrentTime) {
                 const current = player.getCurrentTime();
@@ -256,24 +236,24 @@
                 const pct = (current / total) * 100;
                 progressFill.style.width = pct + '%';
                 progressKnob.style.left = pct + '%';
-                currentTimeText.innerText = formatTime(current);
-                totalTimeText.innerText = formatTime(total);
+                document.getElementById('currentTime').innerText = formatTime(current);
+                document.getElementById('totalTime').innerText = formatTime(total);
             }
         }
 
-        progressContainer.addEventListener('click', (e) => {
-            const rect = progressContainer.getBoundingClientRect();
+        document.getElementById('progressContainer').addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevents hiding UI when seeking
+            const rect = e.currentTarget.getBoundingClientRect();
             const pos = (e.clientX - rect.left) / rect.width;
             player.seekTo(pos * player.getDuration(), true);
-            resetTimer();
         });
 
         function changeVideo(id, title, element) {
+            event.stopPropagation(); // Prevents hiding UI when clicking thumb
             player.loadVideoById(id);
             document.getElementById('displayTitle').innerText = title;
             document.querySelectorAll('.thumb-card').forEach(c => c.classList.remove('active'));
             element.classList.add('active');
-            resetTimer();
         }
 
         function formatTime(seconds) {
