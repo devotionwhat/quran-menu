@@ -1,274 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Video Carousel · flexslider</title>
-  <!-- Flexslider CSS (required) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexslider/2.7.2/flexslider.min.css">
-  <style>
-    /* === custom styles from the original pen (SCSS compiled) === */
-    .videolist {
-      margin: 0 auto;
-      width: 855px;           /* as in pen */
-    }
-    .videolist .video-responsive {
-      height: 0;
-      overflow: hidden;
-      padding-bottom: 56.25%; /* 16:9 aspect ratio */
-      position: relative;
-    }
-    .videolist .video-responsive iframe {
-      height: 100%;
-      left: 0;
-      position: absolute;
-      top: 0;
-      width: 100%;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Clock - SyntaxSidekick</title>
+    <style>
+        /* CSS FROM CODEPEN */
+        body {
+            background: #0f3854;
+            background: radial-gradient(circle, #208ea2 0%, #0d1a44 100%);
+            background-size: cover;
+            font-family: 'Share Tech Mono', monospace;
+            color: #ffffff;
+            text-align: center;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            text-shadow: 0 0 20px rgba(10, 175, 230, 1), 0 0 20px rgba(10, 175, 230, 0);
+        }
 
-    /* === styles for the thumbnail carousel (#carousel) — partially from pen, extended === */
-    #carousel {
-      margin-top: 15px;
-    }
-    #carousel .slides li {
-      position: relative;      /* mentioned in original CSS */
-      cursor: pointer;
-      opacity: 0.6;
-      transition: opacity 0.2s;
-    }
-    #carousel .slides li.flex-active-slide,
-    #carousel .slides li:hover {
-      opacity: 1;
-    }
-    #carousel .slides li img {
-      display: block;
-      width: 100%;
-      height: auto;
-      border-radius: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
+        #clock {
+            font-family: 'Share Tech Mono', monospace;
+            color: #daf6ff;
+            text-align: center;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            text-shadow: 0 0 20px rgba(10, 175, 230, 1), 0 0 20px rgba(10, 175, 230, 0);
+        }
 
-    /* optional container alignment (from original) */
-    .container {
-      max-width: 100%;
-      margin: 0 auto;
-    }
+        .time {
+            letter-spacing: 0.05em;
+            font-size: 80px;
+            padding: 5px 0;
+        }
 
-    /* small extra for demo (keep desktop feel) */
-    body {
-      background: #f2f2f2;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-      font-family: sans-serif;
-    }
-  </style>
+        .date {
+            letter-spacing: 0.1em;
+            font-size: 24px;
+        }
+
+        .text {
+            letter-spacing: 0.1em;
+            font-size: 12px;
+            padding: 20px 0 0;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono" rel="stylesheet">
 </head>
 <body>
-  <!-- main section: exactly as in the pen, with both sliders -->
-  <section class="videolist">
-    <div class="container">
-      <!-- main video slider (id="slider") -->
-      <div id="slider" class="flexslider">
-        <ul class="slides">
-          <!-- first video (from original) -->
-          <li>
-            <div class="video-responsive">
-              <iframe width="560" height="315" src="https://www.youtube.com/embed/xcJtL7QggTI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-          </li>
-          <!-- second video (from original) -->
-          <li>
-            <div class="video-responsive">
-              <iframe width="560" height="315" src="https://www.youtube.com/embed/a3ICNMQW7Ok" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-          </li>
-          <!-- third video (original was cut off; completed with another valid ID) -->
-          <li>
-            <div class="video-responsive">
-              <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-          </li>
-        </ul>
-      </div>
 
-
-       <!-- VIDEO ITEM 3: Music (extend the concept) using a video-3 if exists, else fallback -->
-        <div class="video__item">
-          <div class="video__cover">
-            <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-3.jpg?raw=true" alt="music video" />
-            <div class="video__stats">
-              <span class="video__views">8.2M</span>
-              <span class="video__duration">4:16</span>
-              <img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI2U4MDAzYyIgZD0iTTE0IDI0YzAgMi43NiAyLjI0IDUgNSA1czUtMi4yNCA1LTVzLTIuMjQtNS01LTVzLTUgMi4yNC01IDV6bTAtMTBjMC0yLjc2IDIuMjQtNSA1LTVzNSAyLjI0IDUgNXMtMi4yNCA1LTUgNS01LTIuMjQtNS01em0wIDIwYzAtMi43NiAyLjI0LTUgNS01czUgMi4yNCA1IDUtMi4yNCA1LTUgNS01LTIuMjQtNS01eiIvPjwvc3ZnPg==" alt="opciones" />
-            </div>
-          </div>
-          <div class="video__details">
-            <img class="video__avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23b84a8c'/%3E%3Ctext x='20' y='26' font-size='16' text-anchor='middle' fill='white' font-weight='bold'%3EM%3C/text%3E%3C/svg%3E" alt="music">
-            <div class="video__info">
-              <div class="video__title">Nuevo álbum 2025: canción viral (video oficial)</div>
-              <div class="video__channel">
-                <span>Vevo Music</span>
-                <span class="verified" style="background:#606060;">✓</span>
-                <span>• 3 days ago</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-
-     <!-- VIDEO ITEM 3: Music (extend the concept) using a video-3 if exists, else fallback -->
-        <div class="video__item">
-          <div class="video__cover">
-            <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-3.jpg?raw=true" alt="music video" />
-            <div class="video__stats">
-              <span class="video__views">8.2M</span>
-              <span class="video__duration">4:16</span>
-              <img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI2U4MDAzYyIgZD0iTTE0IDI0YzAgMi43NiAyLjI0IDUgNSA1czUtMi4yNCA1LTVzLTIuMjQtNS01LTVzLTUgMi4yNC01IDV6bTAtMTBjMC0yLjc2IDIuMjQtNSA1LTVzNSAyLjI0IDUgNXMtMi4yNCA1LTUgNS01LTIuMjQtNS01em0wIDIwYzAtMi43NiAyLjI0LTUgNS01czUgMi4yNCA1IDUtMi4yNCA1LTUgNS01LTIuMjQtNS01eiIvPjwvc3ZnPg==" alt="opciones" />
-            </div>
-          </div>
-          <div class="video__details">
-            <img class="video__avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23b84a8c'/%3E%3Ctext x='20' y='26' font-size='16' text-anchor='middle' fill='white' font-weight='bold'%3EM%3C/text%3E%3C/svg%3E" alt="music">
-            <div class="video__info">
-              <div class="video__title">Nuevo álbum 2025: canción viral (video oficial)</div>
-              <div class="video__channel">
-                <span>Vevo Music</span>
-                <span class="verified" style="background:#606060;">✓</span>
-                <span>• 3 days ago</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-
-     <!-- VIDEO ITEM 3: Music (extend the concept) using a video-3 if exists, else fallback -->
-        <div class="video__item">
-          <div class="video__cover">
-            <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-3.jpg?raw=true" alt="music video" />
-            <div class="video__stats">
-              <span class="video__views">8.2M</span>
-              <span class="video__duration">4:16</span>
-              <img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI2U4MDAzYyIgZD0iTTE0IDI0YzAgMi43NiAyLjI0IDUgNSA1czUtMi4yNCA1LTVzLTIuMjQtNS01LTVzLTUgMi4yNC01IDV6bTAtMTBjMC0yLjc2IDIuMjQtNSA1LTVzNSAyLjI0IDUgNXMtMi4yNCA1LTUgNS01LTIuMjQtNS01em0wIDIwYzAtMi43NiAyLjI0LTUgNS01czUgMi4yNCA1IDUtMi4yNCA1LTUgNS01LTIuMjQtNS01eiIvPjwvc3ZnPg==" alt="opciones" />
-            </div>
-          </div>
-          <div class="video__details">
-            <img class="video__avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23b84a8c'/%3E%3Ctext x='20' y='26' font-size='16' text-anchor='middle' fill='white' font-weight='bold'%3EM%3C/text%3E%3C/svg%3E" alt="music">
-            <div class="video__info">
-              <div class="video__title">Nuevo álbum 2025: canción viral (video oficial)</div>
-              <div class="video__channel">
-                <span>Vevo Music</span>
-                <span class="verified" style="background:#606060;">✓</span>
-                <span>• 3 days ago</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-     <!-- VIDEO ITEM 3: Music (extend the concept) using a video-3 if exists, else fallback -->
-        <div class="video__item">
-          <div class="video__cover">
-            <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-3.jpg?raw=true" alt="music video" />
-            <div class="video__stats">
-              <span class="video__views">8.2M</span>
-              <span class="video__duration">4:16</span>
-              <img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI2U4MDAzYyIgZD0iTTE0IDI0YzAgMi43NiAyLjI0IDUgNSA1czUtMi4yNCA1LTVzLTIuMjQtNS01LTVzLTUgMi4yNC01IDV6bTAtMTBjMC0yLjc2IDIuMjQtNSA1LTVzNSAyLjI0IDUgNXMtMi4yNCA1LTUgNS01LTIuMjQtNS01em0wIDIwYzAtMi43NiAyLjI0LTUgNS01czUgMi4yNCA1IDUtMi4yNCA1LTUgNS01LTIuMjQtNS01eiIvPjwvc3ZnPg==" alt="opciones" />
-            </div>
-          </div>
-          <div class="video__details">
-            <img class="video__avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23b84a8c'/%3E%3Ctext x='20' y='26' font-size='16' text-anchor='middle' fill='white' font-weight='bold'%3EM%3C/text%3E%3C/svg%3E" alt="music">
-            <div class="video__info">
-              <div class="video__title">Nuevo álbum 2025: canción viral (video oficial)</div>
-              <div class="video__channel">
-                <span>Vevo Music</span>
-                <span class="verified" style="background:#606060;">✓</span>
-                <span>• 3 days ago</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-     <!-- VIDEO ITEM 3: Music (extend the concept) using a video-3 if exists, else fallback -->
-        <div class="video__item">
-          <div class="video__cover">
-            <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-3.jpg?raw=true" alt="music video" />
-            <div class="video__stats">
-              <span class="video__views">8.2M</span>
-              <span class="video__duration">4:16</span>
-              <img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI2U4MDAzYyIgZD0iTTE0IDI0YzAgMi43NiAyLjI0IDUgNSA1czUtMi4yNCA1LTVzLTIuMjQtNS01LTVzLTUgMi4yNC01IDV6bTAtMTBjMC0yLjc2IDIuMjQtNSA1LTVzNSAyLjI0IDUgNXMtMi4yNCA1LTUgNS01LTIuMjQtNS01em0wIDIwYzAtMi43NiAyLjI0LTUgNS01czUgMi4yNCA1IDUtMi4yNCA1LTUgNS01LTIuMjQtNS01eiIvPjwvc3ZnPg==" alt="opciones" />
-            </div>
-          </div>
-          <div class="video__details">
-            <img class="video__avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23b84a8c'/%3E%3Ctext x='20' y='26' font-size='16' text-anchor='middle' fill='white' font-weight='bold'%3EM%3C/text%3E%3C/svg%3E" alt="music">
-            <div class="video__info">
-              <div class="video__title">Nuevo álbum 2025: canción viral (video oficial)</div>
-              <div class="video__channel">
-                <span>Vevo Music</span>
-                <span class="verified" style="background:#606060;">✓</span>
-                <span>• 3 days ago</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- thumbnail carousel (id="carousel") — added to match the JS -->
-      <div id="carousel" class="flexslider">
-        <ul class="slides">
-          <!-- thumbnail 1 (same video) -->
-          <li>
-            <img src="https://img.youtube.com/vi/xcJtL7QggTI/mqdefault.jpg" alt="Video thumb 1">
-          </li>
-          <!-- thumbnail 2 -->
-          <li>
-            <img src="https://img.youtube.com/vi/a3ICNMQW7Ok/mqdefault.jpg" alt="Video thumb 2">
-          </li>
-          <!-- thumbnail 3 -->
-          <li>
-            <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" alt="Video thumb 3">
-          </li>
-        </ul>
-      </div>
+    <div id="clock">
+        <p class="date">{{ date }}</p>
+        <p class="time">{{ time }}</p>
+        <p class="text">DIGITAL CLOCK with Vue.js</p>
     </div>
-  </section>
 
-  <!-- load jQuery (required by flexslider) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <!-- load flexslider plugin -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/flexslider/2.7.2/jquery.flexslider-min.js"></script>
-  <!-- initialization: exactly the original JavaScript, placed inside DOM ready -->
-  <script>
-    $(window).on('load', function() {
-      // thumbnail carousel (asNavFor points to main slider)
-      $('#carousel').flexslider({
-        animation: "slide",
-        controlNav: false,
-        animationLoop: false,
-        slideshow: false,
-        itemWidth: 210,        // width of thumbnails (from original)
-        itemMargin: 5,
-        asNavFor: '#slider'
-      });
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.4/vue.min.js"></script>
 
-      // main slider (sync with carousel)
-      $('#slider').flexslider({
-        animation: "slide",
-        controlNav: false,
-        animationLoop: false,
-        slideshow: false,
-        sync: "#carousel"
-      });
-    });
-  </script>
+    <script>
+        /* JAVASCRIPT FROM CODEPEN */
+        var clock = new Vue({
+            el: '#clock',
+            data: {
+                time: '',
+                date: ''
+            }
+        });
+
+        var week = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+        var timerID = setInterval(updateTime, 1000);
+        updateTime();
+
+        function updateTime() {
+            var cd = new Date();
+            clock.time = zeroPadding(cd.getHours(), 2) + ':' + zeroPadding(cd.getMinutes(), 2) + ':' + zeroPadding(cd.getSeconds(), 2);
+            clock.date = zeroPadding(cd.getFullYear(), 4) + '-' + zeroPadding(cd.getMonth() + 1, 2) + '-' + zeroPadding(cd.getDate(), 2) + ' ' + week[cd.getDay()];
+        };
+
+        function zeroPadding(num, digit) {
+            var zero = '';
+            for (var i = 0; i < digit; i++) {
+                zero += '0';
+            }
+            return (zero + num).slice(-digit);
+        }
+    </script>
 </body>
 </html>
