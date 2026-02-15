@@ -1,23 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <title>Mobile App UI Video design</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refined Youtube Mobile UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Variables */
-        /* Reset */
-        *,
-        *::after,
-        *::before {
+        /* Reset and Base Styles */
+        *, *::after, *::before {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* Generic */
-        body,
-        html {
+        body, html {
             width: 100%;
             height: 100vh;
             display: flex;
@@ -29,14 +25,10 @@
             user-select: none;
         }
 
-        ul {
-            list-style: none;
-        }
+        ul { list-style: none; }
+        a { text-decoration: none; }
 
-        a {
-            text-decoration: none;
-        }
-
+        /* Icon Effects */
         .icon {
             object-fit: contain;
             height: 25px;
@@ -51,114 +43,101 @@
             opacity: 1;
         }
 
+        /* Screen Container - Added Overflow for Scrolling */
         .screen {
             display: flex;
             flex-direction: column;
             width: 325px;
             height: 617px;
-            box-shadow: 0px 0px 10px 2px rgba(140, 140, 140, 0.15);
-            margin: 0 5px;
-            padding: 12px;
-            border-radius: 25px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 30px;
             background-color: #F9F9F9;
+            overflow: hidden; /* Clips the inner scrollable area */
+            position: relative;
+            border: 8px solid #333; /* Simulated phone bezel */
         }
 
-        @media (max-width: 800px) {
-            .screen {
-                transform: scale(0.6);
-            }
+        /* Scrollable Content Area */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            scrollbar-width: none; /* Firefox */
         }
 
-        /*Layout*/
+        .content::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        /* Header Styles */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            height: 60px;
+            padding: 15px 12px 5px;
+            background-color: #F9F9F9;
         }
 
         .header__logo {
             display: flex;
-            justify-content: center;
             align-items: center;
         }
 
         .header__icon {
-            height: 25px;
-            object-fit: cover;
+            height: 22px;
             margin-right: 5px;
         }
 
         .header__title {
             font-size: 18px;
+            font-weight: 700;
+            color: #222;
         }
 
+        /* Categories Section */
         .categories {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            height: 60px;
+            gap: 10px;
+            padding: 10px 0;
+            overflow-x: auto;
+            scrollbar-width: none;
         }
 
+        .categories::-webkit-scrollbar { display: none; }
+
         .categories__link {
-            position: relative;
+            flex: 0 0 auto;
             font-size: 10px;
-            padding: 6px 16px;
+            padding: 6px 14px;
             border-radius: 16px;
             border: 1px solid #E8003C;
             color: #E8003C;
-            cursor: pointer;
-            overflow: hidden;
-        }
-
-        .categories__link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: #E8003C;
-            transition: 0.4s ease;
+            font-weight: 600;
+            transition: 0.3s;
         }
 
         .categories__link:hover {
-            color: #ffffff;
+            background: #E8003C;
+            color: #fff;
         }
 
-        .categories__link:hover::before {
-            left: 0%;
-        }
-
-        .categories__text {
-            position: relative;
-            z-index: 10;
-        }
-
-        .video {
-            width: 100%;
-        }
-
+        /* Video Item Styles */
         .video__item {
+            margin-bottom: 20px;
+        }
+
+        .video__cover {
             position: relative;
             width: 100%;
         }
 
         .video__img {
-            height: 165px;
+            height: 160px;
             width: 100%;
-            border-radius: 10px;
+            border-radius: 12px;
             object-fit: cover;
-        }
-
-        .video__stats {
-            position: absolute;
-            top: 0;
-            height: 165px;
-            width: 100%;
-            cursor: pointer;
+            display: block;
         }
 
         .video__views {
@@ -166,59 +145,53 @@
             top: 10px;
             left: 10px;
             font-size: 9px;
-            padding: 2px 10px;
-            border-radius: 12px;
-            color: #ffffff;
-            background-color: #E8003C;
-        }
-
-        .video__options {
-            position: absolute;
-            top: 10px;
-            right: 10px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            color: #fff;
+            background: rgba(232, 0, 60, 0.9);
         }
 
         .video__duration {
             position: absolute;
             bottom: 10px;
             right: 10px;
-            font-size: 8px;
+            font-size: 9px;
             padding: 2px 6px;
-            border-radius: 6px;
-            color: #ffffff;
-            background-color: #8c8c8c;
+            border-radius: 4px;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.7);
         }
 
         .video__info {
             display: flex;
-            margin: 5px 0 10px;
+            margin-top: 10px;
         }
 
         .video__photo {
-            object-fit: cover;
-            height: 30px;
-            width: 30px;
+            height: 35px;
+            width: 35px;
             border-radius: 50%;
-            margin-right: 5px;
-            cursor: pointer;
+            margin-right: 10px;
+            object-fit: cover;
         }
 
         .video__title {
-            font-size: 12px;
+            font-size: 13px;
+            color: #222;
+            margin-bottom: 2px;
         }
 
         .video__channel {
-            font-size: 9px;
-            line-height: 1.8;
-            opacity: 0.9;
+            font-size: 10px;
+            color: #777;
         }
 
+        /* Bottom Menu Styles */
         .menu {
             width: 100%;
-            background-color: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0px 0px 5px 1px rgba(140, 140, 140, 0.15);
-            padding: 10px 14px;
+            background-color: #fff;
+            padding: 10px 15px;
+            border-top: 1px solid #eee;
         }
 
         .menu__list {
@@ -227,37 +200,109 @@
         }
 
         .menu__link {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            height: 100%;
+            text-align: center;
+            color: #8c8c8c;
+            transition: 0.3s;
         }
 
-        .menu__link:hover .menu__icon {
-            filter: grayscale(0%);
-            opacity: 1;
-        }
-
-        .menu__link:hover .menu__txt {
-            color: #E8003C;
-        }
+        .menu__link:hover { color: #E8003C; }
 
         .menu__icon {
             height: 20px;
-            object-fit: contain;
+            display: block;
+            margin: 0 auto 4px;
         }
 
         .menu__txt {
-            color: #8c8c8c;
             font-size: 8px;
-            transition: 0.4s ease;
-            font-weight: bold;
+            font-weight: 700;
+        }
+
+        @media (max-width: 800px) {
+            .screen { transform: scale(0.85); }
         }
     </style>
 </head>
-
 <body>
-    <div class="app">
-        <div class="screen">
-            <header class="header"><img class="header__menu icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGZp%0D%0AbGw9IiNlODAwM2MiIGlkPSJzdmdfMSIgZD0ibTYsMzZsMTIsMGwwLC00bC0xMiwwbDAsNHptMCwt%0D%0AMjRsMCw0bDM2LDBsMCwtNGwtMzYsMHptMCwxNGwyNCwwbDAsLTRsLTI0LDBsMCw0eiIvPgogPC9n%0D%0APgo8L3N2Zz4=" alt="Ícono de menu" />
-                <div class="header__logo"><img class="header__icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQg%0D%0AU1ZHIDEuMC8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvVFIvMjAwMS9SRUMtU1ZHLTIwMDEwOTA0%0D%0AL0RURC9zdmcxMC5kdGQnPjxzdmcgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMzIgMzIiIGhl%0D%0AaWdodD0iMzJweCIgaWQ9IkxheWVyXzEiIHZlcnNpb249IjEuMCIgdmlld0JveD0iMCAwIDMyIDMy%0D%0AIiB3aWR0aD0iMzJweCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMu%0D%0Ab3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+%0D%0APGc+PHBhdGggZD0iTTMxLjY3LDkuMTc5YzAsMC0wLjMxMi0yLjM1My0xLjI3MS0zLjM4OWMtMS4y%0D%0AMTctMS4zNTgtMi41OC0xLjM2Ni0zLjIwNS0xLjQ0M0MyMi43MTcsNCwxNi4wMDIsNCwxNi4wMDIs%0D%0ANCAgIGgtMC4wMTVjMCwwLTYuNzE1LDAtMTEuMTkxLDAuMzQ3QzQuMTcxLDQuNDI0LDIuODA5LDQu%0D%0ANDMyLDEuNTkxLDUuNzlDMC42MzMsNi44MjYsMC4zMiw5LjE3OSwwLjMyLDkuMTc5UzAsMTEuOTQs%0D%0AMCwxNC43MDF2Mi41ODggICBjMCwyLjc2MywwLjMyLDUuNTIzLDAuMzIsNS41MjNzMC4zMTIsMi4z%0D%0ANTIsMS4yNzEsMy4zODZjMS4yMTgsMS4zNTgsMi44MTUsMS4zMTcsMy41MjcsMS40NTlDNy42Nzcs%0D%0AMjcuOTE5LDE1Ljk5NSwyOCwxNS45OTUsMjggICBzNi43MjItMC4wMTIsMTEuMTk5LTAuMzU1YzAu%0D%0ANjI1LTAuMDgsMS45ODgtMC4wODgsMy4yMDUtMS40NDZjMC45NTgtMS4wMzQsMS4yNzEtMy4zODYs%0D%0AMS4yNzEtMy4zODZzMC4zMi0yLjc2MSwwLjMyLTUuNTIzdi0yLjU4OCAgIEMzMS45OSwxMS45NCwz%0D%0AMS42Nyw5LjE3OSwzMS42Nyw5LjE3OXoiIGZpbGw9IiNFMDJGMkYiLz48cG9seWdvbiBmaWxsPSIj%0D%0ARkZGRkZGIiBwb2ludHM9IjEyLDEwIDEyLDIyIDIyLDE2ICAiLz48L2c+PGcvP
+
+<div class="app">
+    <div class="screen">
+        <header class="header">
+            <img class="header__menu icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGc+PHBhdGggZmlsbD0iI2U4MDAzYyIgZD0ibTYsMzZsMTIsMGwwLC00bC0xMiwwbDAsNHptMCwtMjRsMCw0bDM2LDBsMCwtNGwtMzYsMHptMCwxNGwyNCwwbDAsLTRsLTI0LDBsMCw0eiIvPjwvZz48L3N2Zz4=" alt="Menu" />
+            <div class="header__logo">
+                <img class="header__icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMzIgMzIiIGhlaWdodD0iMzJweCIgdmlld0JveD0iMCAwIDMyIDMyIiB3aWR0aD0iMzJweCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48cGF0aCBkPSJNMzEuNjcsOS4xNzljMCwwLTAuMzEyLTIuMzUzLTEuMjcxLTMuMzg5Yy0xLjIxNy0xLjM1OC0yLjU4LTEuMzY2LTMuMjA1LTEuNDQzQzIyLjcxNyw0LDE2LjAwMiw0LDE2LjAwMiw0ICAgaC0wLjAxNWMwLDAtNi43MTUsMC0xMS4xOTEsMC4zNDdDNC4xNzEsNC40MjQsMi44MDksNC40MzIsMS41OTEsNS43OUMwLjYzMyw2LjgyNiwwLjMyLDkuMTc5LDAuMzIsOS4xNzlTMCwxMS45NCwwLDE0LjcwMXYyLjU4OCAgIGMwLDIuNzYzLDAuMzIsNS41MjMsMC4zMiw1LjUyM3MwLjMxMiwyLjM1MiwxLjI3MSwzLjM4NmMxLjIxOCwxLjM1OCwyLjgxNSwxLjMxNywzLjUyNywxLjQ1OUM3LjY3NywyNy45MTksMTUuOTk1LDI4LDE1Ljk5NSwyOCAgIHM2LjcyMi0wLjAxMiwxMS4xOTktMC4zNTVjMC42MjUtMC4wOCwxLjk4OC0wLjA4OCwzLjIwNS0xLjQ0NmMwLjk1OC0xLjAzNCwxLjI3MS0zLjM4NiwxLjI3MS0zLjM4NnMwLjMyLTIuNzYxLDAuMzItNS41MjN2LTIuNTg4ICBDMzEuOTksMTEuOTQsMzEuNjcsOS4xNzksMzEuNjcsOS4xNzl6IiBmaWxsPSIjRTAyRjJGIn8+PHBvbHlnb24gZmlsbD0iI0ZGRkZGRiIgcG9pbnRzPSIxMiwxMCAxMiwyMiAyMiwxNiIvPjwvZz48L3N2Zz4=" alt="YouTube" />
+                <h1 class="header__title">YouTube</h1>
+            </div>
+            <img class="header__search icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGc+PHBhdGggZmlsbD0iI2U4MDAzYyIgZD0ibTMxLDI4bC0xLjU5LDBsLTAuNTUsLTAuNTVjMS45NiwtMi4yNyAzLjE0LC01LjIyIDMuMTQsLTguNDVjMCwtNy4xOCAtNS44MiwtMTMgLTEzLC0xM3MtMTMsNS44MiAtMTMsMTNzNS44MiwxMyAxMywxM2MzLjIzLDAgNi4xOCwtMS4xIDguNDUsLTMuMTNsMC41NSwwLjU1bDAsMS41OGwxMSw5Ljk4bDIuOTgsLTIuOThsLTkuOTgsLTEwek0xOSwyOGMtNC45NywwIC05LC00LjAzIC05LC05czQuMDMsLTkgOSwtOXM5LDQuMDMgOSw5cy00LjAzLDkgLTksOXoiLz48L2c+PC9zdmc+" alt="Search" />
+        </header>
+
+        <div class="content">
+            <div class="categories">
+                <a class="categories__link" href="#">High tech</a>
+                <a class="categories__link" href="#">Gaming</a>
+                <a class="categories__link" href="#">Music</a>
+                <a class="categories__link" href="#">Live</a>
+                <a class="categories__link" href="#">Podcasts</a>
+            </div>
+
+            <div class="video">
+                <div class="video__item">
+                    <div class="video__cover">
+                        <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-2.jpg?raw=true" alt="Video Thumbnail" />
+                        <span class="video__views">4.5M views</span>
+                        <span class="video__duration">10:43</span>
+                    </div>
+                    <div class="video__info">
+                        <img class="video__photo" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/channel-1.png?raw=true" alt="Channel" />
+                        <div class="video__description">
+                            <h2 class="video__title">Arkon Fly - Live Session</h2>
+                            <h3 class="video__channel">Song.FM • 2 hours ago</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video__item">
+                    <div class="video__cover">
+                        <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-1.jpg?raw=true" alt="Video Thumbnail" />
+                        <span class="video__views">1.2M views</span>
+                        <span class="video__duration">05:20</span>
+                    </div>
+                    <div class="video__info">
+                        <img class="video__photo" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/channel-2.png?raw=true" alt="Channel" />
+                        <div class="video__description">
+                            <h2 class="video__title">Multicolor - Abstract Visuals</h2>
+                            <h3 class="video__channel">Design Co. • 1 day ago</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video__item">
+                    <div class="video__cover">
+                        <img class="video__img" src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80" alt="Video Thumbnail" />
+                        <span class="video__views">890K views</span>
+                        <span class="video__duration">15:00</span>
+                    </div>
+                    <div class="video__info">
+                        <img class="video__photo" src="https://i.pravatar.cc/100?u=tech" alt="Channel" />
+                        <div class="video__description">
+                            <h2 class="video__title">Retro Gaming Setup 2026</h2>
+                            <h3 class="video__channel">TechGeek • 5 hours ago</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="menu">
+            <ul class="menu__list">
+                <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjRweCIgaGVpZ2h0PSIyNHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9IiNFODAwM0MiIGQ9Ik0xMCwyMEg0VjRINDVWMTZIMjBWMThIMTRWMjBIMTBaTTEyLDZMMiwyMEgyMkwxMiw2WiIvPjwvc3ZnPg==" alt="Home" /><span class="menu__txt">Home</span></a></li>
+                <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjRweCIgaGVpZ2h0PSIyNHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9IiNFODAwM0MiIGQ9Ik0xMiwxN0ExLDUsMCwwLDEsMTcsMTJaIi8+PC9zdmc+" alt="Shorts" /><span class="menu__txt">Shorts</span></a></li>
+                <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjRweCIgaGVpZ2h0PSIyNHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9IiNFODAwM0MiIGQ9Ik0xOSwxM2gxNHYyaC0xNHoiLz48L3N2Zz4=" alt="Subscriptions" /><span class="menu__txt">Subs</span></a></li>
+                <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjRweCIgaGVpZ2h0PSIyNHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9IiNFODAwM0MiIGQ9Ik00LDhoMTR2Mkg0eiIvPjwvc3ZnPg==" alt="Library" /><span class="menu__txt">Library</span></a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+</body>
+</html>
