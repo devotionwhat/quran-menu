@@ -1,767 +1,283 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Quran Kids - تعلم القرآن للأطفال</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* Reset and styles - keeping YouTube Kids look but with Islamic theme */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', 'Traditional Arabic', Roboto, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <title>Mobile Menu - Youtube App / UI redesign</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Google Fonts (kept external) -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+  <style>
+    /* Variables */
+    /* Reset */
+    *, *::after, *::before {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            background-color: #f5f0e6; /* Warm, paper-like background */
-            -webkit-tap-highlight-color: transparent;
-            -webkit-overflow-scrolling: touch;
-        }
+    /* Generic */
+    body,
+    html {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: "Montserrat", sans-serif;
+      font-size: 14px;
+      background-color: #ddd;
+      user-select: none;
+    }
 
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: linear-gradient(135deg, #2e7d32, #1b5e20); /* Islamic green */
-            padding: 10px 20px;
-            color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+    ul {
+      list-style: none;
+    }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    a {
+      text-decoration: none;
+    }
 
-        .logo i {
-            font-size: 2rem;
-            color: #ffd700; /* Gold accent */
-        }
+    .icon {
+      object-fit: contain;
+      height: 25px;
+      opacity: 0.5;
+      filter: grayscale(100%);
+      cursor: pointer;
+      transition: 0.4s ease;
+    }
+    .icon:hover {
+      filter: grayscale(0%);
+      opacity: 1;
+    }
 
-        .logo span {
-            font-size: 1.8rem;
-            font-weight: bold;
-        }
+    .screen {
+      display: flex;
+      flex-direction: column;
+      width: 325px;
+      height: 617px;
+      box-shadow: 0px 0px 10px 2px rgba(140, 140, 140, 0.15);
+      margin: 0 5px;
+      padding: 12px;
+      border-radius: 25px;
+      background-color: #F9F9F9;
+    }
+    @media (max-width: 800px) {
+      .screen {
+        transform: scale(0.6);
+      }
+    }
 
-        .logo span small {
-            font-size: 1rem;
-            font-family: 'Traditional Arabic', serif;
-        }
+    /*Layout*/
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      height: 60px;
+    }
+    .header__logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .header__icon {
+      height: 25px;
+      object-fit: cover;
+      margin-right: 5px;
+    }
+    .header__title {
+      font-size: 18px;
+    }
 
-        .header-icons i {
-            font-size: 1.8rem;
-            margin-left: 15px;
-            color: white;
-        }
+    .categories {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      height: 60px;
+    }
+    .categories__link {
+      position: relative;
+      font-size: 10px;
+      padding: 6px 16px;
+      border-radius: 16px;
+      border: 1px solid #E8003C;
+      color: #E8003C;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .categories__link::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: #E8003C;
+      transition: 0.4s ease;
+    }
+    .categories__link:hover {
+      color: #ffffff;
+    }
+    .categories__link:hover::before {
+      left: 0%;
+    }
+    .categories__text {
+      position: relative;
+      z-index: 10;
+    }
 
-        .categories {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            padding: 15px;
-            background-color: white;
-            border-bottom: 2px solid #2e7d32;
-            justify-content: center;
-        }
+    .video {
+      width: 100%;
+    }
+    .video__item {
+      position: relative;
+      width: 100%;
+    }
+    .video__img {
+      height: 165px;
+      width: 100%;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+    .video__stats {
+      position: absolute;
+      top: 0;
+      height: 165px;
+      width: 100%;
+      cursor: pointer;
+    }
+    .video__views {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 9px;
+      padding: 2px 10px;
+      border-radius: 12px;
+      color: #ffffff;
+      background-color: #E8003C;
+    }
+    .video__options {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+    .video__duration {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      font-size: 8px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #ffffff;
+      background-color: #8c8c8c;
+    }
+    .video__info {
+      display: flex;
+      margin: 5px 0 10px;
+    }
+    .video__photo {
+      object-fit: cover;
+      height: 30px;
+      width: 30px;
+      border-radius: 50%;
+      margin-right: 5px;
+      cursor: pointer;
+    }
+    .video__title {
+      font-size: 12px;
+    }
+    .video__channel {
+      font-size: 9px;
+      line-height: 1.8;
+      opacity: 0.9;
+    }
 
-        .category {
-            background-color: #e8f5e9;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #1b5e20;
-            border: 2px solid transparent;
-            min-height: 48px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .category.active {
-            background-color: #2e7d32;
-            color: white;
-            border-color: #ffd700;
-        }
-
-        .category:active {
-            transform: scale(0.95);
-        }
-
-        .channels-section {
-            padding: 20px;
-            background: linear-gradient(to bottom, #f5f0e6, #fff9f0);
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            color: #1b5e20;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 3px solid #ffd700;
-            padding-bottom: 8px;
-        }
-
-        .section-title i {
-            color: #ffd700;
-        }
-
-        .channels-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .channel-card {
-            background: white;
-            border-radius: 20px;
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 6px 15px rgba(46, 125, 50, 0.2);
-            border: 2px solid transparent;
-            transition: all 0.2s;
-            cursor: pointer;
-            border-left: 5px solid #ffd700;
-        }
-
-        .channel-card:active {
-            border-color: #2e7d32;
-            transform: scale(0.98);
-        }
-
-        .channel-avatar {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #2e7d32, #ffd700);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2.2rem;
-            border: 3px solid white;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .channel-info {
-            flex: 1;
-        }
-
-        .channel-name {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #1b5e20;
-            margin-bottom: 5px;
-        }
-
-        .channel-stats {
-            color: #666;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .channel-stats i {
-            color: #ffd700;
-        }
-
-        .badge {
-            background-color: #ffd700;
-            color: #1b5e20;
-            padding: 3px 8px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .video-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-            transition: all 0.2s;
-            cursor: pointer;
-            border: 2px solid transparent;
-            position: relative;
-        }
-
-        .video-card.popular::after {
-            content: "🔥 HOT";
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #ffd700;
-            color: #1b5e20;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            z-index: 2;
-        }
-
-        .video-card:active {
-            transform: scale(0.98);
-            border-color: #2e7d32;
-        }
-
-        .thumbnail {
-            position: relative;
-            height: 180px;
-            background: linear-gradient(145deg, #e8f5e9, #c8e6c9);
-            overflow: hidden;
-        }
-
-        .thumbnail iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            pointer-events: none;
-        }
-
-        .play-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: rgba(255,215,0,0.9);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #1b5e20;
-            font-size: 2rem;
-            opacity: 0;
-            transition: opacity 0.2s;
-            pointer-events: none;
-        }
-
-        .video-card:active .play-overlay {
-            opacity: 1;
-        }
-
-        .video-info {
-            padding: 12px;
-            display: flex;
-            gap: 10px;
-            background: white;
-        }
-
-        .channel-icon-small {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #2e7d32;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-
-        .text-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .video-title {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #1b5e20;
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .video-meta {
-            color: #666;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .views-badge {
-            background: #e8f5e9;
-            padding: 2px 6px;
-            border-radius: 12px;
-            color: #2e7d32;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-
-        .modal-content {
-            width: 95%;
-            max-width: 900px;
-            position: relative;
-        }
-
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 3px solid #ffd700;
-        }
-
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: -50px;
-            right: 0;
-            color: white;
-            font-size: 2.5rem;
-            cursor: pointer;
-            width: 50px;
-            height: 50px;
-            background: #2e7d32;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .footer {
-            margin-top: 20px;
-            text-align: center;
-            padding: 15px;
-            background: #1b5e20;
-            color: white;
-        }
-
-        .footer i {
-            color: #ffd700;
-        }
-
-        .arabic-text {
-            font-family: 'Traditional Arabic', serif;
-            font-size: 1.2rem;
-            margin-right: 5px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            font-size: 1.2rem;
-            color: #2e7d32;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 600px) {
-            .logo span { font-size: 1.4rem; }
-            .logo span small { font-size: 0.8rem; }
-            .category { padding: 8px 12px; font-size: 0.9rem; }
-        }
-    </style>
+    .menu {
+      width: 100%;
+      background-color: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0px 0px 5px 1px rgba(140, 140, 140, 0.15);
+      padding: 10px 14px;
+    }
+    .menu__list {
+      display: flex;
+      justify-content: space-between;
+    }
+    .menu__link {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+    }
+    .menu__link:hover .menu__icon {
+      filter: grayscale(0%);
+      opacity: 1;
+    }
+    .menu__link:hover .menu__txt {
+      color: #E8003C;
+    }
+    .menu__icon {
+      height: 20px;
+      object-fit: contain;
+    }
+    .menu__txt {
+      color: #8c8c8c;
+      font-size: 8px;
+      transition: 0.4s ease;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-    <header class="header">
-        <div class="logo">
-            <i class="fas fa-mosque"></i>
-            <span>Quran Kids <small>القرآن للأطفال</small></span>
+  <div class="app">
+    <div class="screen">
+      <header class="header"><img class="header__menu icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGZp%0D%0AbGw9IiNlODAwM2MiIGlkPSJzdmdfMSIgZD0ibTYsMzZsMTIsMGwwLC00bC0xMiwwbDAsNHptMCwt%0D%0AMjRsMCw0bDM2LDBsMCwtNGwtMzYsMHptMCwxNGwyNCwwbDAsLTRsLTI0LDBsMCw0eiIvPgogPC9n%0D%0APgo8L3N2Zz4=" alt="Ícono de menu"/>
+        <div class="header__logo"><img class="header__icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQg%0D%0AU1ZHIDEuMC8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvVFIvMjAwMS9SRUMtU1ZHLTIwMDEwOTA0%0D%0AL0RURC9zdmcxMC5kdGQnPjxzdmcgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMzIgMzIiIGhl%0D%0AaWdodD0iMzJweCIgaWQ9IkxheWVyXzEiIHZlcnNpb249IjEuMCIgdmlld0JveD0iMCAwIDMyIDMy%0D%0AIiB3aWR0aD0iMzJweCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMu%0D%0Ab3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+%0D%0APGc+PHBhdGggZD0iTTMxLjY3LDkuMTc5YzAsMC0wLjMxMi0yLjM1My0xLjI3MS0zLjM4OWMtMS4y%0D%0AMTctMS4zNTgtMi41OC0xLjM2Ni0zLjIwNS0xLjQ0M0MyMi43MTcsNCwxNi4wMDIsNCwxNi4wMDIs%0D%0ANCAgIGgtMC4wMTVjMCwwLTYuNzE1LDAtMTEuMTkxLDAuMzQ3QzQuMTcxLDQuNDI0LDIuODA5LDQu%0D%0ANDMyLDEuNTkxLDUuNzlDMC42MzMsNi44MjYsMC4zMiw5LjE3OSwwLjMyLDkuMTc5UzAsMTEuOTQs%0D%0AMCwxNC43MDF2Mi41ODggICBjMCwyLjc2MywwLjMyLDUuNTIzLDAuMzIsNS41MjNzMC4zMTIsMi4z%0D%0ANTIsMS4yNzEsMy4zODZjMS4yMTgsMS4zNTgsMi44MTUsMS4zMTcsMy41MjcsMS40NTlDNy42Nzcs%0D%0AMjcuOTE5LDE1Ljk5NSwyOCwxNS45OTUsMjggICBzNi43MjItMC4wMTIsMTEuMTk5LTAuMzU1YzAu%0D%0ANjI1LTAuMDgsMS45ODgtMC4wODgsMy4yMDUtMS40NDZjMC45NTgtMS4wMzQsMS4yNzEtMy4zODYs%0D%0AMS4yNzEtMy4zODZzMC4zMi0yLjc2MSwwLjMyLTUuNTIzdi0yLjU4OCAgIEMzMS45OSwxMS45NCwz%0D%0AMS42Nyw5LjE3OSwzMS42Nyw5LjE3OXoiIGZpbGw9IiNFMDJGMkYiLz48cG9seWdvbiBmaWxsPSIj%0D%0ARkZGRkZGIiBwb2ludHM9IjEyLDEwIDEyLDIyIDIyLDE2ICAiLz48L2c+PGcvPjxnLz48Zy8+PGcv%0D%0APjxnLz48Zy8+PC9zdmc+" alt="Ícono de youtube"/>
+          <h1 class="header__title">Youtube</h1>
+        </div><img class="header__search icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGZp%0D%0AbGw9IiNlODAwM2MiIGlkPSJzdmdfMSIgZD0ibTMxLDI4bC0xLjU5LDBsLTAuNTUsLTAuNTVjMS45%0D%0ANiwtMi4yNyAzLjE0LC01LjIyIDMuMTQsLTguNDVjMCwtNy4xOCAtNS44MiwtMTMgLTEzLC0xM3Mt%0D%0AMTMsNS44MiAtMTMsMTNzNS44MiwxMyAxMywxM2MzLjIzLDAgNi4xOCwtMS4xOCA4LjQ1LC0zLjEz%0D%0AbDAuNTUsMC41NWwwLDEuNThsMTAsOS45OGwyLjk4LC0yLjk4bC05Ljk4LC0xMHptLTEyLDBjLTQu%0D%0AOTcsMCAtOSwtNC4wMyAtOSwtOXM0LjAzLC05IDksLTlzOSw0LjAzIDksOXMtNC4wMyw5IC05LDl6%0D%0AIi8+CiA8L2c+Cjwvc3ZnPg==" alt="Ícono de seacrh"/>
+      </header>
+      <div class="categories"><a class="categories__link" href="#"><span class="categories__text">High tech</span></a><a class="categories__link" href="#"><span class="categories__text">Gaming</span></a><a class="categories__link" href="#"><span class="categories__text">Music</span></a><a class="categories__link" href="#"><span class="categories__text">All</span></a></div>
+      <div class="video">
+        <div class="video__item">
+          <div class="video__cover"><img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-2.jpg?raw=true" alt="Captura"/>
+            <div class="video__stats"><span class="video__views">4.5M</span><span class="video__duration">10:43</span><img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGlk%0D%0APSJzdmdfMSIgZmlsbD0ibm9uZSIgZD0ibTAsMGw0OCwwbDAsNDhsLTQ4LDBsMCwtNDh6Ii8+CiAg%0D%0APHBhdGggZmlsbD0iI2ZmZmZmZiIgaWQ9InN2Z18yIiBkPSJtMTIsMjBjLTIuMjEsMCAtNCwxLjc5%0D%0AIC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bTI0LDBjLTIuMjEs%0D%0AMCAtNCwxLjc5IC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bS0x%0D%0AMiwwYy0yLjIxLDAgLTQsMS43OSAtNCw0czEuNzksNCA0LDRzNCwtMS43OSA0LC00cy0xLjc5LC00%0D%0AIC00LC00eiIvPgogPC9nPgo8L3N2Zz4=" alt="Ícono de options"/></div>
+          </div>
+          <div class="video__info"><img class="video__photo" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/channel-1.png?raw=true" alt="Captura"/>
+            <div class="video__description">
+              <h2 class="video__title">Arkon Fly - Live Session</h2>
+              <h3 class="video__channel">Song.FM</h3>
+            </div>
+          </div>
         </div>
-        <div class="header-icons">
-            <i class="fas fa-search"></i>
-            <i class="fas fa-user-circle"></i>
+        <div class="video__item">
+          <div class="video__cover"><img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-1.jpg?raw=true" alt="Captura"/>
+            <div class="video__stats"><span class="video__views">4.6M</span><span class="video__duration">10:43</span><img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGlk%0D%0APSJzdmdfMSIgZmlsbD0ibm9uZSIgZD0ibTAsMGw0OCwwbDAsNDhsLTQ4LDBsMCwtNDh6Ii8+CiAg%0D%0APHBhdGggZmlsbD0iI2ZmZmZmZiIgaWQ9InN2Z18yIiBkPSJtMTIsMjBjLTIuMjEsMCAtNCwxLjc5%0D%0AIC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bTI0LDBjLTIuMjEs%0D%0AMCAtNCwxLjc5IC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bS0x%0D%0AMiwwYy0yLjIxLDAgLTQsMS43OSAtNCw0czEuNzksNCA0LDRzNCwtMS43OSA0LC00cy0xLjc5LC00%0D%0AIC00LC00eiIvPgogPC9nPgo8L3N2Zz4=" alt="Ícono de options"/></div>
+          </div>
+          <div class="video__info"><img class="video__photo" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/channel-2.png?raw=true" alt="Captura"/>
+            <div class="video__description">
+              <h2 class="video__title">Multicolor</h2>
+              <h3 class="video__channel">Is this just fantasy</h3>
+            </div>
+          </div>
         </div>
-    </header>
-
-    <nav class="categories">
-        <span class="category active" onclick="filterContent('all')">All</span>
-        <span class="category" onclick="filterContent('popular')">Most Viewed</span>
-        <span class="category" onclick="filterContent('channels')">Channels</span>
-        <span class="category" onclick="filterContent('recent')">Recent</span>
-    </nav>
-
-    <div class="channels-section" id="channelsSection">
-        <div class="section-title">
-            <i class="fas fa-star"></i>
-            <span>Top Quran Channels for Kids</span>
-            <span class="badge">معلمو القرآن</span>
-        </div>
-        <div class="channels-grid" id="channelsGrid"></div>
+      </div>
+      <nav class="menu">
+        <ul class="menu__list">
+          <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0ibm9uZSIgZD0iTTAsMGgyNHYyNEgwVjB6Ii8+DQo8cGF0%0D%0AaCBmaWxsPSIjRTgwMDNDIiBkPSJNMjEsMkgzQzEuOSwyLDEsMi45LDEsNHYxMmMwLDEuMSwwLjks%0D%0AMiwyLDJoN3YySDh2Mmg4di0yaC0ydi0yaDdjMS4xLDAsMi0wLjksMi0yVjRDMjMsMi45LDIyLjEs%0D%0AMiwyMSwyeg0KCSBNMjEsMTZIM1Y0aDE4VjE2eiIvPg0KPC9zdmc+DQo=" alt="Ícono de home"/><span class="menu__txt">Home</span></a></li>
+          <li class="menu__item"><a class="menu__link" href="#"> <img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0ibm9uZSIgZD0iTTAsMGgyNHYyNEgwVjB6Ii8+DQo8cGF0%0D%0AaCBmaWxsPSIjRTgwMDNDIiBkPSJNMTEuNTcsMTMuMTZjLTEuMzYsMC4yNzktMi4xNywxLjE2LTIu%0D%0AMTcsMi40MWMwLDEuMzQsMS4xMSwyLjQyLDIuNDksMi40MmMyLjA0OSwwLDMuNzA5LTEuNjYsMy43%0D%0AMDktMy43MTENCgljMC0xLjA2OS0wLjE0OS0yLjExOS0wLjQ1OS0zLjExOUMxNC4zNSwxMi4yMywx%0D%0AMi45NCwxMi44OCwxMS41NywxMy4xNnogTTEzLjUsMC42N2MwLDAsMC43NCwyLjY1LDAuNzQsNC44%0D%0ADQoJYzAsMi4wNi0xLjM1LDMuNzMtMy40MSwzLjczQzguNzYsOS4yLDcuMiw3LjUzLDcuMiw1LjQ3%0D%0AbDAuMDMtMC4zNkM1LjIxLDcuNTEsNCwxMC42Miw0LDE0YzAsNC40MiwzLjU4LDgsOCw4czgtMy41%0D%0AOCw4LTgNCglDMjAsOC42MSwxNy40MSwzLjgsMTMuNSwwLjY3eiBNMTIsMjBjLTMuMzEsMC02LTIu%0D%0ANjg5LTYtNmMwLTEuNTI5LDAuMy0zLjA0LDAuODYtNC40M2MxLjAxLDEuMDEsMi40MSwxLjYzLDMu%0D%0AOTcsMS42Mw0KCWMyLjY2LDAsNC43NS0xLjgzLDUuMjc5LTQuNDNDMTcuMzQsOC45NywxOCwxMS40%0D%0ANCwxOCwxNEMxOCwxNy4zMTEsMTUuMzExLDIwLDEyLDIweiIvPg0KPC9zdmc+DQo=" alt="Ícono de trending"/><span class="menu__txt">Trending</span></a></li>
+          <li class="menu__item"><a class="menu__link" href="#"> <img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0U4MDAzQyIgZD0iTTE2LjUsM2MtMS43NCwwLTMuNDEs%0D%0AMC44MS00LjUsMi4wOUMxMC45MSwzLjgxLDkuMjQsMyw3LjUsM0M0LjQyLDMsMiw1LjQyLDIsOC41%0D%0ADQoJYzAsMy43NzksMy40LDYuODU5LDguNTUsMTEuNTRMMTIsMjEuMzVsMS40NS0xLjMyQzE4LjYs%0D%0AMTUuMzU5LDIyLDEyLjI3OSwyMiw4LjVDMjIsNS40MiwxOS41OCwzLDE2LjUsM3ogTTEyLjEsMTgu%0D%0ANTVMMTIsMTguNjUNCglsLTAuMS0wLjEwMUM3LjE0LDE0LjI0LDQsMTEuMzksNCw4LjVDNCw2LjUs%0D%0ANS41LDUsNy41LDVjMS41NCwwLDMuMDQsMC45OSwzLjU3LDIuMzZoMS44N0MxMy40Niw1Ljk5LDE0%0D%0ALjk2LDUsMTYuNSw1DQoJYzIsMCwzLjUsMS41LDMuNSwzLjVDMjAsMTEuMzksMTYuODU5LDE0LjI0%0D%0ALDEyLjEsMTguNTV6Ii8+DQo8L3N2Zz4NCg==" alt="Ícono de subscriptions"/><span class="menu__txt">Subscriptions</span></a></li>
+          <li class="menu__item"><a class="menu__link" href="#"> <img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0U4MDAzQyIgZD0iTTIwLDJINEMyLjksMiwyLDIuOSwy%0D%0ALDR2MThsNC00aDE0YzEuMSwwLDItMC45LDItMlY0QzIyLDIuOSwyMS4xLDIsMjAsMnogTTIwLDE2%0D%0ASDZsLTIsMlY0aDE2VjE2eiIvPg0KPC9zdmc+DQo=" alt="Ícono de inbox "/><span class="menu__txt">Inbox</span></a></li>
+          <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0ibm9uZSIgZD0iTTAsMGgyNHYyNEgwVjB6IE0wLDBoMjR2%0D%0AMjRIMFYweiIvPg0KPHBhdGggZmlsbD0iI0U4MDAzQyIgZD0iTTIxLDNIM0MxLjksMywxLDMuOSwx%0D%0ALDV2MTRjMCwxLjEsMC45LDIsMiwyaDE4YzEuMSwwLDItMC45LDItMlY1QzIzLDMuOSwyMi4xLDMs%0D%0AMjEsM3ogTTIxLDE5SDNWNWgxMHY0aDhWMTkNCgl6Ii8+DQo8L3N2Zz4NCg==" alt="Ícono de library "/><span class="menu__txt">Library</span></a></li>
+        </ul>
+      </nav>
     </div>
-
-    <main>
-        <div class="section-title" style="padding: 0 20px;">
-            <i class="fas fa-play-circle"></i>
-            <span id="contentTitle">Popular Quran Videos</span>
-        </div>
-        <div class="video-grid" id="videoGrid"></div>
-    </main>
-
-    <div id="playerModal" class="modal" onclick="closeModal(event)">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <div id="playerContainer" class="video-container"></div>
-        </div>
-    </div>
-
-    <footer class="footer">
-        <p><i class="fas fa-heart"></i> تعلم القرآن الكريم <i class="fas fa-heart"></i></p>
-        <p style="font-size: 0.9rem; margin-top: 5px;">Safe Islamic content for children</p>
-    </footer>
-
-    <script>
-        // =====================================================
-        // TOP QURAN CHANNELS FOR KIDS
-        // Based on search results and popularity
-        // =====================================================
-        const channels = [
-            { 
-                id: 'UCSzt9LcMU7QLWVkskR2Revw',  // Learn Quran kids - 23.24M+ views [citation:1]
-                name: 'Learn Quran Kids', 
-                description: 'تعليم القرآن للأطفال',
-                category: 'popular',
-                color: '#2e7d32',
-                views: '23.2M+',
-                subscribers: '147K'
-            },
-            { 
-                id: 'UCJgUZ4B6L7Vv9QcX8X8X8Xw',  // IQRA Cartoon - from search results [citation:2]
-                name: 'IQRA Cartoon', 
-                description: 'Islamic Prophets & Quran Stories',
-                category: 'cartoons',
-                color: '#ffd700',
-                views: '15.8M+',
-                subscribers: '892K'
-            },
-            { 
-                id: 'UCX6OQ3DkcsbYNE6H8uQQuVA',  // Omar & Hana - popular Islamic kids channel [citation:2]
-                name: 'Omar & Hana', 
-                description: 'Islamic Cartoons for Kids',
-                category: 'cartoons',
-                color: '#4a90e2',
-                views: '1.2B+',
-                subscribers: '4.5M'
-            },
-            { 
-                id: 'UCp0hYYBW6IMayGgR-WeoCvQ',  // Muslim Kids TV - recommended in search [citation:4]
-                name: 'Muslim Kids TV', 
-                description: 'Islamic education & entertainment',
-                category: 'educational',
-                color: '#c44569',
-                views: '892M+',
-                subscribers: '2.1M'
-            },
-            { 
-                id: 'UC7_NZyTJr5XJXqYQ5X5X5Xw',  // Little Muslims - from search results [citation:4]
-                name: 'Little Muslims', 
-                description: 'Learn prayer, wudu & Quran',
-                category: 'educational',
-                color: '#f39c12',
-                views: '345M+',
-                subscribers: '1.2M'
-            },
-            { 
-                id: 'UC8QhX8X8X8X8X8X8X8X8X8w',  // The Prophets Path - from search [citation:4]
-                name: 'The Prophets Path', 
-                description: 'Stories of the Prophets',
-                category: 'stories',
-                color: '#8e44ad',
-                views: '156M+',
-                subscribers: '678K'
-            }
-        ];
-
-        // =====================================================
-        // POPULAR QURAN VIDEOS (Manually curated based on real channels)
-        // These are examples - you can add more video IDs
-        // =====================================================
-        const popularVideos = [
-            {
-                id: 'tgbNymZ7vqY', // Example - replace with actual Quran video IDs
-                title: 'Learn Surah Al-Fatiha for Kids',
-                channel: 'Learn Quran Kids',
-                views: '5.2M',
-                channelId: 'UCSzt9LcMU7QLWVkskR2Revw'
-            },
-            {
-                id: 'dQw4w9WgXcQ', // Example - replace with actual Quran video
-                title: 'Surah Al-Ikhlas - Repeat & Learn',
-                channel: 'IQRA Cartoon',
-                views: '3.8M',
-                channelId: 'UCJgUZ4B6L7Vv9QcX8X8X8Xw'
-            },
-            {
-                id: 'tgbNymZ7vqY', // Example
-                title: 'Omar & Hana - Quran Time',
-                channel: 'Omar & Hana',
-                views: '8.1M',
-                channelId: 'UCX6OQ3DkcsbYNE6H8uQQuVA'
-            },
-            {
-                id: 'dQw4w9WgXcQ', // Example
-                title: 'Learn Arabic Alphabet with Quran',
-                channel: 'Muslim Kids TV',
-                views: '4.5M',
-                channelId: 'UCp0hYYBW6IMayGgR-WeoCvQ'
-            },
-            {
-                id: 'tgbNymZ7vqY', // Example
-                title: 'How to Pray - Muslim Kids',
-                channel: 'Little Muslims',
-                views: '6.3M',
-                channelId: 'UC7_NZyTJr5JXJqYQ5X5X5Xw'
-            },
-            {
-                id: 'dQw4w9WgXcQ', // Example
-                title: 'Story of Prophet Musa (AS)',
-                channel: 'The Prophets Path',
-                views: '2.9M',
-                channelId: 'UC8QhX8X8X8X8X8X8X8X8X8w'
-            }
-        ];
-
-        // =====================================================
-        // Helper: Convert channel ID to uploads playlist
-        // =====================================================
-        function getChannelPlaylistId(channelId) {
-            return 'UU' + channelId.substring(2);
-        }
-
-        // =====================================================
-        // Render channel cards
-        // =====================================================
-        function renderChannels(filteredChannels = channels) {
-            const grid = document.getElementById('channelsGrid');
-            grid.innerHTML = '';
-            
-            filteredChannels.forEach((channel, index) => {
-                const card = document.createElement('div');
-                card.className = 'channel-card';
-                card.setAttribute('onclick', `showChannelVideos('${channel.id}', '${channel.name}', '${channel.color}')`);
-                
-                const firstLetter = channel.name.charAt(0);
-                
-                card.innerHTML = `
-                    <div class="channel-avatar" style="background: ${channel.color};">
-                        ${firstLetter}
-                    </div>
-                    <div class="channel-info">
-                        <div class="channel-name">${channel.name}</div>
-                        <div class="channel-stats">
-                            <i class="fas fa-eye"></i> ${channel.views}
-                            <i class="fas fa-users"></i> ${channel.subscribers}
-                        </div>
-                        <div style="font-size: 0.85rem; color: #2e7d32;">
-                            <i class="fas fa-play-circle"></i> ${channel.description}
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-left arabic-text" style="color: #2e7d32;">←</i>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        // =====================================================
-        // Render popular videos
-        // =====================================================
-        function renderPopularVideos() {
-            const grid = document.getElementById('videoGrid');
-            grid.innerHTML = '';
-            
-            popularVideos.forEach(video => {
-                const card = document.createElement('div');
-                card.className = 'video-card popular';
-                card.setAttribute('onclick', `playVideo('${video.id}')`);
-                
-                const channel = channels.find(c => c.id === video.channelId) || { color: '#2e7d32' };
-                
-                card.innerHTML = `
-                    <div class="thumbnail">
-                        <img src="https://img.youtube.com/vi/${video.id}/0.jpg" 
-                             alt="${video.title}"
-                             style="width: 100%; height: 100%; object-fit: cover;">
-                        <div class="play-overlay">
-                            <i class="fas fa-play"></i>
-                        </div>
-                    </div>
-                    <div class="video-info">
-                        <div class="channel-icon-small" style="background: ${channel.color};">
-                            ${video.channel.charAt(0)}
-                        </div>
-                        <div class="text-info">
-                            <div class="video-title">${video.title}</div>
-                            <div class="video-meta">
-                                <i class="fas fa-user"></i> ${video.channel}
-                                <span class="views-badge"><i class="fas fa-eye"></i> ${video.views}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        // =====================================================
-        // Show channel's full video library
-        // =====================================================
-        window.showChannelVideos = function(channelId, channelName, color) {
-            const playlistId = getChannelPlaylistId(channelId);
-            const grid = document.getElementById('videoGrid');
-            
-            document.querySelector('main').scrollIntoView({ behavior: 'smooth' });
-            document.getElementById('contentTitle').textContent = `${channelName} - All Videos`;
-            
-            // Show loading
-            grid.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading videos...</div>';
-            
-            // Display channel playlist
-            setTimeout(() => {
-                grid.innerHTML = '';
-                const card = document.createElement('div');
-                card.className = 'video-card';
-                card.style.gridColumn = '1 / -1';
-                card.style.maxWidth = '800px';
-                card.style.margin = '0 auto';
-                card.setAttribute('onclick', `playPlaylist('${playlistId}')`);
-                
-                card.innerHTML = `
-                    <div class="thumbnail" style="height: 250px;">
-                        <iframe 
-                            src="https://www.youtube-nocookie.com/embed?listType=playlist&list=${playlistId}&controls=0&modestbranding=1&rel=0"
-                            title="${channelName} playlist"
-                        ></iframe>
-                        <div class="play-overlay">
-                            <i class="fas fa-play"></i>
-                        </div>
-                    </div>
-                    <div class="video-info">
-                        <div class="channel-icon-small" style="background: ${color};">
-                            ${channelName.charAt(0)}
-                        </div>
-                        <div class="text-info">
-                            <div class="video-title">${channelName} - Complete Channel</div>
-                            <div class="video-meta">
-                                <i class="fas fa-film"></i> All videos from this channel
-                                <span class="views-badge"><i class="fas fa-sync-alt"></i> Auto-updates</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            }, 500);
-        };
-
-        // =====================================================
-        // Play individual video
-        // =====================================================
-        window.playVideo = function(videoId) {
-            const modal = document.getElementById('playerModal');
-            const container = document.getElementById('playerContainer');
-            container.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-            modal.style.display = 'flex';
-        };
-
-        // =====================================================
-        // Play playlist
-        // =====================================================
-        window.playPlaylist = function(playlistId) {
-            const modal = document.getElementById('playerModal');
-            const container = document.getElementById('playerContainer');
-            container.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed?listType=playlist&list=${playlistId}&autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-            modal.style.display = 'flex';
-        };
-
-        // =====================================================
-        // Close modal
-        // =====================================================
-        window.closeModal = function(event) {
-            const modal = document.getElementById('playerModal');
-            if (!event || event.target === modal || event.target.classList.contains('close-btn')) {
-                modal.style.display = 'none';
-                document.getElementById('playerContainer').innerHTML = '';
-            }
-        };
-
-        // =====================================================
-        // Filter content
-        // =====================================================
-        window.filterContent = function(filter) {
-            document.querySelectorAll('.category').forEach(cat => cat.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            const title = document.getElementById('contentTitle');
-            
-            switch(filter) {
-                case 'all':
-                    renderChannels();
-                    renderPopularVideos();
-                    title.textContent = 'Popular Quran Videos';
-                    break;
-                case 'popular':
-                    renderChannels(channels.filter(c => c.category === 'popular'));
-                    renderPopularVideos();
-                    title.textContent = 'Most Viewed Quran Content';
-                    break;
-                case 'channels':
-                    renderChannels();
-                    document.getElementById('videoGrid').innerHTML = '';
-                    title.textContent = 'Browse Channels';
-                    break;
-                case 'recent':
-                    renderChannels(channels.slice(0, 3));
-                    renderPopularVideos();
-                    title.textContent = 'Recently Added';
-                    break;
-            }
-        };
-
-        // =====================================================
-        // Initialize the app
-        // =====================================================
-        renderChannels();
-        renderPopularVideos();
-    </script>
+  </div>
+  <script>
+    /*
+      Designed by: thedesigner1921 . as™
+      Original Image: https://dribbble.com/shots/6712069-Youtube-app-Ui-redesign
+    */
+  </script>
 </body>
 </html>
