@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>YouTube Kids · Fullscreen Player</title>
-  <!-- Google Fonts (only used in main UI) -->
   <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
   <style>
+    /* ... (all your existing CSS, unchanged) ... */
     /* ========== RESET & BASE ========== */
     *, *::after, *::before { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -30,7 +30,7 @@
       display: flex; flex-direction: column;
       width: 100%; height: 100%;
       background-color: #F9F9F9;
-      border-radius: 0;  /* edge-to-edge on mobile */
+      border-radius: 0;
       padding: 12px;
       overflow: hidden;
     }
@@ -42,14 +42,12 @@
       }
     }
 
-    /* common icon style */
     .icon {
       object-fit: contain; height: 25px; opacity: 0.5;
       filter: grayscale(100%); cursor: pointer; transition: 0.4s ease;
     }
     .icon:hover { filter: grayscale(0%); opacity: 1; }
 
-    /* header, categories same as before */
     .header {
       display: flex; justify-content: space-between; align-items: center;
       width: 100%; height: 60px; flex-shrink: 0;
@@ -75,7 +73,6 @@
     .categories__link:hover::before { left: 0%; }
     .categories__text { position: relative; z-index: 10; }
 
-    /* scrollable video area */
     .video {
       flex: 1;
       overflow-y: auto;
@@ -84,7 +81,7 @@
       min-height: 0;
     }
 
-    /* default video items (static) – will be replaced by grid on load */
+    /* (static items remain, but will be replaced by grid on load) */
     .video__item {
       position: relative; width: 100%; margin-bottom: 10px;
     }
@@ -117,7 +114,6 @@
     .video__title { font-size: 12px; }
     .video__channel { font-size: 9px; line-height: 1.8; opacity: 0.9; }
 
-    /* bottom menu */
     .menu {
       width: 100%; background-color: #ffffff; border-radius: 20px;
       box-shadow: 0px 0px 5px 1px rgba(140,140,140,0.15);
@@ -134,7 +130,6 @@
       color: #8c8c8c; font-size: 8px; transition: 0.4s ease; font-weight: bold;
     }
 
-    /* grid for videos (used by both Home and Trending) */
     .video-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -175,14 +170,14 @@
     }
     .thumb-con:hover .play-button { border-color: #ccc; }
 
-    /* ========== FULLSCREEN PLAYER (initially hidden) ========== */
+    /* ========== FULLSCREEN PLAYER ========== */
     #playerContainer {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
       background-color: #000;
       z-index: 1000;
-      display: none;  /* hidden by default */
+      display: none;
       color: white;
       font-family: 'Arial Rounded MT Bold', 'Helvetica', sans-serif;
       -webkit-tap-highlight-color: transparent;
@@ -289,9 +284,9 @@
         <a class="categories__link" href="#"><span class="categories__text">All</span></a>
       </div>
 
-      <!-- scrollable content area (initially contains static items, will be replaced by grid on load) -->
+      <!-- scrollable content area (will be replaced by grid on load) -->
       <div class="video" id="mainVideoContainer">
-        <!-- two default items with real video IDs -->
+        <!-- two default items (will be replaced) -->
         <div class="video__item" data-video-id="kWvFnOBP4Sc" data-video-title="Arkon Fly - Live Session">
           <div class="video__cover">
             <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-2.jpg?raw=true" alt="video">
@@ -376,8 +371,8 @@
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
     (function() {
-      // ---------- GLOBAL VIDEO LIST (from the home grid) ----------
-      const videoLinks = [
+      // ---------- HOME VIDEOS (original long list) ----------
+      const homeLinks = [
         "https://www.youtube.com/watch?v=wL_4_Al1U1k",
         "https://www.youtube.com/watch?v=J8X6TeJtvsU",
         "https://www.youtube.com/watch?v=914PooSyyL0",
@@ -494,20 +489,41 @@
         "https://www.youtube.com/watch?v=N3hvAwEyuPo",
       ];
 
+      // ---------- TRENDING VIDEOS (new list – you can replace these) ----------
+      const trendingLinks = [
+        "https://www.youtube.com/watch?v=Cm1v4bteXbI&pp=ygULbWFra2FoIGxpdmU%3D",  
+        "https://www.youtube.com/watch?v=HQBygBpQCSM&pp=ygUo2KfZhNmF2K_ZitmG2Kkg2KfZhNmF2YbZiNix2Kkg2YXYqNin2LTYsQ%3D%3D",  
+       
+      ];
+
       // Helper to extract video ID
       function regexYTLink(url) {
         return url.substr(url.indexOf('v=') + 2, 20);
       }
 
-      // Build array of { id, title } for all videos (default titles)
-      const allVideos = videoLinks.map((link, index) => {
+      // Build video objects for Home and Trending
+      const homeVideos = homeLinks.map((link, index) => {
         return { id: regexYTLink(link), title: `Video ${index+1}` };
       });
-      // Override first two titles to match static items
-      if (allVideos.length >= 2) {
-        allVideos[0].title = "Arkon Fly - Live Session";
-        allVideos[1].title = "Multicolor";
+      const trendingVideos = trendingLinks.map((link, index) => {
+        return { id: regexYTLink(link), title: `Trending ${index+1}` };
+      });
+
+      // Override first two home titles to match static items
+      if (homeVideos.length >= 2) {
+        homeVideos[0].title = "Arkon Fly - Live Session";
+        homeVideos[1].title = "Multicolor";
       }
+
+      // Master list for player carousel: combine both, deduplicate by id
+      const masterVideos = [];
+      const seenIds = new Set();
+      [...homeVideos, ...trendingVideos].forEach(v => {
+        if (!seenIds.has(v.id)) {
+          seenIds.add(v.id);
+          masterVideos.push(v);
+        }
+      });
 
       // ---------- PLAYER GLOBAL VARIABLES ----------
       let player;
@@ -523,10 +539,9 @@
       const displayTitle = document.getElementById('displayTitle');
       const carousel = document.getElementById('playerCarousel');
 
-      // YouTube API callback
       window.onYouTubeIframeAPIReady = function() {
         player = new YT.Player('youtube-player', {
-          videoId: allVideos[0].id, // default first video
+          videoId: masterVideos[0].id,
           playerVars: { autoplay: 1, controls: 0, modestbranding: 1, rel: 0, iv_load_policy: 3, playsinline: 1 },
           events: { onReady: onPlayerReady }
         });
@@ -537,7 +552,6 @@
         startHideTimer();
       }
 
-      // Player UI functions
       function startHideTimer() {
         clearTimeout(hideTimer);
         if (isUIVisible && !isDragging && player && player.getPlayerState() === 1) {
@@ -587,7 +601,6 @@
         return min + ":" + (sec < 10 ? '0' : '') + sec;
       }
 
-      // Scrub events
       progressContainer.addEventListener('touchstart', (e) => { isDragging = true; handleScrub(e); });
       window.addEventListener('touchmove', (e) => { if (isDragging) handleScrub(e); }, { passive: false });
       window.addEventListener('touchend', () => {
@@ -610,7 +623,6 @@
         setBarPosition(pct);
       }
 
-      // Change video (called from thumbnails)
       window.changeVideo = function(id, title, element) {
         if (window.event) window.event.stopPropagation();
         player.loadVideoById(id);
@@ -618,13 +630,12 @@
         document.querySelectorAll('#playerCarousel .thumb-card').forEach(c => c.classList.remove('active'));
         if (element) element.classList.add('active');
         player.playVideo();
-        hideUI(); // instant hide on play
+        hideUI();
       };
 
-      // Populate carousel with all videos
       function populateCarousel(activeId) {
         carousel.innerHTML = '';
-        allVideos.forEach(v => {
+        masterVideos.forEach(v => {
           const card = document.createElement('div');
           card.className = 'thumb-card' + (v.id === activeId ? ' active' : '');
           card.setAttribute('onclick', `changeVideo('${v.id}', '${v.title}', this)`);
@@ -633,21 +644,17 @@
         });
       }
 
-      // Open player with a specific video
       window.openPlayerWithVideo = function(videoId, videoTitle) {
-        // Show player container, hide main screen
         playerContainer.style.display = 'block';
-        document.querySelector('.app').style.display = 'none'; // hide main UI
+        document.querySelector('.app').style.display = 'none';
 
-        // If player already initialized, just load video, otherwise it will load on ready
         if (player && player.loadVideoById) {
           player.loadVideoById(videoId);
           displayTitle.innerText = videoTitle;
           populateCarousel(videoId);
           player.playVideo();
-          hideUI(); // hide UI immediately
+          hideUI();
         } else {
-          // Player not ready yet; set a one-time listener
           const checkExist = setInterval(() => {
             if (player && player.loadVideoById) {
               clearInterval(checkExist);
@@ -661,19 +668,18 @@
         }
       };
 
-      // Close player and return to main UI
       window.closePlayer = function() {
         if (player && player.pauseVideo) player.pauseVideo();
         playerContainer.style.display = 'none';
-        document.querySelector('.app').style.display = 'flex'; // show main UI again
+        document.querySelector('.app').style.display = 'flex';
       };
 
-      // ---------- GRID LOADING FUNCTION (reusable) ----------
+      // ---------- GRID LOADING FUNCTION ----------
       const videoContainer = document.getElementById('mainVideoContainer');
 
       function loadGrid(videos) {
         const gridDiv = document.createElement('div');
-        gridDiv.className = 'video-grid'; // using generic class
+        gridDiv.className = 'video-grid';
         videos.forEach(v => {
           const thumbCon = document.createElement('div');
           thumbCon.className = 'thumb-con';
@@ -689,31 +695,30 @@
           });
           gridDiv.appendChild(thumbCon);
         });
-        // Replace content
         videoContainer.innerHTML = '';
         videoContainer.appendChild(gridDiv);
       }
 
-      // ---------- HOME BUTTON ----------
+      // ---------- TAB BUTTONS ----------
       const homeBtn = document.getElementById('homeBtn');
+      const trendingBtn = document.getElementById('trendingBtn');
+
       homeBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        loadGrid(allVideos);
+        loadGrid(homeVideos);
       });
 
-      // ---------- TRENDING BUTTON ----------
-      const trendingBtn = document.getElementById('trendingBtn');
       trendingBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        loadGrid(allVideos); // same videos for now, can be changed later
+        loadGrid(trendingVideos);
       });
 
-      // ---------- INITIAL LOAD (replace static items with grid) ----------
+      // ---------- INITIAL LOAD (Home) ----------
       window.addEventListener('load', function() {
-        loadGrid(allVideos);
+        loadGrid(homeVideos);
       });
 
-      // Also attach click to the two static video items (in case they remain before load, but load will replace them)
+      // Also attach click to the two static video items (in case they remain)
       document.querySelectorAll('.video__item[data-video-id]').forEach(item => {
         item.addEventListener('click', function(e) {
           const videoId = this.dataset.videoId;
