@@ -2,65 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Mobile YouTube · Fullscreen</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
-  <!-- Google Fonts -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>YouTube Kids · Fullscreen Player</title>
+  <!-- Google Fonts (only used in main UI) -->
   <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
   <style>
-    /* ========== RESET & FULLSCREEN FIX ========== */
+    /* ========== RESET & BASE ========== */
     *, *::after, *::before { margin: 0; padding: 0; box-sizing: border-box; }
 
-    /* make everything full screen */
     html, body {
-      width: 100%;
-      height: 100%;
-      background-color: #ddd;
+      width: 100%; height: 100%;
+      background-color: #000;
       font-family: "Montserrat", sans-serif;
-      font-size: 14px;
-      user-select: none;
-      overflow: hidden;        /* prevent double scroll */
+      overflow: hidden;
     }
 
     .app {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #ddd;   /* same as body */
-      padding: 0;               /* no outer padding */
+      background-color: #ddd;
     }
 
-    /* screen now fills the whole app area with a soft corner (optional) */
+    /* ========== MAIN UI (phone screen) ========== */
     .screen {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      height: 100%;
+      display: flex; flex-direction: column;
+      width: 100%; height: 100%;
       background-color: #F9F9F9;
-      border-radius: 0;         /* edge-to-edge on mobile, you can set 25px if you prefer */
+      border-radius: 0;  /* edge-to-edge on mobile */
       padding: 12px;
-      box-shadow: none;         /* remove shadow for fullscreen look */
-      overflow: hidden;         /* keeps children inside */
+      overflow: hidden;
     }
-    /* if you prefer a subtle shadow and small radius on very wide screens, add a media query */
     @media (min-width: 500px) {
       .screen {
-        max-width: 420px;
-        max-height: 800px;
+        max-width: 420px; max-height: 800px;
         border-radius: 25px;
-        box-shadow: 0px 0px 10px 2px rgba(140, 140, 140, 0.15);
+        box-shadow: 0px 0px 10px 2px rgba(140,140,140,0.15);
       }
     }
 
-    /* icon styles unchanged */
+    /* common icon style */
     .icon {
       object-fit: contain; height: 25px; opacity: 0.5;
       filter: grayscale(100%); cursor: pointer; transition: 0.4s ease;
     }
     .icon:hover { filter: grayscale(0%); opacity: 1; }
 
-    /* header unchanged */
+    /* header, categories same as before */
     .header {
       display: flex; justify-content: space-between; align-items: center;
       width: 100%; height: 60px; flex-shrink: 0;
@@ -69,7 +58,6 @@
     .header__icon { height: 25px; object-fit: cover; margin-right: 5px; }
     .header__title { font-size: 18px; }
 
-    /* categories unchanged */
     .categories {
       display: flex; justify-content: space-between; align-items: center;
       width: 100%; height: 60px; flex-shrink: 0;
@@ -87,16 +75,16 @@
     .categories__link:hover::before { left: 0%; }
     .categories__text { position: relative; z-index: 10; }
 
-    /* video container takes remaining space and scrolls */
+    /* scrollable video area */
     .video {
       flex: 1;
       overflow-y: auto;
       width: 100%;
       padding-right: 2px;
-      min-height: 0;  /* flex restriction */
+      min-height: 0;
     }
 
-    /* original video items (default view) */
+    /* default video items (static) */
     .video__item {
       position: relative; width: 100%; margin-bottom: 10px;
     }
@@ -132,7 +120,7 @@
     /* bottom menu */
     .menu {
       width: 100%; background-color: #ffffff; border-radius: 20px;
-      box-shadow: 0px 0px 5px 1px rgba(140, 140, 140, 0.15);
+      box-shadow: 0px 0px 5px 1px rgba(140,140,140,0.15);
       padding: 10px 14px; margin-top: 8px; flex-shrink: 0;
     }
     .menu__list { display: flex; justify-content: space-between; }
@@ -146,21 +134,15 @@
       color: #8c8c8c; font-size: 8px; transition: 0.4s ease; font-weight: bold;
     }
 
-    /* ========== YOUTUBE GRID STYLES ========== */
-    :root {
-      --color: white;
-    }
-
+    /* grid for home videos (appears after clicking Home) */
     .home-grid {
       display: grid;
       grid-template-columns: 1fr;
       grid-row-gap: 1em;
       justify-items: center;
-      align-items: center;
       width: 100%;
-      padding: 0 0 0.5em 0;
+      padding: 0 0 0.5em;
     }
-
     .thumb-con {
       --height: 10;
       height: calc(var(--height) * 1em);
@@ -172,52 +154,123 @@
       overflow: hidden;
       border-radius: 10px;
     }
-
     .thumb {
       background-color: #111;
       background-size: cover;
-      height: 100%;
-      width: 100%;
+      height: 100%; width: 100%;
       transform: translateZ(5px);
     }
-
-    .thumb-con:hover * {
-      --color:#ccc;
-    }
-
     .play-button {
       --height: 2;
-      content: "";
       position: absolute;
       height: calc(var(--height) * 1em);
       width: calc(var(--height) * 1em);
       background-color: transparent;
-      top: 50%;
-      left: 48%;
+      top: 50%; left: 48%;
       transform: translateX(-50%) translateY(-50%) rotate(45deg);
-      border-top: calc(var(--height) * 0.5em) solid var(--color);
-      border-right: calc(var(--height) * 0.5em) solid var(--color);
-      filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.4));
+      border-top: calc(var(--height) * 0.5em) solid white;
+      border-right: calc(var(--height) * 0.5em) solid white;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,0.4));
       transition: 150ms ease-in-out;
     }
+    .thumb-con:hover .play-button { border-color: #ccc; }
 
-    .grid-embed {
-      height: 100%;
-      width: 100%;
-      border: none;
-      border-radius: 10px;
+    /* ========== FULLSCREEN PLAYER (initially hidden) ========== */
+    #playerContainer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: #000;
+      z-index: 1000;
+      display: none;  /* hidden by default */
+      color: white;
+      font-family: 'Arial Rounded MT Bold', 'Helvetica', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #playerContainer .main-container {
+      position: relative; width: 100%; height: 100%;
+    }
+    #playerContainer #youtube-player {
+      width: 100%; height: 100%;
+    }
+    #playerContainer #ui-trigger {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 5; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #playerContainer #status-icon {
+      font-size: 60px;
+      background: rgba(0,0,0,0.5);
+      width: 100px; height: 100px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      transform: scale(0.5);
+    }
+    #playerContainer #status-icon.show { opacity: 1; transform: scale(1); }
+
+    #playerContainer #video-ui {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; display: flex; flex-direction: column;
+      justify-content: space-between; padding: 20px; box-sizing: border-box;
+      background: rgba(0, 0, 0, 0.4); z-index: 10;
+      transition: opacity 0.4s ease, visibility 0.4s;
+    }
+    #playerContainer .hidden-ui { opacity: 0; visibility: hidden; }
+
+    #playerContainer .top-bar {
+      display: flex; align-items: center; gap: 15px; pointer-events: auto;
+    }
+    #playerContainer .back-btn {
+      font-size: 28px; cursor: pointer; background: none; border: none; color: white;
+    }
+    #playerContainer .video-title { font-size: 18px; font-weight: bold; margin: 0; }
+    #playerContainer .sub-btn {
+      background: #FF0000; color: white; border: none; padding: 8px 16px;
+      border-radius: 20px; font-weight: bold;
     }
 
-    .video::-webkit-scrollbar {
-      width: 4px;
+    #playerContainer .bottom-section {
+      pointer-events: auto; display: flex; flex-direction: column; gap: 15px;
     }
-    .video::-webkit-scrollbar-thumb {
-      background: #E8003C;
-      border-radius: 10px;
+    #playerContainer .carousel-section {
+      width: 100%; display: flex; align-items: center; overflow-x: auto;
+      gap: 15px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    }
+    #playerContainer .carousel-section::-webkit-scrollbar { display: none; }
+
+    #playerContainer .thumb-card {
+      flex: 0 0 auto; width: 180px; height: 100px; border-radius: 12px;
+      overflow: hidden; cursor: pointer; border: 4px solid transparent;
+    }
+    #playerContainer .thumb-card.active { border-color: #FF0000; }
+    #playerContainer .thumb-card img { width: 100%; height: 100%; object-fit: cover; }
+
+    #playerContainer .progress-row {
+      width: 100%; display: flex; align-items: center; gap: 15px;
+    }
+    #playerContainer .progress-container {
+      flex-grow: 1; height: 40px;
+      display: flex; align-items: center; cursor: pointer; position: relative;
+      touch-action: none;
+    }
+    #playerContainer .progress-bg {
+      width: 100%; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px;
+    }
+    #playerContainer .progress-fill {
+      width: 0%; height: 100%; background: #FF0000; border-radius: 3px;
+    }
+    #playerContainer .progress-knob {
+      width: 24px; height: 24px; background: white; border-radius: 50%;
+      position: absolute; left: 0%; transform: translateX(-50%);
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
   </style>
 </head>
 <body>
+  <!-- MAIN UI (phone screen) -->
   <div class="app">
     <div class="screen">
       <header class="header">
@@ -236,10 +289,10 @@
         <a class="categories__link" href="#"><span class="categories__text">All</span></a>
       </div>
 
-      <!-- scrollable content area -->
+      <!-- scrollable content area (static + dynamic grid) -->
       <div class="video" id="mainVideoContainer">
-        <!-- default two video items -->
-        <div class="video__item">
+        <!-- two default items with real video IDs -->
+        <div class="video__item" data-video-id="kWvFnOBP4Sc" data-video-title="Arkon Fly - Live Session">
           <div class="video__cover">
             <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-2.jpg?raw=true" alt="video">
             <div class="video__stats">
@@ -256,7 +309,7 @@
             </div>
           </div>
         </div>
-        <div class="video__item">
+        <div class="video__item" data-video-id="zE3Ek97kz_U" data-video-title="Multicolor">
           <div class="video__cover">
             <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-1.jpg?raw=true" alt="video">
             <div class="video__stats">
@@ -287,9 +340,43 @@
     </div>
   </div>
 
+  <!-- FULLSCREEN PLAYER (hidden initially) -->
+  <div id="playerContainer">
+    <div class="main-container">
+      <div id="youtube-player"></div>
+      <div id="ui-trigger" onclick="handleMainClick()">
+        <div id="status-icon">▶</div>
+      </div>
+      <div id="video-ui">
+        <div class="top-bar">
+          <button class="back-btn" onclick="closePlayer()">←</button>
+          <div style="flex-grow:1">
+            <div class="video-title" id="displayTitle">مكة المكرمة</div>
+          </div>
+          <button class="sub-btn">SUBSCRIBE</button>
+        </div>
+        <div class="bottom-section">
+          <div class="carousel-section" id="playerCarousel" onscroll="resetHideTimer()" ontouchstart="resetHideTimer()">
+            <!-- dynamic thumbnails will be injected here -->
+          </div>
+          <div class="progress-row">
+            <span id="currentTime" style="font-size:14px; min-width:45px;">0:00</span>
+            <div class="progress-container" id="progressContainer">
+              <div class="progress-bg"><div class="progress-fill" id="progressFill"></div></div>
+              <div class="progress-knob" id="progressKnob"></div>
+            </div>
+            <span id="totalTime" style="font-size:14px; min-width:45px;">0:00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- YouTube IFrame API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
   <script>
     (function() {
-      // ----- YOUTUBE GRID DATA -----
+      // ---------- GLOBAL VIDEO LIST (from the home grid) ----------
       const videoLinks = [
         "https://www.youtube.com/watch?v=kWvFnOBP4Sc",
         "https://www.youtube.com/watch?v=zE3Ek97kz_U",
@@ -308,88 +395,216 @@
         "https://www.youtube.com/watch?v=AAJ4Yg9-Jwc"
       ];
 
+      // Helper to extract video ID
       function regexYTLink(url) {
         return url.substr(url.indexOf('v=') + 2, 20);
       }
 
+      // Build array of { id, title } for all videos (default titles)
+      const allVideos = videoLinks.map((link, index) => {
+        return { id: regexYTLink(link), title: `Video ${index+1}` };
+      });
+      // Override first two titles to match static items
+      if (allVideos.length >= 2) {
+        allVideos[0].title = "Arkon Fly - Live Session";
+        allVideos[1].title = "Multicolor";
+      }
+
+      // ---------- PLAYER GLOBAL VARIABLES ----------
+      let player;
+      let isUIVisible = true;
+      let isDragging = false;
+      let hideTimer;
+      const uiElement = document.getElementById('video-ui');
+      const statusIcon = document.getElementById('status-icon');
+      const progressFill = document.getElementById('progressFill');
+      const progressKnob = document.getElementById('progressKnob');
+      const progressContainer = document.getElementById('progressContainer');
+      const playerContainer = document.getElementById('playerContainer');
+      const displayTitle = document.getElementById('displayTitle');
+      const carousel = document.getElementById('playerCarousel');
+
+      // YouTube API callback
+      window.onYouTubeIframeAPIReady = function() {
+        player = new YT.Player('youtube-player', {
+          videoId: allVideos[0].id, // default first video
+          playerVars: { autoplay: 1, controls: 0, modestbranding: 1, rel: 0, iv_load_policy: 3, playsinline: 1 },
+          events: { onReady: onPlayerReady }
+        });
+      };
+
+      function onPlayerReady() {
+        setInterval(updateProgressBar, 100);
+        startHideTimer();
+      }
+
+      // Player UI functions
+      function startHideTimer() {
+        clearTimeout(hideTimer);
+        if (isUIVisible && !isDragging && player && player.getPlayerState() === 1) {
+          hideTimer = setTimeout(() => hideUI(), 5000);
+        }
+      }
+      function resetHideTimer() { if (isUIVisible) startHideTimer(); }
+      function hideUI() { isUIVisible = false; uiElement.classList.add('hidden-ui'); }
+      function showUI() { isUIVisible = true; uiElement.classList.remove('hidden-ui'); startHideTimer(); }
+
+      window.handleMainClick = function() {
+        if (isDragging) return;
+        if (!isUIVisible) showUI();
+        else {
+          const state = player.getPlayerState();
+          if (state === 1) { player.pauseVideo(); showStatusIcon('Ⅱ'); clearTimeout(hideTimer); }
+          else { player.playVideo(); showStatusIcon('▶'); hideUI(); }
+        }
+      };
+
+      function showStatusIcon(char) {
+        statusIcon.innerText = char;
+        statusIcon.classList.add('show');
+        setTimeout(() => statusIcon.classList.remove('show'), 600);
+      }
+
+      function updateProgressBar() {
+        if (player && player.getCurrentTime && !isDragging) {
+          const current = player.getCurrentTime();
+          const total = player.getDuration();
+          if (total > 0) {
+            const pct = (current / total) * 100;
+            setBarPosition(pct);
+            document.getElementById('currentTime').innerText = formatTime(current);
+            document.getElementById('totalTime').innerText = formatTime(total);
+          }
+        }
+      }
+      function setBarPosition(pct) {
+        pct = Math.max(0, Math.min(100, pct));
+        progressFill.style.width = pct + '%';
+        progressKnob.style.left = pct + '%';
+      }
+      function formatTime(seconds) {
+        const min = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60);
+        return min + ":" + (sec < 10 ? '0' : '') + sec;
+      }
+
+      // Scrub events
+      progressContainer.addEventListener('touchstart', (e) => { isDragging = true; handleScrub(e); });
+      window.addEventListener('touchmove', (e) => { if (isDragging) handleScrub(e); }, { passive: false });
+      window.addEventListener('touchend', () => {
+        if (isDragging) {
+          const pct = parseFloat(progressKnob.style.left) || 0;
+          const newTime = (pct / 100) * player.getDuration();
+          player.seekTo(newTime, true);
+          isDragging = false;
+          startHideTimer();
+        }
+      });
+      function handleScrub(e) {
+        e.stopPropagation();
+        resetHideTimer();
+        const rect = progressContainer.getBoundingClientRect();
+        const touchX = e.touches ? e.touches[0].clientX : e.clientX;
+        const offsetX = touchX - rect.left;
+        let pct = (offsetX / rect.width) * 100;
+        pct = Math.max(0, Math.min(100, pct));
+        setBarPosition(pct);
+      }
+
+      // Change video (called from thumbnails)
+      window.changeVideo = function(id, title, element) {
+        if (window.event) window.event.stopPropagation();
+        player.loadVideoById(id);
+        displayTitle.innerText = title;
+        document.querySelectorAll('#playerCarousel .thumb-card').forEach(c => c.classList.remove('active'));
+        if (element) element.classList.add('active');
+        player.playVideo();
+        hideUI(); // instant hide on play
+      };
+
+      // Populate carousel with all videos
+      function populateCarousel(activeId) {
+        carousel.innerHTML = '';
+        allVideos.forEach(v => {
+          const card = document.createElement('div');
+          card.className = 'thumb-card' + (v.id === activeId ? ' active' : '');
+          card.setAttribute('onclick', `changeVideo('${v.id}', '${v.title}', this)`);
+          card.innerHTML = `<img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg">`;
+          carousel.appendChild(card);
+        });
+      }
+
+      // Open player with a specific video
+      window.openPlayerWithVideo = function(videoId, videoTitle) {
+        // Show player container, hide main screen
+        playerContainer.style.display = 'block';
+        document.querySelector('.app').style.display = 'none'; // hide main UI
+
+        // If player already initialized, just load video, otherwise it will load on ready
+        if (player && player.loadVideoById) {
+          player.loadVideoById(videoId);
+          displayTitle.innerText = videoTitle;
+          populateCarousel(videoId);
+          player.playVideo();
+          hideUI(); // hide UI immediately
+        } else {
+          // Player not ready yet; set a one-time listener
+          const checkExist = setInterval(() => {
+            if (player && player.loadVideoById) {
+              clearInterval(checkExist);
+              player.loadVideoById(videoId);
+              displayTitle.innerText = videoTitle;
+              populateCarousel(videoId);
+              player.playVideo();
+              hideUI();
+            }
+          }, 100);
+        }
+      };
+
+      // Close player and return to main UI
+      window.closePlayer = function() {
+        if (player && player.pauseVideo) player.pauseVideo();
+        playerContainer.style.display = 'none';
+        document.querySelector('.app').style.display = 'flex'; // show main UI again
+      };
+
+      // ---------- HOME GRID (same as before but click opens player) ----------
+      const homeBtn = document.getElementById('homeBtn');
+      const videoContainer = document.getElementById('mainVideoContainer');
+
       function createGrid() {
         const gridDiv = document.createElement('div');
         gridDiv.className = 'home-grid';
-        videoLinks.forEach(link => {
-          const key = regexYTLink(link);
+        allVideos.forEach(v => {
           const thumbCon = document.createElement('div');
           thumbCon.className = 'thumb-con';
-          thumbCon.setAttribute('data-link', link);
+          thumbCon.setAttribute('data-id', v.id);
+          thumbCon.setAttribute('data-title', v.title);
           thumbCon.innerHTML = `
-            <div class="thumb" style="background-image: url('https://i.ytimg.com/vi/${key}/maxresdefault.jpg')"></div>
+            <div class="thumb" style="background-image: url('https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg')"></div>
             <div class="play-button"></div>
           `;
+          thumbCon.addEventListener('click', (e) => {
+            e.preventDefault();
+            openPlayerWithVideo(v.id, v.title);
+          });
           gridDiv.appendChild(thumbCon);
         });
         return gridDiv;
       }
 
+      // Lazy load & parallax for grid (simplified, no embed replacement)
       function initGrid() {
         const thumbContainers = document.querySelectorAll('.thumb-con');
-        if (!thumbContainers.length) return;
-
-        function embedLinkAdd(ele) {
-          let link = ele.getAttribute('data-link');
-          let key = regexYTLink(link);
-          return `<embed class='grid-embed' src="https://www.youtube.com/embed/${key}" frameborder="0" allowfullscreen></embed>`;
-        }
-
-        function replaceThing(ele) {
-          ele.innerHTML = embedLinkAdd(ele);
-        }
-
-        function addImgLink(ele) {
-          let link = ele.getAttribute('data-link');
-          let key = regexYTLink(link);
-          ele.children[0].style.backgroundImage = `url('https://i.ytimg.com/vi/${key}/maxresdefault.jpg')`;
-        }
-
         function inVertViewport(ele) {
           let rect = ele.getBoundingClientRect();
-          return (
-            rect.top >= -300 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) + 300
-          );
+          return rect.top >= -300 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) + 300;
         }
-
-        function lazyLoad(ele) {
-          if (inVertViewport(ele)) {
-            addImgLink(ele);
-          }
-        }
-
-        function para(ele) {
-          let child = ele.children[0];
-          let y = ele.offsetTop;
-          let speed = 15;
-          if (inVertViewport(ele)) {
-            child.style.backgroundPosition = '0 ' + (window.scrollY - y) / speed + 'px';
-          }
-        }
-
         thumbContainers.forEach(ele => {
-          lazyLoad(ele);
-          ele.addEventListener('click', function(e) {
-            replaceThing(ele);
-          });
-        });
-
-        window.addEventListener('scroll', function() {
-          thumbContainers.forEach(ele => {
-            para(ele);
-            lazyLoad(ele);
-          });
+          // just ensure background is set (already inline)
         });
       }
-
-      // Home button click
-      const homeBtn = document.getElementById('homeBtn');
-      const videoContainer = document.getElementById('mainVideoContainer');
 
       homeBtn.addEventListener('click', function(e) {
         e.preventDefault();
@@ -399,6 +614,19 @@
         videoContainer.appendChild(grid);
         initGrid();
       });
+
+      // Also attach click to the two static video items
+      document.querySelectorAll('.video__item[data-video-id]').forEach(item => {
+        item.addEventListener('click', function(e) {
+          // Avoid triggering if clicking on options icon etc.
+          const videoId = this.dataset.videoId;
+          const videoTitle = this.dataset.videoTitle;
+          openPlayerWithVideo(videoId, videoTitle);
+        });
+      });
+
+      // Preload carousel when player opens first time
+      // (populateCarousel will be called from openPlayerWithVideo)
     })();
   </script>
 </body>
