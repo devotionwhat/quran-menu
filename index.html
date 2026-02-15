@@ -84,39 +84,7 @@
       min-height: 0;
     }
 
-    /* default video items (static) */
-    .video__item {
-      position: relative; width: 100%; margin-bottom: 10px;
-    }
-    .video__img {
-      height: 165px; width: 100%; border-radius: 10px; object-fit: cover;
-    }
-    .video__stats {
-      position: absolute; top: 0; height: 165px; width: 100%; cursor: pointer;
-    }
-    .video__views {
-      position: absolute; top: 10px; left: 10px; font-size: 9px;
-      padding: 2px 10px; border-radius: 12px; color: #ffffff;
-      background-color: #E8003C;
-    }
-    .video__options {
-      position: absolute; top: 10px; right: 10px;
-    }
-    .video__duration {
-      position: absolute; bottom: 10px; right: 10px; font-size: 8px;
-      padding: 2px 6px; border-radius: 6px; color: #ffffff;
-      background-color: #8c8c8c;
-    }
-    .video__info {
-      display: flex; margin: 5px 0 10px;
-    }
-    .video__photo {
-      object-fit: cover; height: 30px; width: 30px; border-radius: 50%;
-      margin-right: 5px; cursor: pointer;
-    }
-    .video__title { font-size: 12px; }
-    .video__channel { font-size: 9px; line-height: 1.8; opacity: 0.9; }
-
+    /* default video items (static) – removed, now grid is default */
     /* bottom menu */
     .menu {
       width: 100%; background-color: #ffffff; border-radius: 20px;
@@ -289,44 +257,8 @@
         <a class="categories__link" href="#"><span class="categories__text">All</span></a>
       </div>
 
-      <!-- scrollable content area (static + dynamic grid) -->
-      <div class="video" id="mainVideoContainer">
-        <!-- two default items with real video IDs -->
-        <div class="video__item" data-video-id="kWvFnOBP4Sc" data-video-title="Arkon Fly - Live Session">
-          <div class="video__cover">
-            <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-2.jpg?raw=true" alt="video">
-            <div class="video__stats">
-              <span class="video__views">4.5M</span>
-              <span class="video__duration">10:43</span>
-              <img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGlk%0D%0APSJzdmdfMSIgZmlsbD0ibm9uZSIgZD0ibTAsMGw0OCwwbDAsNDhsLTQ4LDBsMCwtNDh6Ii8+CiAg%0D%0APHBhdGggZmlsbD0iI2ZmZmZmZiIgaWQ9InN2Z18yIiBkPSJtMTIsMjBjLTIuMjEsMCAtNCwxLjc5%0D%0AIC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bTI0LDBjLTIuMjEs%0D%0AMCAtNCwxLjc5IC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bS0x%0D%0AMiwwYy0yLjIxLDAgLTQsMS43OSAtNCw0czEuNzksNCA0LDRzNCwtMS43OSA0LC00cy0xLjc5LC00%0D%0AIC00LC00eiIvPgogPC9nPgo8L3N2Zz4=" alt="options">
-            </div>
-          </div>
-          <div class="video__info">
-            <img class="video__photo" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/channel-1.png?raw=true" alt="channel">
-            <div class="video__description">
-              <h2 class="video__title">Arkon Fly - Live Session</h2>
-              <h3 class="video__channel">Song.FM</h3>
-            </div>
-          </div>
-        </div>
-        <div class="video__item" data-video-id="zE3Ek97kz_U" data-video-title="Multicolor">
-          <div class="video__cover">
-            <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-1.jpg?raw=true" alt="video">
-            <div class="video__stats">
-              <span class="video__views">4.6M</span>
-              <span class="video__duration">10:43</span>
-              <img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGlk%0D%0APSJzdmdfMSIgZmlsbD0ibm9uZSIgZD0ibTAsMGw0OCwwbDAsNDhsLTQ4LDBsMCwtNDh6Ii8+CiAg%0D%0APHBhdGggZmlsbD0iI2ZmZmZmZiIgaWQ9InN2Z18yIiBkPSJtMTIsMjBjLTIuMjEsMCAtNCwxLjc5%0D%0AIC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bTI0LDBjLTIuMjEs%0D%0AMCAtNCwxLjc5IC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bS0x%0D%0AMiwwYy0yLjIxLDAgLTQsMS43OSAtNCw0czEuNzksNCA0LDRzNCwtMS43OSA0LC00cy0xLjc5LC00%0D%0AIC00LC00eiIvPgogPC9nPgo8L3N2Zz4=" alt="options">
-            </div>
-          </div>
-          <div class="video__info">
-            <img class="video__photo" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/channel-2.png?raw=true" alt="channel">
-            <div class="video__description">
-              <h2 class="video__title">Multicolor</h2>
-              <h3 class="video__channel">Is this just fantasy</h3>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- scrollable content area (initially empty; grid will be injected by JS) -->
+      <div class="video" id="mainVideoContainer"></div>
 
       <nav class="menu">
         <ul class="menu__list">
@@ -379,119 +311,119 @@
       // ---------- GLOBAL VIDEO LIST (from the home grid) ----------
       const videoLinks = [
         "https://www.youtube.com/watch?v=wL_4_Al1U1k",
-"https://www.youtube.com/watch?v=J8X6TeJtvsU",
-"https://www.youtube.com/watch?v=914PooSyyL0",
-"https://www.youtube.com/watch?v=Sn4-8qbi0ps",
-"https://www.youtube.com/watch?v=5RvgLQiBt9o",
-"https://www.youtube.com/watch?v=4-Gn1CbXKSE",
-"https://www.youtube.com/watch?v=b2vkXogolqw",
-"https://www.youtube.com/watch?v=RV1ZNzobabQ",
-"https://www.youtube.com/watch?v=XGkxW1_qrk4",
-"https://www.youtube.com/watch?v=VcmyT3_aarI",
-"https://www.youtube.com/watch?v=iHjivhBxG80",
-"https://www.youtube.com/watch?v=fA_7e59yU3k",
-"https://www.youtube.com/watch?v=UFAqQRqkkPo",
-"https://www.youtube.com/watch?v=oOf_01jG_x8",
-"https://www.youtube.com/watch?v=T-0hLSzdGSc",
-"https://www.youtube.com/watch?v=YxITpeu1mR4",
-"https://www.youtube.com/watch?v=UtBNKQ1K2b4",
-"https://www.youtube.com/watch?v=QM6rlfohSjo",
-"https://www.youtube.com/watch?v=xGsKGvALWTc",
-"https://www.youtube.com/watch?v=YG44dL_g1EA",
-"https://www.youtube.com/watch?v=U5L5-w7362o",
-"https://www.youtube.com/watch?v=i53JqozWCLg",
-"https://www.youtube.com/watch?v=Zop1ZCdsyLY",
-"https://www.youtube.com/watch?v=ErqEg4nLz7Y",
-"https://www.youtube.com/watch?v=KdYKz-q1VTs",
-"https://www.youtube.com/watch?v=IUMvUiyMYiI",
-"https://www.youtube.com/watch?v=5shxgOIaaWE",
-"https://www.youtube.com/watch?v=npGMQLacCJY",
-"https://www.youtube.com/watch?v=pETuBRZgrxE",
-"https://www.youtube.com/watch?v=VeExu3gZgCs",
-"https://www.youtube.com/watch?v=vFWOMhmnWN4",
-"https://www.youtube.com/watch?v=SNmVlfOdAWI",
-"https://www.youtube.com/watch?v=ThrjUWsiYX4",
-"https://www.youtube.com/watch?v=S8WiHTTfjgI",
-"https://www.youtube.com/watch?v=n-LuHpSkCMI",
-"https://www.youtube.com/watch?v=RARnH1WTass",
-"https://www.youtube.com/watch?v=Zx4_5F8U7NY",
-"https://www.youtube.com/watch?v=llcjMOAxesg",
-"https://www.youtube.com/watch?v=gdgTv9pNII8",
-"https://www.youtube.com/watch?v=xeEysWsYwog",
-"https://www.youtube.com/watch?v=JO6MZIzSTN8",
-"https://www.youtube.com/watch?v=tnxSALpg7UU",
-"https://www.youtube.com/watch?v=JITEaN8scS4",
-"https://www.youtube.com/watch?v=52fqzHxBebc",
-"https://www.youtube.com/watch?v=aQ1ZinNa7oY",
-"https://www.youtube.com/watch?v=MJOE5BjEQJ8",
-"https://www.youtube.com/watch?v=qnZgOTZqXgc",
-"https://www.youtube.com/watch?v=dz2MemURPUM",
-"https://www.youtube.com/watch?v=9WmuOtMCjE0",
-"https://www.youtube.com/watch?v=_lhuvmMwAFw",
-"https://www.youtube.com/watch?v=kmpSuOIkdZQ",
-"https://www.youtube.com/watch?v=mLWLWW1bSqM",
-"https://www.youtube.com/watch?v=hskSVG0c0GA",
-"https://www.youtube.com/watch?v=3YBp4czvy4s",
-"https://www.youtube.com/watch?v=v2K4q-UVzu8",
-"https://www.youtube.com/watch?v=vZnN8qeUdZ4",
-"https://www.youtube.com/watch?v=6loTREB8yNg",
-"https://www.youtube.com/watch?v=942l1xCpgdM",
-"https://www.youtube.com/watch?v=_8jhhFjUMtc",
-"https://www.youtube.com/watch?v=PKFcsdre_ZQ",
-"https://www.youtube.com/watch?v=CSx23N_Tw8c",
-"https://www.youtube.com/watch?v=A04TdkY8WSs",
-"https://www.youtube.com/watch?v=Syowq655tTA",
-"https://www.youtube.com/watch?v=ucezp3N54vg",
-"https://www.youtube.com/watch?v=ZX4nHvyslRM",
-"https://www.youtube.com/watch?v=NORv-qg07TE",
-"https://www.youtube.com/watch?v=3f8BEYj8fN4",
-"https://www.youtube.com/watch?v=ItWaTidAMm8",
-"https://www.youtube.com/watch?v=rzc4P07HZh0",
-"https://www.youtube.com/watch?v=O2c_d6J4XSU",
-"https://www.youtube.com/watch?v=a85lmbc9SjA",
-"https://www.youtube.com/watch?v=4LWT9jgipIo",
-"https://www.youtube.com/watch?v=C-WNHzGweWM",
-"https://www.youtube.com/watch?v=3vY4fA-SFX4",
-"https://www.youtube.com/watch?v=eJS1z0BLtCY",
-"https://www.youtube.com/watch?v=X5MvAV_oczU",
-"https://www.youtube.com/watch?v=210WQYk3If8",
-"https://www.youtube.com/watch?v=dDtxsrGZOX4",
-"https://www.youtube.com/watch?v=sUbAbvkO3Lk",
-"https://www.youtube.com/watch?v=d8N87NOLcrg",
-"https://www.youtube.com/watch?v=Nvb27m_kUNg",
-"https://www.youtube.com/watch?v=vk0KG1hSSSg",
-"https://www.youtube.com/watch?v=e4RbrAaSxT8",
-"https://www.youtube.com/watch?v=CppGQUq-bSM",
-"https://www.youtube.com/watch?v=emeFvngfuwU",
-"https://www.youtube.com/watch?v=YoN8NTSGNXs",
-"https://www.youtube.com/watch?v=t_y_bGVs5Tk",
-"https://www.youtube.com/watch?v=ZSFKGw-AYoM",
-"https://www.youtube.com/watch?v=msahZhrNtTY",
-"https://www.youtube.com/watch?v=1fk7M72eq_o",
-"https://www.youtube.com/watch?v=5VIwfpPT-Mo",
-"https://www.youtube.com/watch?v=heFOCiFqrWE",
-"https://www.youtube.com/watch?v=p2Cykz9Jrr8",
-"https://www.youtube.com/watch?v=zCYFrGQUYO0",
-"https://www.youtube.com/watch?v=Y__9B_2RrG8",
-"https://www.youtube.com/watch?v=XH5wVPAvdWE",
-"https://www.youtube.com/watch?v=CaA-eRMS1No",
-"https://www.youtube.com/watch?v=2kPr39M0Vhk",
-"https://www.youtube.com/watch?v=KoA0HpeZ9v8",
-"https://www.youtube.com/watch?v=krNnjzmsEU0",
-"https://www.youtube.com/watch?v=jL5ZgoexCDs",
-"https://www.youtube.com/watch?v=-SNPJRq1CbY",
-"https://www.youtube.com/watch?v=cm1v5ynkFUE",
-"https://www.youtube.com/watch?v=SPxBnNMkTrk",
-"https://www.youtube.com/watch?v=JIfWsREM2ZA",
-"https://www.youtube.com/watch?v=6iDMDwmWCmk",
-"https://www.youtube.com/watch?v=BR8K6aKoLj8",
-"https://www.youtube.com/watch?v=RV8bGbs_VaY",
-"https://www.youtube.com/watch?v=diirash7WJ0",
-"https://www.youtube.com/watch?v=YSpQzKFU1fc",
-"https://www.youtube.com/watch?v=0VAOUAvjraA",
-"https://www.youtube.com/watch?v=ICEE1JYMzbQ",
-"https://www.youtube.com/watch?v=v6k_RpvJTXc",
-"https://www.youtube.com/watch?v=N3hvAwEyuPo",
+        "https://www.youtube.com/watch?v=J8X6TeJtvsU",
+        "https://www.youtube.com/watch?v=914PooSyyL0",
+        "https://www.youtube.com/watch?v=Sn4-8qbi0ps",
+        "https://www.youtube.com/watch?v=5RvgLQiBt9o",
+        "https://www.youtube.com/watch?v=4-Gn1CbXKSE",
+        "https://www.youtube.com/watch?v=b2vkXogolqw",
+        "https://www.youtube.com/watch?v=RV1ZNzobabQ",
+        "https://www.youtube.com/watch?v=XGkxW1_qrk4",
+        "https://www.youtube.com/watch?v=VcmyT3_aarI",
+        "https://www.youtube.com/watch?v=iHjivhBxG80",
+        "https://www.youtube.com/watch?v=fA_7e59yU3k",
+        "https://www.youtube.com/watch?v=UFAqQRqkkPo",
+        "https://www.youtube.com/watch?v=oOf_01jG_x8",
+        "https://www.youtube.com/watch?v=T-0hLSzdGSc",
+        "https://www.youtube.com/watch?v=YxITpeu1mR4",
+        "https://www.youtube.com/watch?v=UtBNKQ1K2b4",
+        "https://www.youtube.com/watch?v=QM6rlfohSjo",
+        "https://www.youtube.com/watch?v=xGsKGvALWTc",
+        "https://www.youtube.com/watch?v=YG44dL_g1EA",
+        "https://www.youtube.com/watch?v=U5L5-w7362o",
+        "https://www.youtube.com/watch?v=i53JqozWCLg",
+        "https://www.youtube.com/watch?v=Zop1ZCdsyLY",
+        "https://www.youtube.com/watch?v=ErqEg4nLz7Y",
+        "https://www.youtube.com/watch?v=KdYKz-q1VTs",
+        "https://www.youtube.com/watch?v=IUMvUiyMYiI",
+        "https://www.youtube.com/watch?v=5shxgOIaaWE",
+        "https://www.youtube.com/watch?v=npGMQLacCJY",
+        "https://www.youtube.com/watch?v=pETuBRZgrxE",
+        "https://www.youtube.com/watch?v=VeExu3gZgCs",
+        "https://www.youtube.com/watch?v=vFWOMhmnWN4",
+        "https://www.youtube.com/watch?v=SNmVlfOdAWI",
+        "https://www.youtube.com/watch?v=ThrjUWsiYX4",
+        "https://www.youtube.com/watch?v=S8WiHTTfjgI",
+        "https://www.youtube.com/watch?v=n-LuHpSkCMI",
+        "https://www.youtube.com/watch?v=RARnH1WTass",
+        "https://www.youtube.com/watch?v=Zx4_5F8U7NY",
+        "https://www.youtube.com/watch?v=llcjMOAxesg",
+        "https://www.youtube.com/watch?v=gdgTv9pNII8",
+        "https://www.youtube.com/watch?v=xeEysWsYwog",
+        "https://www.youtube.com/watch?v=JO6MZIzSTN8",
+        "https://www.youtube.com/watch?v=tnxSALpg7UU",
+        "https://www.youtube.com/watch?v=JITEaN8scS4",
+        "https://www.youtube.com/watch?v=52fqzHxBebc",
+        "https://www.youtube.com/watch?v=aQ1ZinNa7oY",
+        "https://www.youtube.com/watch?v=MJOE5BjEQJ8",
+        "https://www.youtube.com/watch?v=qnZgOTZqXgc",
+        "https://www.youtube.com/watch?v=dz2MemURPUM",
+        "https://www.youtube.com/watch?v=9WmuOtMCjE0",
+        "https://www.youtube.com/watch?v=_lhuvmMwAFw",
+        "https://www.youtube.com/watch?v=kmpSuOIkdZQ",
+        "https://www.youtube.com/watch?v=mLWLWW1bSqM",
+        "https://www.youtube.com/watch?v=hskSVG0c0GA",
+        "https://www.youtube.com/watch?v=3YBp4czvy4s",
+        "https://www.youtube.com/watch?v=v2K4q-UVzu8",
+        "https://www.youtube.com/watch?v=vZnN8qeUdZ4",
+        "https://www.youtube.com/watch?v=6loTREB8yNg",
+        "https://www.youtube.com/watch?v=942l1xCpgdM",
+        "https://www.youtube.com/watch?v=_8jhhFjUMtc",
+        "https://www.youtube.com/watch?v=PKFcsdre_ZQ",
+        "https://www.youtube.com/watch?v=CSx23N_Tw8c",
+        "https://www.youtube.com/watch?v=A04TdkY8WSs",
+        "https://www.youtube.com/watch?v=Syowq655tTA",
+        "https://www.youtube.com/watch?v=ucezp3N54vg",
+        "https://www.youtube.com/watch?v=ZX4nHvyslRM",
+        "https://www.youtube.com/watch?v=NORv-qg07TE",
+        "https://www.youtube.com/watch?v=3f8BEYj8fN4",
+        "https://www.youtube.com/watch?v=ItWaTidAMm8",
+        "https://www.youtube.com/watch?v=rzc4P07HZh0",
+        "https://www.youtube.com/watch?v=O2c_d6J4XSU",
+        "https://www.youtube.com/watch?v=a85lmbc9SjA",
+        "https://www.youtube.com/watch?v=4LWT9jgipIo",
+        "https://www.youtube.com/watch?v=C-WNHzGweWM",
+        "https://www.youtube.com/watch?v=3vY4fA-SFX4",
+        "https://www.youtube.com/watch?v=eJS1z0BLtCY",
+        "https://www.youtube.com/watch?v=X5MvAV_oczU",
+        "https://www.youtube.com/watch?v=210WQYk3If8",
+        "https://www.youtube.com/watch?v=dDtxsrGZOX4",
+        "https://www.youtube.com/watch?v=sUbAbvkO3Lk",
+        "https://www.youtube.com/watch?v=d8N87NOLcrg",
+        "https://www.youtube.com/watch?v=Nvb27m_kUNg",
+        "https://www.youtube.com/watch?v=vk0KG1hSSSg",
+        "https://www.youtube.com/watch?v=e4RbrAaSxT8",
+        "https://www.youtube.com/watch?v=CppGQUq-bSM",
+        "https://www.youtube.com/watch?v=emeFvngfuwU",
+        "https://www.youtube.com/watch?v=YoN8NTSGNXs",
+        "https://www.youtube.com/watch?v=t_y_bGVs5Tk",
+        "https://www.youtube.com/watch?v=ZSFKGw-AYoM",
+        "https://www.youtube.com/watch?v=msahZhrNtTY",
+        "https://www.youtube.com/watch?v=1fk7M72eq_o",
+        "https://www.youtube.com/watch?v=5VIwfpPT-Mo",
+        "https://www.youtube.com/watch?v=heFOCiFqrWE",
+        "https://www.youtube.com/watch?v=p2Cykz9Jrr8",
+        "https://www.youtube.com/watch?v=zCYFrGQUYO0",
+        "https://www.youtube.com/watch?v=Y__9B_2RrG8",
+        "https://www.youtube.com/watch?v=XH5wVPAvdWE",
+        "https://www.youtube.com/watch?v=CaA-eRMS1No",
+        "https://www.youtube.com/watch?v=2kPr39M0Vhk",
+        "https://www.youtube.com/watch?v=KoA0HpeZ9v8",
+        "https://www.youtube.com/watch?v=krNnjzmsEU0",
+        "https://www.youtube.com/watch?v=jL5ZgoexCDs",
+        "https://www.youtube.com/watch?v=-SNPJRq1CbY",
+        "https://www.youtube.com/watch?v=cm1v5ynkFUE",
+        "https://www.youtube.com/watch?v=SPxBnNMkTrk",
+        "https://www.youtube.com/watch?v=JIfWsREM2ZA",
+        "https://www.youtube.com/watch?v=6iDMDwmWCmk",
+        "https://www.youtube.com/watch?v=BR8K6aKoLj8",
+        "https://www.youtube.com/watch?v=RV8bGbs_VaY",
+        "https://www.youtube.com/watch?v=diirash7WJ0",
+        "https://www.youtube.com/watch?v=YSpQzKFU1fc",
+        "https://www.youtube.com/watch?v=0VAOUAvjraA",
+        "https://www.youtube.com/watch?v=ICEE1JYMzbQ",
+        "https://www.youtube.com/watch?v=v6k_RpvJTXc",
+        "https://www.youtube.com/watch?v=N3hvAwEyuPo",
       ];
 
       // Helper to extract video ID
@@ -503,7 +435,7 @@
       const allVideos = videoLinks.map((link, index) => {
         return { id: regexYTLink(link), title: `Video ${index+1}` };
       });
-      // Override first two titles to match static items
+      // Override first two titles to match static items (optional)
       if (allVideos.length >= 2) {
         allVideos[0].title = "Arkon Fly - Live Session";
         allVideos[1].title = "Multicolor";
@@ -668,7 +600,7 @@
         document.querySelector('.app').style.display = 'flex'; // show main UI again
       };
 
-      // ---------- HOME GRID (same as before but click opens player) ----------
+      // ---------- HOME GRID (click opens player) ----------
       const homeBtn = document.getElementById('homeBtn');
       const videoContainer = document.getElementById('mainVideoContainer');
 
@@ -714,18 +646,13 @@
         initGrid();
       });
 
-      // Also attach click to the two static video items
-      document.querySelectorAll('.video__item[data-video-id]').forEach(item => {
-        item.addEventListener('click', function(e) {
-          // Avoid triggering if clicking on options icon etc.
-          const videoId = this.dataset.videoId;
-          const videoTitle = this.dataset.videoTitle;
-          openPlayerWithVideo(videoId, videoTitle);
-        });
+      // On page load, show the grid (home screen) immediately
+      window.addEventListener('load', function() {
+        const grid = createGrid();
+        videoContainer.innerHTML = '';
+        videoContainer.appendChild(grid);
+        initGrid();
       });
-
-      // Preload carousel when player opens first time
-      // (populateCarousel will be called from openPlayerWithVideo)
     })();
   </script>
 </body>
