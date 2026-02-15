@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>YouTube Kids - Auto Hide UI</title>
+    <title>YouTube Kids - Instant Hide on Play</title>
     <style>
         :root {
             --yt-red: #FF0000;
@@ -48,7 +48,7 @@
             pointer-events: none; display: flex; flex-direction: column;
             justify-content: space-between; padding: 20px; box-sizing: border-box;
             background: rgba(0, 0, 0, 0.4); z-index: 10;
-            transition: opacity 0.6s ease, visibility 0.6s;
+            transition: opacity 0.4s ease, visibility 0.4s;
         }
 
         .hidden-ui { opacity: 0; visibility: hidden; }
@@ -160,38 +160,26 @@
                     'rel': 0, 'iv_load_policy': 3, 'playsinline': 1 
                 },
                 events: { 
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange 
+                    'onReady': onPlayerReady
                 }
             });
         }
 
         function onPlayerReady() {
             setInterval(updateProgressBar, 100);
-            startHideTimer(); // Start the first countdown
+            startHideTimer();
         }
 
-        function onPlayerStateChange(event) {
-            // If the video starts playing, ensure the timer is running
-            if (event.data === YT.PlayerState.PLAYING) {
-                startHideTimer();
-            }
-        }
-
-        // --- AUTO-HIDE LOGIC ---
         function startHideTimer() {
             clearTimeout(hideTimer);
-            if (isUIVisible && !isDragging) {
-                hideTimer = setTimeout(() => {
-                    hideUI();
-                }, 5000); // 5 seconds
+            // Only auto-hide if playing
+            if (isUIVisible && !isDragging && player.getPlayerState() === 1) {
+                hideTimer = setTimeout(() => hideUI(), 5000);
             }
         }
 
         function resetHideTimer() {
-            if (isUIVisible) {
-                startHideTimer();
-            }
+            if (isUIVisible) startHideTimer();
         }
 
         function hideUI() {
@@ -211,23 +199,18 @@
             if (!isUIVisible) {
                 showUI();
             } else {
-                // Toggle Play/Pause when clicking while UI is already visible
-                if (player && player.getPlayerState) {
-                    const state = player.getPlayerState();
-                    if (state === 1) { // Playing
-                        player.pauseVideo();
-                        showStatusIcon('Ⅱ');
-                        clearTimeout(hideTimer); // Don't hide while paused
-                    } else { // Paused
-                        player.playVideo();
-                        showStatusIcon('▶');
-                        startHideTimer();
-                    }
+                const state = player.getPlayerState();
+                if (state === 1) { // Playing -> Pause
+                    player.pauseVideo();
+                    showStatusIcon('Ⅱ');
+                    clearTimeout(hideTimer); // Keep UI visible while paused
+                } else { // Paused -> Play
+                    player.playVideo();
+                    showStatusIcon('▶');
+                    hideUI(); // INSTANT HIDE ON PLAY
                 }
             }
         }
-
-        // --- REST OF THE LOGIC ---
 
         function showStatusIcon(char) {
             statusIcon.innerText = char;
@@ -256,7 +239,7 @@
 
         function handleScrub(e) {
             e.stopPropagation();
-            resetHideTimer(); // Reset timer while scrubbing
+            resetHideTimer();
             const rect = progressContainer.getBoundingClientRect();
             const touchX = e.touches ? e.touches[0].clientX : e.clientX;
             const offsetX = touchX - rect.left;
@@ -283,7 +266,10 @@
             document.getElementById('displayTitle').innerText = title;
             document.querySelectorAll('.thumb-card').forEach(c => c.classList.remove('active'));
             element.classList.add('active');
-            showUI();
+            
+            // When picking a new video: Start playing and hide UI
+            player.playVideo();
+            hideUI();
         }
 
         function formatTime(seconds) {
