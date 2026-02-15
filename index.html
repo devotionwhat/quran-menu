@@ -84,7 +84,39 @@
       min-height: 0;
     }
 
-    /* default video items (static) – removed, now grid is default */
+    /* default video items (static) – will be replaced by grid on load */
+    .video__item {
+      position: relative; width: 100%; margin-bottom: 10px;
+    }
+    .video__img {
+      height: 165px; width: 100%; border-radius: 10px; object-fit: cover;
+    }
+    .video__stats {
+      position: absolute; top: 0; height: 165px; width: 100%; cursor: pointer;
+    }
+    .video__views {
+      position: absolute; top: 10px; left: 10px; font-size: 9px;
+      padding: 2px 10px; border-radius: 12px; color: #ffffff;
+      background-color: #E8003C;
+    }
+    .video__options {
+      position: absolute; top: 10px; right: 10px;
+    }
+    .video__duration {
+      position: absolute; bottom: 10px; right: 10px; font-size: 8px;
+      padding: 2px 6px; border-radius: 6px; color: #ffffff;
+      background-color: #8c8c8c;
+    }
+    .video__info {
+      display: flex; margin: 5px 0 10px;
+    }
+    .video__photo {
+      object-fit: cover; height: 30px; width: 30px; border-radius: 50%;
+      margin-right: 5px; cursor: pointer;
+    }
+    .video__title { font-size: 12px; }
+    .video__channel { font-size: 9px; line-height: 1.8; opacity: 0.9; }
+
     /* bottom menu */
     .menu {
       width: 100%; background-color: #ffffff; border-radius: 20px;
@@ -102,8 +134,8 @@
       color: #8c8c8c; font-size: 8px; transition: 0.4s ease; font-weight: bold;
     }
 
-    /* grid for home videos (appears after clicking Home) */
-    .home-grid {
+    /* grid for videos (used by both Home and Trending) */
+    .video-grid {
       display: grid;
       grid-template-columns: 1fr;
       grid-row-gap: 1em;
@@ -257,13 +289,49 @@
         <a class="categories__link" href="#"><span class="categories__text">All</span></a>
       </div>
 
-      <!-- scrollable content area (initially empty; grid will be injected by JS) -->
-      <div class="video" id="mainVideoContainer"></div>
+      <!-- scrollable content area (initially contains static items, will be replaced by grid on load) -->
+      <div class="video" id="mainVideoContainer">
+        <!-- two default items with real video IDs -->
+        <div class="video__item" data-video-id="kWvFnOBP4Sc" data-video-title="Arkon Fly - Live Session">
+          <div class="video__cover">
+            <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-2.jpg?raw=true" alt="video">
+            <div class="video__stats">
+              <span class="video__views">4.5M</span>
+              <span class="video__duration">10:43</span>
+              <img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGlk%0D%0APSJzdmdfMSIgZmlsbD0ibm9uZSIgZD0ibTAsMGw0OCwwbDAsNDhsLTQ4LDBsMCwtNDh6Ii8+CiAg%0D%0APHBhdGggZmlsbD0iI2ZmZmZmZiIgaWQ9InN2Z18yIiBkPSJtMTIsMjBjLTIuMjEsMCAtNCwxLjc5%0D%0AIC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bTI0LDBjLTIuMjEs%0D%0AMCAtNCwxLjc5IC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bS0x%0D%0AMiwwYy0yLjIxLDAgLTQsMS43OSAtNCw0czEuNzksNCA0LDRzNCwtMS43OSA0LC00cy0xLjc5LC00%0D%0AIC00LC00eiIvPgogPC9nPgo8L3N2Zz4=" alt="options">
+            </div>
+          </div>
+          <div class="video__info">
+            <img class="video__photo" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/channel-1.png?raw=true" alt="channel">
+            <div class="video__description">
+              <h2 class="video__title">Arkon Fly - Live Session</h2>
+              <h3 class="video__channel">Song.FM</h3>
+            </div>
+          </div>
+        </div>
+        <div class="video__item" data-video-id="zE3Ek97kz_U" data-video-title="Multicolor">
+          <div class="video__cover">
+            <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-1.jpg?raw=true" alt="video">
+            <div class="video__stats">
+              <span class="video__views">4.6M</span>
+              <span class="video__duration">10:43</span>
+              <img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGlk%0D%0APSJzdmdfMSIgZmlsbD0ibm9uZSIgZD0ibTAsMGw0OCwwbDAsNDhsLTQ4LDBsMCwtNDh6Ii8+CiAg%0D%0APHBhdGggZmlsbD0iI2ZmZmZmZiIgaWQ9InN2Z18yIiBkPSJtMTIsMjBjLTIuMjEsMCAtNCwxLjc5%0D%0AIC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bTI0LDBjLTIuMjEs%0D%0AMCAtNCwxLjc5IC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bS0x%0D%0AMiwwYy0yLjIxLDAgLTQsMS43OSAtNCw0czEuNzksNCA0LDRzNCwtMS43OSA0LC00cy0xLjc5LC00%0D%0AIC00LC00eiIvPgogPC9nPgo8L3N2Zz4=" alt="options">
+            </div>
+          </div>
+          <div class="video__info">
+            <img class="video__photo" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/channel-2.png?raw=true" alt="channel">
+            <div class="video__description">
+              <h2 class="video__title">Multicolor</h2>
+              <h3 class="video__channel">Is this just fantasy</h3>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <nav class="menu">
         <ul class="menu__list">
           <li class="menu__item"><a class="menu__link" href="#" id="homeBtn"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0ibm9uZSIgZD0iTTAsMGgyNHYyNEgwVjB6Ii8+DQo8cGF0%0D%0AaCBmaWxsPSIjRTgwMDNDIiBkPSJNMjEsMkgzQzEuOSwyLDEsMi45LDEsNHYxMmMwLDEuMSwwLjks%0D%0AMiwyLDJoN3YySDh2Mmg4di0yaC0ydi0yaDdjMS4xLDAsMi0wLjksMi0yVjRDMjMsMi45LDIyLjEs%0D%0AMiwyMSwyeg0KCSBNMjEsMTZIM1Y0aDE4VjE2eiIvPg0KPC9zdmc+DQo=" alt="home"><span class="menu__txt">Home</span></a></li>
-          <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0ibm9uZSIgZD0iTTAsMGgyNHYyNEgwVjB6Ii8+DQo8cGF0%0D%0AaCBmaWxsPSIjRTgwMDNDIiBkPSJNMTEuNTcsMTMuMTZjLTEuMzYsMC4yNzktMi4xNywxLjE2LTIu%0D%0AMTcsMi40MWMwLDEuMzQsMS4xMSwyLjQyLDIuNDksMi40MmMyLjA0OSwwLDMuNzA5LTEuNjYsMy43%0D%0AMDktMy43MTENCgljMC0xLjA2OS0wLjE0OS0yLjExOS0wLjQ1OS0zLjExOUMxNC4zNSwxMi4yMywx%0D%0AMi45NCwxMi44OCwxMS41NywxMy4xNnogTTEzLjUsMC42N2MwLDAsMC43NCwyLjY1LDAuNzQsNC44%0D%0ADQoJYzAsMi4wNi0xLjM1LDMuNzMtMy40MSwzLjczQzguNzYsOS4yLDcuMiw3LjUzLDcuMiw1LjQ3%0D%0AbDAuMDMtMC4zNkM1LjIxLDcuNTEsNCwxMC42Miw0LDE0YzAsNC40MiwzLjU4LDgsOCw4czgtMy41%0D%0AOCw4LTgNCglDMjAsOC42MSwxNy40MSwzLjgsMTMuNSwwLjY3eiBNMTIsMjBjLTMuMzEsMC02LTIu%0D%0ANjg5LTYtNmMwLTEuNTI5LDAuMy0zLjA0LDAuODYtNC40M2MxLjAxLDEuMDEsMi40MSwxLjYzLDMu%0D%0AOTcsMS42Mw0KCWMyLjY2LDAsNC43NS0xLjgzLDUuMjc5LTQuNDNDMTcuMzQsOC45NywxOCwxMS40%0D%0ANCwxOCwxNEMxOCwxNy4zMTEsMTUuMzExLDIwLDEyLDIweiIvPg0KPC9zdmc+DQo=" alt="trending"><span class="menu__txt">Trending</span></a></li>
+          <li class="menu__item"><a class="menu__link" href="#" id="trendingBtn"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0ibm9uZSIgZD0iTTAsMGgyNHYyNEgwVjB6Ii8+DQo8cGF0%0D%0AaCBmaWxsPSIjRTgwMDNDIiBkPSJNMTEuNTcsMTMuMTZjLTEuMzYsMC4yNzktMi4xNywxLjE2LTIu%0D%0AMTcsMi40MWMwLDEuMzQsMS4xMSwyLjQyLDIuNDksMi40MmMyLjA0OSwwLDMuNzA5LTEuNjYsMy43%0D%0AMDktMy43MTENCgljMC0xLjA2OS0wLjE0OS0yLjExOS0wLjQ1OS0zLjExOUMxNC4zNSwxMi4yMywx%0D%0AMi45NCwxMi44OCwxMS41NywxMy4xNnogTTEzLjUsMC42N2MwLDAsMC43NCwyLjY1LDAuNzQsNC44%0D%0ADQoJYzAsMi4wNi0xLjM1LDMuNzMtMy40MSwzLjczQzguNzYsOS4yLDcuMiw3LjUzLDcuMiw1LjQ3%0D%0AbDAuMDMtMC4zNkM1LjIxLDcuNTEsNCwxMC42Miw0LDE0YzAsNC40MiwzLjU4LDgsOCw4czgtMy41%0D%0AOCw4LTgNCglDMjAsOC42MSwxNy40MSwzLjgsMTMuNSwwLjY3eiBNMTIsMjBjLTMuMzEsMC02LTIu%0D%0ANjg5LTYtNmMwLTEuNTI5LDAuMy0zLjA0LDAuODYtNC40M2MxLjAxLDEuMDEsMi40MSwxLjYzLDMu%0D%0AOTcsMS42Mw0KCWMyLjY2LDAsNC43NS0xLjgzLDUuMjc5LTQuNDNDMTcuMzQsOC45NywxOCwxMS40%0D%0ANCwxOCwxNEMxOCwxNy4zMTEsMTUuMzExLDIwLDEyLDIweiIvPg0KPC9zdmc+DQo=" alt="trending"><span class="menu__txt">Trending</span></a></li>
           <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0U4MDAzQyIgZD0iTTE2LjUsM2MtMS43NCwwLTMuNDEs%0D%0AMC44MS00LjUsMi4wOUMxMC45MSwzLjgxLDkuMjQsMyw3LjUsM0M0LjQyLDMsMiw1LjQyLDIsOC41%0D%0ADQoJYzAsMy43NzksMy40LDYuODU5LDguNTUsMTEuNTRMMTIsMjEuMzVsMS40NS0xLjMyQzE4LjYs%0D%0AMTUuMzU5LDIyLDEyLjI3OSwyMiw4LjVDMjIsNS40MiwxOS41OCwzLDE2LjUsM3ogTTEyLjEsMTgu%0D%0ANTVMMTIsMTguNjUNCglsLTAuMS0wLjEwMUM3LjE0LDE0LjI0LDQsMTEuMzksNCw4LjVDNCw2LjUs%0D%0ANS41LDUsNy41LDVjMS41NCwwLDMuMDQsMC45OSwzLjU3LDIuMzZoMS44N0MxMy40Niw1Ljk5LDE0%0D%0ALjk2LDUsMTYuNSw1DQoJYzIsMCwzLjUsMS41LDMuNSwzLjVDMjAsMTEuMzksMTYuODU5LDE0LjI0%0D%0ALDEyLjEsMTguNTV6Ii8+DQo8L3N2Zz4NCg==" alt="subscriptions"><span class="menu__txt">Subscriptions</span></a></li>
           <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0U4MDAzQyIgZD0iTTIwLDJINEMyLjksMiwyLDIuOSwy%0D%0ALDR2MThsNC00aDE0YzEuMSwwLDItMC45LDItMlY0QzIyLDIuOSwyMS4xLDIsMjAsMnogTTIwLDE2%0D%0ASDZsLTIsMlY0aDE2VjE2eiIvPg0KPC9zdmc+DQo=" alt="inbox"><span class="menu__txt">Inbox</span></a></li>
           <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0ibm9uZSIgZD0iTTAsMGgyNHYyNEgwVjB6IE0wLDBoMjR2%0D%0AMjRIMFYweiIvPg0KPHBhdGggZmlsbD0iI0U4MDAzQyIgZD0iTTIxLDNIM0MxLjksMywxLDMuOSwx%0D%0ALDV2MTRjMCwxLjEsMC45LDIsMiwyaDE4YzEuMSwwLDItMC45LDItMlY1QzIzLDMuOSwyMi4xLDMs%0D%0AMjEsM3ogTTIxLDE5SDNWNWgxMHY0aDhWMTkNCgl6Ii8+DQo8L3N2Zz4NCg==" alt="library"><span class="menu__txt">Library</span></a></li>
@@ -435,7 +503,7 @@
       const allVideos = videoLinks.map((link, index) => {
         return { id: regexYTLink(link), title: `Video ${index+1}` };
       });
-      // Override first two titles to match static items (optional)
+      // Override first two titles to match static items
       if (allVideos.length >= 2) {
         allVideos[0].title = "Arkon Fly - Live Session";
         allVideos[1].title = "Multicolor";
@@ -600,14 +668,13 @@
         document.querySelector('.app').style.display = 'flex'; // show main UI again
       };
 
-      // ---------- HOME GRID (click opens player) ----------
-      const homeBtn = document.getElementById('homeBtn');
+      // ---------- GRID LOADING FUNCTION (reusable) ----------
       const videoContainer = document.getElementById('mainVideoContainer');
 
-      function createGrid() {
+      function loadGrid(videos) {
         const gridDiv = document.createElement('div');
-        gridDiv.className = 'home-grid';
-        allVideos.forEach(v => {
+        gridDiv.className = 'video-grid'; // using generic class
+        videos.forEach(v => {
           const thumbCon = document.createElement('div');
           thumbCon.className = 'thumb-con';
           thumbCon.setAttribute('data-id', v.id);
@@ -622,36 +689,37 @@
           });
           gridDiv.appendChild(thumbCon);
         });
-        return gridDiv;
+        // Replace content
+        videoContainer.innerHTML = '';
+        videoContainer.appendChild(gridDiv);
       }
 
-      // Lazy load & parallax for grid (simplified, no embed replacement)
-      function initGrid() {
-        const thumbContainers = document.querySelectorAll('.thumb-con');
-        function inVertViewport(ele) {
-          let rect = ele.getBoundingClientRect();
-          return rect.top >= -300 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) + 300;
-        }
-        thumbContainers.forEach(ele => {
-          // just ensure background is set (already inline)
-        });
-      }
-
+      // ---------- HOME BUTTON ----------
+      const homeBtn = document.getElementById('homeBtn');
       homeBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        if (videoContainer.querySelector('.home-grid')) return;
-        videoContainer.innerHTML = '';
-        const grid = createGrid();
-        videoContainer.appendChild(grid);
-        initGrid();
+        loadGrid(allVideos);
       });
 
-      // On page load, show the grid (home screen) immediately
+      // ---------- TRENDING BUTTON ----------
+      const trendingBtn = document.getElementById('trendingBtn');
+      trendingBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        loadGrid(allVideos); // same videos for now, can be changed later
+      });
+
+      // ---------- INITIAL LOAD (replace static items with grid) ----------
       window.addEventListener('load', function() {
-        const grid = createGrid();
-        videoContainer.innerHTML = '';
-        videoContainer.appendChild(grid);
-        initGrid();
+        loadGrid(allVideos);
+      });
+
+      // Also attach click to the two static video items (in case they remain before load, but load will replace them)
+      document.querySelectorAll('.video__item[data-video-id]').forEach(item => {
+        item.addEventListener('click', function(e) {
+          const videoId = this.dataset.videoId;
+          const videoTitle = this.dataset.videoTitle;
+          openPlayerWithVideo(videoId, videoTitle);
+        });
       });
     })();
   </script>
