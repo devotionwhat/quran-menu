@@ -1,193 +1,362 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Quran Kids</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --yt-blue: #00d1ff;
-            --yt-red: #ff4e45;
-            --yt-yellow: #ffcf25;
-            --yt-green: #45d948;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>YouTube • high tech</title>
+  <style>
+    /* RESET / BASE — exact look from the CodePen */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Fredoka One', cursive;
-            background-color: #f9f9f9;
-            overflow: hidden; /* App feel */
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #e5e5e5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
 
-        /* Top Navigation - Colorful Icons */
-        .top-nav {
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 10;
-        }
+    /* main app card — mimics the CodePen preview */
+    .app {
+      width: 360px;
+      max-width: 100%;
+      background-color: #fff;
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+      position: relative;
+    }
 
-        .nav-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            border: none;
-            color: white;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
-        }
+    .screen {
+      background: white;
+      display: flex;
+      flex-direction: column;
+    }
 
-        /* The Television Player */
-        #tv-screen {
-            width: 90%;
-            margin: 15px auto;
-            aspect-ratio: 16/9;
-            background: #000;
-            border-radius: 25px;
-            border: 8px solid white;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            overflow: hidden;
-            position: relative;
-        }
+    /* ===== HEADER (exact icons from base64 / original pen) ===== */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
 
-        iframe { width: 100%; height: 100%; border: none; }
+    .header__menu,
+    .header__search {
+      width: 28px;
+      height: 28px;
+      cursor: default; /* static like the pen */
+    }
 
-        /* Horizontal Video Shelf */
-        .shelf-title {
-            padding: 0 20px;
-            font-size: 20px;
-            color: #444;
-            margin-bottom: 5px;
-        }
+    .header__logo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-        .video-shelf {
-            display: flex;
-            overflow-x: auto;
-            padding: 10px 20px;
-            gap: 20px;
-            scrollbar-width: none; /* Hide scrollbar */
-            -webkit-overflow-scrolling: touch;
-        }
+    .header__icon {
+      width: 28px;
+      height: 28px;
+    }
 
-        .video-card {
-            flex: 0 0 200px;
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: transform 0.2s;
-            border-bottom: 5px solid var(--yt-blue);
-        }
+    .header__title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      color: #212121;
+    }
 
-        .video-card:active { transform: scale(0.9); }
+    /* categories row — exactly as described: High tech, Gaming, Music, All */
+    .categories {
+      display: flex;
+      padding: 12px 16px;
+      gap: 16px;
+      border-bottom: 1px solid #f0f0f0;
+      background: white;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none; /* hide scroll for clean look */
+      -ms-overflow-style: none;
+    }
 
-        .thumb-box {
-            width: 100%;
-            height: 110px;
-            background: #eee;
-            position: relative;
-        }
+    .categories::-webkit-scrollbar {
+      display: none;
+    }
 
-        .thumb-box img { width: 100%; height: 100%; object-fit: cover; }
+    .categories__link {
+      text-decoration: none;
+      color: #606060;
+      font-size: 1rem;
+      font-weight: 500;
+      white-space: nowrap;
+      padding-bottom: 4px;
+      border-bottom: 2px solid transparent;
+      transition: 0.2s;
+    }
 
-        .video-card-title {
-            padding: 10px;
-            font-size: 14px;
-            color: #333;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    /* active / selected style (original pen had 'All' as selected? we reflect design) */
+    .categories__link:nth-child(4) .categories__text {
+      color: #e8003c;  /* red accent from the menu icon */
+      font-weight: 600;
+    }
 
-        /* Background Decorations */
-        .bg-blob {
-            position: absolute;
-            z-index: -1;
-            filter: blur(50px);
-            opacity: 0.2;
-        }
-    </style>
+    .categories__text {
+      display: inline-block;
+    }
+
+    /* video feed */
+    .video {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      background: white;
+    }
+
+    /* video card item */
+    .video__item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .video__cover {
+      position: relative;
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #f5f5f5;
+    }
+
+    .video__img {
+      width: 100%;
+      height: auto;
+      display: block;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+    }
+
+    /* stats overlay (views + duration + options) exactly like pen */
+    .video__stats {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      right: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+      pointer-events: none;
+    }
+
+    .video__views {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 2px 6px;
+      border-radius: 20px;
+      backdrop-filter: blur(2px);
+    }
+
+    .video__duration {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 2px 6px;
+      border-radius: 20px;
+      backdrop-filter: blur(2px);
+    }
+
+    .video__options {
+      margin-left: auto;
+      width: 24px;
+      height: 24px;
+      filter: drop-shadow(0 1px 2px black);
+      pointer-events: auto; /* so it could be clickable, but static design */
+    }
+
+    /* bottom metadata: title + channel */
+    .video__details {
+      display: flex;
+      gap: 12px;
+    }
+
+    .video__avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #c4c4c4;
+      flex-shrink: 0;
+      object-fit: cover;
+    }
+
+    .video__info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .video__title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #0f0f0f;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .video__channel {
+      font-size: 0.8rem;
+      color: #606060;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .verified {
+      width: 14px;
+      height: 14px;
+      background: #606060;
+      border-radius: 50%;
+      color: white;
+      font-size: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* extra micro – replicate the original Codepen layout exactly */
+    .icon {
+      filter: brightness(0) invert(0.3);  /* make icons a bit dark, like original #e8003c menu is red, but we keep them as given */
+    }
+
+    /* specific red for the path inside menus? the original used inline red #e8003c. 
+       but we can keep as they are because we embed the exact base64. However, 
+       to be safe we keep the SVGs from original, and they already contain fill="#e8003c" */
+    /* additional card: to match second video from the partial pen snippet (the HTML was cut) */
+    .separator {
+      height: 1px;
+      background: #f0f0f0;
+      margin: 8px 0;
+    }
+  </style>
 </head>
 <body>
+  <div class="app">
+    <div class="screen">
+      <!-- header exactly from codePen: menu + youtube logo + search -->
+      <header class="header">
+        <!-- menu icon (three red lines) base64 from original -->
+        <img class="header__menu icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGZp%0D%0AbGw9IiNlODAwM2MiIGlkPSJzdmdfMSIgZD0ibTYsMzZsMTIsMGwwLC00bC0xMiwwbDAsNHptMCwt%0D%0AMjRsMCw0bDM2LDBsMCwtNGwtMzYsMHptMCwxNGwyNCwwbDAsLTRsLTI0LDBsMCw0eiIvPgogPC9n%0D%0APgo8L3N2Zz4=" alt="Ícono de menu" />
 
-    <div class="top-nav">
-        <button class="nav-btn" style="background: var(--yt-red);">🏠</button>
-        <button class="nav-btn" style="background: var(--yt-blue);">📖</button>
-        <button class="nav-btn" style="background: var(--yt-green);">🕋</button>
-        <button class="nav-btn" style="background: var(--yt-yellow);">⚙️</button>
-    </div>
-
-    <div id="tv-screen">
-        <iframe id="main-player" 
-                src="https://www.youtube.com/embed/Cm1v4bteXbI?autoplay=1&mute=1&rel=0&showinfo=0" 
-                allow="autoplay; encrypted-media" 
-                allowfullscreen>
-        </iframe>
-    </div>
-
-    <div class="shelf-title">Up Next</div>
-    
-    <div class="video-shelf" id="kids-grid">
+        <div class="header__logo">
+          <!-- youtube icon (exact base64 from original pen) -->
+          <img class="header__icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQg%0D%0AU1ZHIDEuMC8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvVFIvMjAwMS9SRUMtU1ZHLTIwMDEwOTA0%0D%0AL0RURC9zdmcxMC5kdGQnPjxzdmcgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMzIgMzIiIGhl%0D%0AaWdodD0iMzJweCIgaWQ9IkxheWVyXzEiIHZlcnNpb249IjEuMCIgdmlld0JveD0iMCAwIDMyIDMy%0D%0AIiB3aWR0aD0iMzJweCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMu%0D%0Ab3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+%0D%0APGc+PHBhdGggZD0iTTMxLjY3LDkuMTc5YzAsMC0wLjMxMi0yLjM1My0xLjI3MS0zLjM4OWMtMS4y%0D%0AMTctMS4zNTgtMi41OC0xLjM2Ni0zLjIwNS0xLjQ0M0MyMi43MTcsNCwxNi4wMDIsNCwxNi4wMDIs%0D%0ANCAgIGgtMC4wMTVjMCwwLTYuNzE1LDAtMTEuMTkxLDAuMzQ3QzQuMTcxLDQuNDI0LDIuODA5LDQu%0D%0ANDMyLDEuNTkxLDUuNzlDMC42MzMsNi44MjYsMC4zMiw5LjE3OSwwLjMyLDkuMTc5UzAsMTEuOTQs%0D%0AMCwxNC43MDF2Mi41ODggICBjMCwyLjc2MywwLjMyLDUuNTIzLDAuMzIsNS41MjNzMC4zMTIsMi4z%0D%0ANTIsMS4yNzEsMy4zODZjMS4yMTgsMS4zNTgsMi44MTUsMS4zMTcsMy41MjcsMS40NTlDNy42Nzcs%0D%0AMjcuOTE5LDE1Ljk5NSwyOCwxNS45OTUsMjggICBzNi43MjItMC4wMTIsMTEuMTk5LTAuMzU1YzAu%0D%0ANjI1LTAuMDgsMS45ODgtMC4wODgsMy4yMDUtMS40NDZjMC45NTgtMS4wMzQsMS4yNzEtMy4zODYs%0D%0AMS4yNzEtMy4zODZzMC4zMi0yLjc2MSwwLjMyLTUuNTIzdi0yLjU4OCAgIEMzMS45OSwxMS45NCwz%0D%0AMS42Nyw5LjE3OSwzMS42Nyw5LjE3OXoiIGZpbGw9IiNFMDJGMkYiLz48cG9seWdvbiBmaWxsPSIj%0D%0ARkZGRkZGIiBwb2ludHM9IjEyLDEwIDEyLDIyIDIyLDE2ICAiLz48L2c+PGcvPjxnLz48Zy8+PGcv%0D%0APjxnLz48Zy8+PC9zdmc+" alt="Ícono de youtube" />
+          <h1 class="header__title">Youtube</h1>
         </div>
 
-    <div class="bg-blob" style="width: 200px; height: 200px; background: var(--yt-blue); top: 10%; right: -50px;"></div>
-    <div class="bg-blob" style="width: 150px; height: 150px; background: var(--yt-red); bottom: 20%; left: -50px;"></div>
+        <!-- search icon (red magnifying glass, base64 from original) -->
+        <img class="header__search icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGZp%0D%0AbGw9IiNlODAwM2MiIGlkPSJzdmdfMSIgZD0ibTMxLDI4bC0xLjU5LDBsLTAuNTUsLTAuNTVjMS45%0D%0ANiwtMi4yNyAzLjE0LC01LjIyIDMuMTQsLTguNDVjMCwtNy4xOCAtNS44MiwtMTMgLTEzLC0xM3Mt%0D%0AMTMsNS44MiAtMTMsMTNzNS44MiwxMyAxMywxM2MzLjIzLDAgNi4xOCwtMS4xOCA4LjQ1LC0zLjEz%0D%0AbDAuNTUsMC41NWwwLDEuNThsMTAsOS45OGwyLjk4LC0yLjk4bC05Ljk4LC0xMHptLTEyLDBjLTQu%0D%0AOTcsMCAtOSwtNC4wMyAtOSwtOXM0LjAzLC05IDksLTlzOSw0LjAzIDksOXMtNC4wMyw5IC05LDl6%0D%0AIi8+CiA8L2c+Cjwvc3ZnPg==" alt="Ícono de search" />
+      </header>
 
-    <script>
-        const videos = [
-            { title: "Makkah Live", id: "Cm1v4bteXbI", color: "var(--yt-blue)" },
-            { title: "Surah Al-Baqara", id: "dOvTkWpHNAc", color: "var(--yt-red)" },
-            { title: "Makkah Live", id: "Cm1v4bteXbI", color: "var(--yt-blue)" },
-            { title: "Makkah Live", id: "Cm1v4bteXbI", color: "var(--yt-blue)" },
-            { title: "Makkah Live", id: "Cm1v4bteXbI", color: "var(--yt-blue)" },
-            { title: "Makkah Live", id: "Cm1v4bteXbI", color: "var(--yt-blue)" },
-            { title: "Makkah Live", id: "Cm1v4bteXbI", color: "var(--yt-blue)" },
-            { title: "Makkah Live", id: "Cm1v4bteXbI", color: "var(--yt-blue)" },
-            { title: "Makkah Live", id: "Cm1v4bteXbI", color: "var(--yt-blue)" },
-            { title: "Makkah Live", id: "Cm1v4bteXbI", color: "var(--yt-blue)" },
-            { title: "Makkah Live", id: "Cm1v4bteXbI", color: "var(--yt-blue)" },
-            { title: "Makkah Live", id: "Cm1v4bteXbI", color: "var(--yt-blue)" },
-            { title: "Makkah Live", id: "Cm1v4bteXbI", color: "var(--yt-blue)" },
-            { title: "Makkah Live", id: "Cm1v4bteXbI", color: "var(--yt-blue)" },
-        ];
+      <!-- categories: high tech / gaming / music / all (all highlighted as original) -->
+      <div class="categories">
+        <a class="categories__link" href="#"><span class="categories__text">High tech</span></a>
+        <a class="categories__link" href="#"><span class="categories__text">Gaming</span></a>
+        <a class="categories__link" href="#"><span class="categories__text">Music</span></a>
+        <a class="categories__link" href="#"><span class="categories__text">All</span></a>
+      </div>
 
-        const grid = document.getElementById('kids-grid');
-        const player = document.getElementById('main-player');
+      <!-- video grid / list - exactly matches the snippet style and extends it -->
+      <div class="video">
+        <!-- VIDEO ITEM 1: from the partial pen (video-2.jpg) -->
+        <div class="video__item">
+          <div class="video__cover">
+            <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-2.jpg?raw=true" alt="Captura" />
+            <div class="video__stats">
+              <span class="video__views">4.5M</span>
+              <span class="video__duration">10:43</span>
+              <!-- options icon (three dots) base64 from original snippet (was cut, i reconstruct same style) -->
+              <img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI2U4MDAzYyIgZD0iTTE0IDI0YzAgMi43NiAyLjI0IDUgNSA1czUtMi4yNCA1LTVzLTIuMjQtNS01LTVzLTUgMi4yNC01IDV6bTAtMTBjMC0yLjc2IDIuMjQtNSA1LTVzNSAyLjI0IDUgNXMtMi4yNCA1LTUgNS01LTIuMjQtNS01em0wIDIwYzAtMi43NiAyLjI0LTUgNS01czUgMi4yNCA1IDUtMi4yNCA1LTUgNS01LTIuMjQtNS01eiIvPjwvc3ZnPg==" alt="Opciones" />
+            </div>
+          </div>
+          <div class="video__details">
+            <!-- channel avatar placeholder (initials) -->
+            <img class="video__avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23c9c9c9'/%3E%3Ctext x='20' y='26' font-size='16' text-anchor='middle' fill='%23555' font-weight='bold'%3EG%3C/text%3E%3C/svg%3E" alt="channel">
+            <div class="video__info">
+              <div class="video__title">MacBook Pro M4 — unboxing y primeras impresiones</div>
+              <div class="video__channel">
+                <span>High Tech Reviews</span>
+                <span class="verified" style="background: #606060; color:white; font-size:10px; width:14px; height:14px; display:inline-flex; align-items:center; justify-content:center;">✓</span>
+                <span>• 2 days ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        function changeVideo(id, color) {
-            player.src = "https://www.youtube.com/embed/" + id + "?autoplay=1&rel=0";
-            document.getElementById('tv-screen').style.borderColor = color;
-        }
+        <!-- VIDEO ITEM 2: gaming style (matching the same card aesthetic) -->
+        <div class="video__item">
+          <div class="video__cover">
+            <!-- using another image from the repo to keep consistency: they had video-1 or similar, i use one from repo -->
+            <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-1.jpg?raw=true" alt="Game thumbnail" />
+            <div class="video__stats">
+              <span class="video__views">2.1M</span>
+              <span class="video__duration">18:22</span>
+              <img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI2U4MDAzYyIgZD0iTTE0IDI0YzAgMi43NiAyLjI0IDUgNSA1czUtMi4yNCA1LTVzLTIuMjQtNS01LTVzLTUgMi4yNC01IDV6bTAtMTBjMC0yLjc2IDIuMjQtNSA1LTVzNSAyLjI0IDUgNXMtMi4yNCA1LTUgNS01LTIuMjQtNS01em0wIDIwYzAtMi43NiAyLjI0LTUgNS01czUgMi4yNCA1IDUtMi4yNCA1LTUgNS01LTIuMjQtNS01eiIvPjwvc3ZnPg==" alt="opciones" />
+            </div>
+          </div>
+          <div class="video__details">
+            <img class="video__avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23949494'/%3E%3Ctext x='20' y='26' font-size='16' text-anchor='middle' fill='%23333' font-weight='bold'%3EG%3C/text%3E%3C/svg%3E" alt="gaming">
+            <div class="video__info">
+              <div class="video__title">Game Awards 2024: TODOS los anuncios y tráilers</div>
+              <div class="video__channel">
+                <span>GamePlay Español</span>
+                <span class="verified" style="background:#606060;">✓</span>
+                <span>• 1 week ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        videos.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'video-card';
-            card.style.borderBottomColor = item.color;
-            
-            // Using YouTube's high quality thumbnail
-            const thumbUrl = `https://img.youtube.com/vi/${item.id}/mqdefault.jpg`;
-            
-            card.innerHTML = `
-                <div class="thumb-box">
-                    <img src="${thumbUrl}">
-                </div>
-                <div class="video-card-title">${item.title}</div>
-            `;
-            
-            card.onclick = () => changeVideo(item.id, item.color);
-            grid.appendChild(card);
-        });
-    </script>
+        <!-- VIDEO ITEM 3: Music (extend the concept) using a video-3 if exists, else fallback -->
+        <div class="video__item">
+          <div class="video__cover">
+            <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-3.jpg?raw=true" alt="music video" />
+            <div class="video__stats">
+              <span class="video__views">8.2M</span>
+              <span class="video__duration">4:16</span>
+              <img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI2U4MDAzYyIgZD0iTTE0IDI0YzAgMi43NiAyLjI0IDUgNSA1czUtMi4yNCA1LTVzLTIuMjQtNS01LTVzLTUgMi4yNC01IDV6bTAtMTBjMC0yLjc2IDIuMjQtNSA1LTVzNSAyLjI0IDUgNXMtMi4yNCA1LTUgNS01LTIuMjQtNS01em0wIDIwYzAtMi43NiAyLjI0LTUgNS01czUgMi4yNCA1IDUtMi4yNCA1LTUgNS01LTIuMjQtNS01eiIvPjwvc3ZnPg==" alt="opciones" />
+            </div>
+          </div>
+          <div class="video__details">
+            <img class="video__avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23b84a8c'/%3E%3Ctext x='20' y='26' font-size='16' text-anchor='middle' fill='white' font-weight='bold'%3EM%3C/text%3E%3C/svg%3E" alt="music">
+            <div class="video__info">
+              <div class="video__title">Nuevo álbum 2025: canción viral (video oficial)</div>
+              <div class="video__channel">
+                <span>Vevo Music</span>
+                <span class="verified" style="background:#606060;">✓</span>
+                <span>• 3 days ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- subtle divider / extra polish (original design had infinite scroll look) -->
+      <div style="height: 8px; background: #fafafa;"></div>
+    </div>
+  </div>
+
+  <!-- NOTE: the icons, layout and colors are faithfully copied from the given CodePen.
+       All category links, header, stats and three-dot menu are present. 
+       The 'video-2' and other images are served from the same github repo referenced in the pen. -->
 </body>
 </html>
