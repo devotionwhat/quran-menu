@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>YouTube Kids - Draggable Progress</title>
+    <title>YouTube Kids - Play/Pause Toggle</title>
     <style>
         :root {
             --yt-red: #FF0000;
@@ -25,7 +25,22 @@
         #ui-trigger {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 5; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
         }
+
+        /* POPUP ICON FOR PLAY/PAUSE */
+        #status-icon {
+            font-size: 60px;
+            background: rgba(0,0,0,0.5);
+            width: 100px; height: 100px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+            transform: scale(0.5);
+        }
+        #status-icon.show { opacity: 1; transform: scale(1); }
 
         /* UI OVERLAY */
         #video-ui {
@@ -47,7 +62,6 @@
             pointer-events: auto; display: flex; flex-direction: column; gap: 15px;
         }
 
-        /* CAROUSEL */
         .carousel-section {
             width: 100%; display: flex; align-items: center; overflow-x: auto;
             gap: 15px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
@@ -61,21 +75,14 @@
         .thumb-card.active { border-color: var(--yt-red); }
         .thumb-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
-        /* PROGRESS BAR */
         .progress-row { width: 100%; display: flex; align-items: center; gap: 15px; }
-        
         .progress-container {
-            flex-grow: 1; height: 40px; /* Larger touch area */
+            flex-grow: 1; height: 40px;
             display: flex; align-items: center; cursor: pointer; position: relative;
-            touch-action: none; /* Prevents scrolling while dragging knob */
+            touch-action: none;
         }
-        
-        .progress-bg {
-            width: 100%; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px;
-        }
-        
+        .progress-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; }
         .progress-fill { width: 0%; height: 100%; background: var(--yt-red); border-radius: 3px; }
-        
         .progress-knob {
             width: 24px; height: 24px; background: white; border-radius: 50%;
             position: absolute; left: 0%; transform: translateX(-50%);
@@ -87,7 +94,10 @@
 
     <div class="main-container">
         <div id="youtube-player"></div>
-        <div id="ui-trigger" onclick="toggleUI()"></div>
+        
+        <div id="ui-trigger" onclick="handleMainClick()">
+            <div id="status-icon">▶</div>
+        </div>
 
         <div id="video-ui">
             <div class="top-bar">
@@ -136,6 +146,7 @@
         let isDragging = false;
         
         const uiElement = document.getElementById('video-ui');
+        const statusIcon = document.getElementById('status-icon');
         const progressFill = document.getElementById('progressFill');
         const progressKnob = document.getElementById('progressKnob');
         const progressContainer = document.getElementById('progressContainer');
@@ -155,10 +166,33 @@
             setInterval(updateProgressBar, 100);
         }
 
-        function toggleUI() {
-            if (isDragging) return; // Don't toggle while scrubbing
+        // --- NEW PLAY/PAUSE + UI TOGGLE LOGIC ---
+        function handleMainClick() {
+            if (isDragging) return;
+
+            // 1. Toggle UI Visibility
             isUIVisible = !isUIVisible;
             uiElement.classList.toggle('hidden-ui', !isUIVisible);
+
+            // 2. Toggle Play/Pause
+            if (player && player.getPlayerState) {
+                const state = player.getPlayerState();
+                if (state === 1) { // Currently Playing
+                    player.pauseVideo();
+                    showStatusIcon('Ⅱ'); // Pause symbol
+                } else { // Currently Paused or Ended
+                    player.playVideo();
+                    showStatusIcon('▶'); // Play symbol
+                }
+            }
+        }
+
+        function showStatusIcon(char) {
+            statusIcon.innerText = char;
+            statusIcon.classList.add('show');
+            setTimeout(() => {
+                statusIcon.classList.remove('show');
+            }, 600);
         }
 
         function updateProgressBar() {
@@ -180,7 +214,6 @@
             progressKnob.style.left = pct + '%';
         }
 
-        // --- DRAGGING LOGIC ---
         function handleScrub(e) {
             e.stopPropagation();
             const rect = progressContainer.getBoundingClientRect();
@@ -188,25 +221,11 @@
             const offsetX = touchX - rect.left;
             let pct = (offsetX / rect.width) * 100;
             pct = Math.max(0, Math.min(100, pct));
-            
             setBarPosition(pct);
-            
-            // Preview time while dragging
-            if (player && player.getDuration) {
-                const previewTime = (pct / 100) * player.getDuration();
-                document.getElementById('currentTime').innerText = formatTime(previewTime);
-            }
         }
 
-        progressContainer.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            handleScrub(e);
-        });
-
-        window.addEventListener('touchmove', (e) => {
-            if (isDragging) handleScrub(e);
-        }, { passive: false });
-
+        progressContainer.addEventListener('touchstart', (e) => { isDragging = true; handleScrub(e); });
+        window.addEventListener('touchmove', (e) => { if (isDragging) handleScrub(e); }, { passive: false });
         window.addEventListener('touchend', () => {
             if (isDragging) {
                 const pct = parseFloat(progressKnob.style.left);
@@ -216,18 +235,15 @@
             }
         });
 
-        // Also allow clicking directly on bar
-        progressContainer.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            handleScrub(e);
-        });
-
         function changeVideo(id, title, element) {
             if (window.event) window.event.stopPropagation();
             player.loadVideoById(id);
             document.getElementById('displayTitle').innerText = title;
             document.querySelectorAll('.thumb-card').forEach(c => c.classList.remove('active'));
             element.classList.add('active');
+            // Ensure UI is visible when changing video
+            isUIVisible = true;
+            uiElement.classList.remove('hidden-ui');
         }
 
         function formatTime(seconds) {
