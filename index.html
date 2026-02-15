@@ -3,159 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kids TV - Video Carousel</title>
+    <title>Kids TV Carousel</title>
     <style>
         :root {
-            --primary-bg: #4CC9FE; /* Bright Sky Blue */
-            --player-bg: #000;
-            --card-radius: 20px;
-            --yt-red: #FF0000;
+            --bg-color: #6247AA; /* Deep Purple */
+            --accent-color: #FFD600; /* Yellow */
+            --card-bg: #ffffff;
         }
 
         body {
             margin: 0;
             padding: 20px;
-            font-family: 'Arial Round', 'Comic Sans MS', sans-serif;
-            background-color: var(--primary-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
+            color: white;
         }
 
-        /* 1. THE BIG SCREEN (Above the slider) */
-        .main-display-area {
-            width: 90%;
+        h1 {
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0px #000;
+            font-size: 2.5rem;
+        }
+
+        /* --- THE BIG SCREEN PLAYER --- */
+        .player-wrapper {
+            width: 95%;
             max-width: 900px;
-            aspect-ratio: 16/9;
-            background: var(--player-bg);
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border: 8px solid white;
             border-radius: 30px;
-            border: 10px solid white;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.5);
             overflow: hidden;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             position: relative;
         }
 
-        #mainVideoFrame {
+        /* This container holds the iframe */
+        #video-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .player-placeholder {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .player-placeholder h2 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+        }
+
+        iframe {
             width: 100%;
             height: 100%;
             border: none;
         }
 
-        /* Placeholder before a video is clicked */
-        .placeholder-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            text-align: center;
-            font-size: 1.5rem;
+        /* --- THE CAROUSEL SLIDER --- */
+        .carousel-title {
+            align-self: flex-start;
+            margin-left: 5%;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
         }
 
-        /* 2. THE CAROUSEL (Below the player) */
-        .carousel-container {
+        .slider-window {
             width: 100%;
-            max-width: 1100px;
             overflow-x: auto;
             padding: 20px 0;
-            scrollbar-width: none; /* Hide for Firefox */
+            /* Hide scrollbars but allow scrolling */
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
         }
 
-        .carousel-container::-webkit-scrollbar {
-            display: none; /* Hide for Chrome/Safari */
+        .slider-window::-webkit-scrollbar {
+            display: none;
         }
 
-        .carousel-track {
+        .slider-track {
             display: flex;
-            gap: 20px;
-            padding: 0 20px;
+            gap: 25px;
+            padding: 0 5%;
         }
 
-        /* 3. VIDEO THUMBNAILS */
-        .thumb-card {
-            min-width: 240px;
-            height: 140px;
-            background: white;
-            border-radius: var(--card-radius);
-            cursor: pointer;
+        /* --- THUMBNAIL CARDS --- */
+        .video-item {
+            flex: 0 0 auto;
+            width: 280px;
+            background: var(--card-bg);
+            border-radius: 20px;
             overflow: hidden;
-            transition: transform 0.3s ease;
-            border: 5px solid white;
-            position: relative;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 5px solid transparent;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .thumb-card:hover {
+        .video-item:hover {
+            transform: scale(1.08) translateY(-5px);
+            border-color: var(--accent-color);
+        }
+
+        .video-item.active {
+            border-color: #FF0000;
             transform: scale(1.05);
-            border-color: #FFD600;
         }
 
-        .thumb-card img {
+        .thumb-box {
+            width: 100%;
+            height: 157px;
+            position: relative;
+        }
+
+        .thumb-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .thumb-card.active {
-            border-color: var(--yt-red);
-            transform: scale(1.05);
+        /* Play Button Overlay */
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
         }
 
-        h2 {
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            margin: 10px 0;
+        .play-overlay::after {
+            content: '';
+            border-style: solid;
+            border-width: 10px 0 10px 18px;
+            border-color: transparent transparent transparent #FF0000;
+            margin-left: 4px;
+        }
+
+        .video-info {
+            padding: 12px;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+            font-size: 0.9rem;
         }
 
     </style>
 </head>
 <body>
 
-    <h2>Now Playing</h2>
+    <h1>Kids TV ✨</h1>
 
-    <div class="main-display-area" id="screen">
-        <div class="placeholder-text" id="placeholder">Click a video below to start watching!</div>
-        <iframe id="mainVideoFrame" src="" allow="autoplay; encrypted-media" allowfullscreen style="display:none;"></iframe>
+    <div class="player-wrapper">
+        <div id="video-container">
+            <div class="player-placeholder">
+                <h2>Ready to watch?</h2>
+                <p>Pick a video from the slider below!</p>
+            </div>
+        </div>
     </div>
 
-    <h2>Choose a Video</h2>
+    <div class="carousel-title">Pick a Fun Video:</div>
 
-    <div class="carousel-container">
-        <div class="carousel-track">
+    <div class="slider-window">
+        <div class="slider-track">
             
-            <div class="thumb-card" onclick="playThis('dQw4w9WgXcQ', this)">
-                <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" alt="Video 1">
+            <div class="video-item" onclick="loadVideo('dQw4w9WgXcQ', this)">
+                <div class="thumb-box">
+                    <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg">
+                    <div class="play-overlay"></div>
+                </div>
+                <div class="video-info">Super Fun Music</div>
             </div>
 
-            <div class="thumb-card" onclick="playThis('9bZkp7q19f0', this)">
-                <img src="https://img.youtube.com/vi/9bZkp7q19f0/mqdefault.jpg" alt="Video 2">
+            <div class="video-item" onclick="loadVideo('9bZkp7q19f0', this)">
+                <div class="thumb-box">
+                    <img src="https://img.youtube.com/vi/9bZkp7q19f0/mqdefault.jpg">
+                    <div class="play-overlay"></div>
+                </div>
+                <div class="video-info">Amazing Gangnam Style</div>
             </div>
 
-            <div class="thumb-card" onclick="playThis('fHI8X4OXW-Q', this)">
-                <img src="https://img.youtube.com/vi/fHI8X4OXW-Q/mqdefault.jpg" alt="Video 3">
+            <div class="video-item" onclick="loadVideo('fHI8X4OXW-Q', this)">
+                <div class="thumb-box">
+                    <img src="https://img.youtube.com/vi/fHI8X4OXW-Q/mqdefault.jpg">
+                    <div class="play-overlay"></div>
+                </div>
+                <div class="video-info">Funny Animals</div>
             </div>
 
-            <div class="thumb-card" onclick="playThis('kJQP7kiw5Fk', this)">
-                <img src="https://img.youtube.com/vi/kJQP7kiw5Fk/mqdefault.jpg" alt="Video 4">
+            <div class="video-item" onclick="loadVideo('kJQP7kiw5Fk', this)">
+                <div class="thumb-box">
+                    <img src="https://img.youtube.com/vi/kJQP7kiw5Fk/mqdefault.jpg">
+                    <div class="play-overlay"></div>
+                </div>
+                <div class="video-info">Despacito Fun</div>
             </div>
 
-            <div class="thumb-card" onclick="playThis('tgbNymZ7vqY', this)">
-                <img src="https://img.youtube.com/vi/tgbNymZ7vqY/mqdefault.jpg" alt="Video 5">
-            </div>
-
-            <div class="thumb-card" onclick="playThis('3AtDnEC4zak', this)">
-                <img src="https://img.youtube.com/vi/3AtDnEC4zak/mqdefault.jpg" alt="Video 6">
+            <div class="video-item" onclick="loadVideo('tgbNymZ7vqY', this)">
+                <div class="thumb-box">
+                    <img src="https://img.youtube.com/vi/tgbNymZ7vqY/mqdefault.jpg">
+                    <div class="play-overlay"></div>
+                </div>
+                <div class="video-info">Classic Muppets</div>
             </div>
 
         </div>
     </div>
 
     <script>
-        function playThis(videoId, element) {
-            const iframe = document.getElementById('mainVideoFrame');
-            const placeholder = document.getElementById('placeholder');
-            const allCards = document.querySelectorAll('.thumb-card');
+        function loadVideo(id, element) {
+            const container = document.getElementById('video-container');
+            const allItems = document.querySelectorAll('.video-item');
 
-            //
+            // 1. Remove "active" class from all thumbnails
+            allItems.forEach(item => item.classList.remove('active'));
+            
+            // 2. Add "active" class to the clicked one
+            element.classList.add('active');
+
+            // 3. Inject the Iframe directly (This is the most reliable way to trigger play)
+            // We use ?autoplay=1 and &mute=0. 
+            // NOTE: Some browsers only allow autoplay if the video is muted. 
+            // If it doesn't autoplay, the user just has to click the big play button once.
+            container.innerHTML = `
+                <iframe 
+                    src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            `;
+
+            // 4. Smooth scroll back to top so the kid can see the player
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+</body>
+</html>
