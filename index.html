@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>YouTube Kids - Instant Hide on Play</title>
+    <title>YouTube Kids - Playlist Carousel</title>
     <style>
         :root {
             --yt-red: #FF0000;
@@ -21,14 +21,12 @@
         .main-container { position: relative; width: 100vw; height: 100vh; background: #000; }
         #youtube-player { width: 100%; height: 100%; }
 
-        /* UI TRIGGER LAYER */
         #ui-trigger {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 5; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* POPUP ICON FOR PLAY/PAUSE */
         #status-icon {
             font-size: 60px;
             background: rgba(0,0,0,0.5);
@@ -42,7 +40,6 @@
         }
         #status-icon.show { opacity: 1; transform: scale(1); }
 
-        /* UI OVERLAY */
         #video-ui {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; display: flex; flex-direction: column;
@@ -55,7 +52,7 @@
 
         .top-bar { display: flex; align-items: center; gap: 15px; pointer-events: auto; }
         .back-btn { font-size: 28px; cursor: pointer; background: none; border: none; color: white; }
-        .video-title { font-size: 18px; font-weight: bold; margin: 0; }
+        .video-title { font-size: 18px; font-weight: bold; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .sub-btn { background: var(--yt-red); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; }
 
         .bottom-section {
@@ -65,12 +62,14 @@
         .carousel-section {
             width: 100%; display: flex; align-items: center; overflow-x: auto;
             gap: 15px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+            min-height: 110px;
         }
         .carousel-section::-webkit-scrollbar { display: none; }
 
         .thumb-card {
             flex: 0 0 auto; width: 180px; height: 100px; border-radius: var(--card-radius);
             overflow: hidden; cursor: pointer; border: 4px solid transparent;
+            background: #222;
         }
         .thumb-card.active { border-color: var(--yt-red); }
         .thumb-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
@@ -102,26 +101,14 @@
         <div id="video-ui">
             <div class="top-bar">
                 <button class="back-btn">←</button>
-                <div style="flex-grow:1">
-                    <div class="video-title" id="displayTitle">مكة المكرمة</div>
+                <div style="flex-grow:1; overflow:hidden;">
+                    <div class="video-title" id="displayTitle">Loading Playlist...</div>
                 </div>
                 <button class="sub-btn">SUBSCRIBE</button>
             </div>
 
             <div class="bottom-section">
-                <div class="carousel-section" onscroll="resetHideTimer()" ontouchstart="resetHideTimer()">
-                    <div class="thumb-card active" onclick="changeVideo('V_UXI8BoPnw', 'مكة المكرمة', this)">
-                        <img src="https://img.youtube.com/vi/V_UXI8BoPnw/mqdefault.jpg">
-                    </div>
-                    <div class="thumb-card" onclick="changeVideo('HQBygBpQCSM', 'المدينة المنورة', this)">
-                        <img src="https://img.youtube.com/vi/HQBygBpQCSM/mqdefault.jpg">
-                    </div>
-                    <div class="thumb-card" onclick="changeVideo('wiV-BpQ1odQ', 'الفاتحة', this)">
-                        <img src="https://img.youtube.com/vi/wiV-BpQ1odQ/mqdefault.jpg">
-                    </div>
-                    <div class="thumb-card" onclick="changeVideo('An-4fwvK7NU', 'الكهف', this)">
-                        <img src="https://img.youtube.com/vi/An-4fwvK7NU/mqdefault.jpg">
-                    </div>
+                <div class="carousel-section" id="carousel" onscroll="resetHideTimer()" ontouchstart="resetHideTimer()">
                 </div>
 
                 <div class="progress-row">
@@ -141,6 +128,141 @@
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <script>
+        // 1. SETTINGS: REPLACE THESE TWO VALUES
+        const API_KEY = '<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YouTube Kids - Playlist Carousel</title>
+    <style>
+        :root {
+            --yt-red: #FF0000;
+            --card-radius: 12px;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #000;
+            font-family: 'Arial Rounded MT Bold', 'Helvetica', sans-serif;
+            overflow: hidden; color: white;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .main-container { position: relative; width: 100vw; height: 100vh; background: #000; }
+        #youtube-player { width: 100%; height: 100%; }
+
+        #ui-trigger {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        #status-icon {
+            font-size: 60px;
+            background: rgba(0,0,0,0.5);
+            width: 100px; height: 100px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+            transform: scale(0.5);
+        }
+        #status-icon.show { opacity: 1; transform: scale(1); }
+
+        #video-ui {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; display: flex; flex-direction: column;
+            justify-content: space-between; padding: 20px; box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.4); z-index: 10;
+            transition: opacity 0.4s ease, visibility 0.4s;
+        }
+
+        .hidden-ui { opacity: 0; visibility: hidden; }
+
+        .top-bar { display: flex; align-items: center; gap: 15px; pointer-events: auto; }
+        .back-btn { font-size: 28px; cursor: pointer; background: none; border: none; color: white; }
+        .video-title { font-size: 18px; font-weight: bold; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sub-btn { background: var(--yt-red); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; }
+
+        .bottom-section {
+            pointer-events: auto; display: flex; flex-direction: column; gap: 15px;
+        }
+
+        .carousel-section {
+            width: 100%; display: flex; align-items: center; overflow-x: auto;
+            gap: 15px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+            min-height: 110px;
+        }
+        .carousel-section::-webkit-scrollbar { display: none; }
+
+        .thumb-card {
+            flex: 0 0 auto; width: 180px; height: 100px; border-radius: var(--card-radius);
+            overflow: hidden; cursor: pointer; border: 4px solid transparent;
+            background: #222;
+        }
+        .thumb-card.active { border-color: var(--yt-red); }
+        .thumb-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+
+        .progress-row { width: 100%; display: flex; align-items: center; gap: 15px; }
+        .progress-container {
+            flex-grow: 1; height: 40px;
+            display: flex; align-items: center; cursor: pointer; position: relative;
+            touch-action: none;
+        }
+        .progress-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; }
+        .progress-fill { width: 0%; height: 100%; background: var(--yt-red); border-radius: 3px; }
+        .progress-knob {
+            width: 24px; height: 24px; background: white; border-radius: 50%;
+            position: absolute; left: 0%; transform: translateX(-50%);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <div id="youtube-player"></div>
+        
+        <div id="ui-trigger" onclick="handleMainClick()">
+            <div id="status-icon">▶</div>
+        </div>
+
+        <div id="video-ui">
+            <div class="top-bar">
+                <button class="back-btn">←</button>
+                <div style="flex-grow:1; overflow:hidden;">
+                    <div class="video-title" id="displayTitle">Loading Playlist...</div>
+                </div>
+                <button class="sub-btn">SUBSCRIBE</button>
+            </div>
+
+            <div class="bottom-section">
+                <div class="carousel-section" id="carousel" onscroll="resetHideTimer()" ontouchstart="resetHideTimer()">
+                </div>
+
+                <div class="progress-row">
+                    <span id="currentTime" style="font-size: 14px; min-width: 45px;">0:00</span>
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bg">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-knob" id="progressKnob"></div>
+                    </div>
+                    <span id="totalTime" style="font-size: 14px; min-width: 45px;">0:00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script>
+        // 1. SETTINGS: REPLACE THESE TWO VALUES
+        const API_KEY = 'AIzaSyCqkdNYKfPOuz-bqPVph9_vlyaJxKWt4tw'; 
+        const PLAYLIST_ID = 'PLcEPRvlLG_JvEYEOyOJ8StRUMKwIJPUqx,PLJCHYvnjPCfGzwFLIwdWO7H0skJqkmZ9i'; // Example ID
+
         let player;
         let isUIVisible = true;
         let isDragging = false;
@@ -151,36 +273,80 @@
         const progressFill = document.getElementById('progressFill');
         const progressKnob = document.getElementById('progressKnob');
         const progressContainer = document.getElementById('progressContainer');
+        const carousel = document.getElementById('carousel');
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-player', {
-                videoId: 'V_UXI8BoPnw',
+                height: '100%',
+                width: '100%',
                 playerVars: { 
                     'autoplay': 1, 'controls': 0, 'modestbranding': 1, 
                     'rel': 0, 'iv_load_policy': 3, 'playsinline': 1 
                 },
                 events: { 
-                    'onReady': onPlayerReady
+                    'onReady': onPlayerReady,
+                    'onStateChange': (e) => { if(e.data === 1) startHideTimer(); }
                 }
             });
         }
 
-        function onPlayerReady() {
+        async function onPlayerReady() {
             setInterval(updateProgressBar, 100);
+            await fetchPlaylist(); // Get the videos from the playlist
             startHideTimer();
         }
 
+        // 2. FETCH PLAYLIST DATA FROM YOUTUBE API
+        async function fetchPlaylist() {
+            try {
+                const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${PLAYLIST_ID}&key=${API_KEY}`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.items) {
+                    renderPlaylist(data.items);
+                } else {
+                    document.getElementById('displayTitle').innerText = "API Error: Check Key/ID";
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('displayTitle').innerText = "Network Error";
+            }
+        }
+
+        function renderPlaylist(items) {
+            carousel.innerHTML = ''; // Clear loading text
+            items.forEach((item, index) => {
+                const videoId = item.snippet.resourceId.videoId;
+                const title = item.snippet.title;
+                const thumb = item.snippet.thumbnails.medium.url;
+
+                const card = document.createElement('div');
+                card.className = `thumb-card ${index === 0 ? 'active' : ''}`;
+                card.onclick = (e) => {
+                    e.stopPropagation();
+                    changeVideo(videoId, title, card);
+                };
+                card.innerHTML = `<img src="${thumb}">`;
+                carousel.appendChild(card);
+
+                // Autoplay the first video in the playlist
+                if (index === 0) {
+                    player.loadVideoById(videoId);
+                    document.getElementById('displayTitle').innerText = title;
+                }
+            });
+        }
+
+        // 3. UI LOGIC (SAME AS YOUR ORIGINAL CODE)
         function startHideTimer() {
             clearTimeout(hideTimer);
-            // Only auto-hide if playing
             if (isUIVisible && !isDragging && player.getPlayerState() === 1) {
                 hideTimer = setTimeout(() => hideUI(), 5000);
             }
         }
 
-        function resetHideTimer() {
-            if (isUIVisible) startHideTimer();
-        }
+        function resetHideTimer() { if (isUIVisible) startHideTimer(); }
 
         function hideUI() {
             isUIVisible = false;
@@ -195,19 +361,18 @@
 
         function handleMainClick() {
             if (isDragging) return;
-
             if (!isUIVisible) {
                 showUI();
             } else {
                 const state = player.getPlayerState();
-                if (state === 1) { // Playing -> Pause
+                if (state === 1) { 
                     player.pauseVideo();
                     showStatusIcon('Ⅱ');
-                    clearTimeout(hideTimer); // Keep UI visible while paused
-                } else { // Paused -> Play
+                    clearTimeout(hideTimer);
+                } else { 
                     player.playVideo();
                     showStatusIcon('▶');
-                    hideUI(); // INSTANT HIDE ON PLAY
+                    hideUI(); 
                 }
             }
         }
@@ -261,13 +426,191 @@
         });
 
         function changeVideo(id, title, element) {
-            if (window.event) window.event.stopPropagation();
             player.loadVideoById(id);
             document.getElementById('displayTitle').innerText = title;
             document.querySelectorAll('.thumb-card').forEach(c => c.classList.remove('active'));
             element.classList.add('active');
-            
-            // When picking a new video: Start playing and hide UI
+            player.playVideo();
+            hideUI();
+        }
+
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return min + ":" + (sec < 10 ? '0' : '') + sec;
+        }
+    </script>
+</body>
+</html>'; 
+        const PLAYLIST_ID = 'PL689E464E62F766C2'; // Example ID
+
+        let player;
+        let isUIVisible = true;
+        let isDragging = false;
+        let hideTimer;
+        
+        const uiElement = document.getElementById('video-ui');
+        const statusIcon = document.getElementById('status-icon');
+        const progressFill = document.getElementById('progressFill');
+        const progressKnob = document.getElementById('progressKnob');
+        const progressContainer = document.getElementById('progressContainer');
+        const carousel = document.getElementById('carousel');
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '100%',
+                width: '100%',
+                playerVars: { 
+                    'autoplay': 1, 'controls': 0, 'modestbranding': 1, 
+                    'rel': 0, 'iv_load_policy': 3, 'playsinline': 1 
+                },
+                events: { 
+                    'onReady': onPlayerReady,
+                    'onStateChange': (e) => { if(e.data === 1) startHideTimer(); }
+                }
+            });
+        }
+
+        async function onPlayerReady() {
+            setInterval(updateProgressBar, 100);
+            await fetchPlaylist(); // Get the videos from the playlist
+            startHideTimer();
+        }
+
+        // 2. FETCH PLAYLIST DATA FROM YOUTUBE API
+        async function fetchPlaylist() {
+            try {
+                const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${PLAYLIST_ID}&key=${API_KEY}`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.items) {
+                    renderPlaylist(data.items);
+                } else {
+                    document.getElementById('displayTitle').innerText = "API Error: Check Key/ID";
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('displayTitle').innerText = "Network Error";
+            }
+        }
+
+        function renderPlaylist(items) {
+            carousel.innerHTML = ''; // Clear loading text
+            items.forEach((item, index) => {
+                const videoId = item.snippet.resourceId.videoId;
+                const title = item.snippet.title;
+                const thumb = item.snippet.thumbnails.medium.url;
+
+                const card = document.createElement('div');
+                card.className = `thumb-card ${index === 0 ? 'active' : ''}`;
+                card.onclick = (e) => {
+                    e.stopPropagation();
+                    changeVideo(videoId, title, card);
+                };
+                card.innerHTML = `<img src="${thumb}">`;
+                carousel.appendChild(card);
+
+                // Autoplay the first video in the playlist
+                if (index === 0) {
+                    player.loadVideoById(videoId);
+                    document.getElementById('displayTitle').innerText = title;
+                }
+            });
+        }
+
+        // 3. UI LOGIC (SAME AS YOUR ORIGINAL CODE)
+        function startHideTimer() {
+            clearTimeout(hideTimer);
+            if (isUIVisible && !isDragging && player.getPlayerState() === 1) {
+                hideTimer = setTimeout(() => hideUI(), 5000);
+            }
+        }
+
+        function resetHideTimer() { if (isUIVisible) startHideTimer(); }
+
+        function hideUI() {
+            isUIVisible = false;
+            uiElement.classList.add('hidden-ui');
+        }
+
+        function showUI() {
+            isUIVisible = true;
+            uiElement.classList.remove('hidden-ui');
+            startHideTimer();
+        }
+
+        function handleMainClick() {
+            if (isDragging) return;
+            if (!isUIVisible) {
+                showUI();
+            } else {
+                const state = player.getPlayerState();
+                if (state === 1) { 
+                    player.pauseVideo();
+                    showStatusIcon('Ⅱ');
+                    clearTimeout(hideTimer);
+                } else { 
+                    player.playVideo();
+                    showStatusIcon('▶');
+                    hideUI(); 
+                }
+            }
+        }
+
+        function showStatusIcon(char) {
+            statusIcon.innerText = char;
+            statusIcon.classList.add('show');
+            setTimeout(() => statusIcon.classList.remove('show'), 600);
+        }
+
+        function updateProgressBar() {
+            if (player && player.getCurrentTime && !isDragging) {
+                const current = player.getCurrentTime();
+                const total = player.getDuration();
+                if (total > 0) {
+                    const pct = (current / total) * 100;
+                    setBarPosition(pct);
+                    document.getElementById('currentTime').innerText = formatTime(current);
+                    document.getElementById('totalTime').innerText = formatTime(total);
+                }
+            }
+        }
+
+        function setBarPosition(pct) {
+            pct = Math.max(0, Math.min(100, pct));
+            progressFill.style.width = pct + '%';
+            progressKnob.style.left = pct + '%';
+        }
+
+        function handleScrub(e) {
+            e.stopPropagation();
+            resetHideTimer();
+            const rect = progressContainer.getBoundingClientRect();
+            const touchX = e.touches ? e.touches[0].clientX : e.clientX;
+            const offsetX = touchX - rect.left;
+            let pct = (offsetX / rect.width) * 100;
+            pct = Math.max(0, Math.min(100, pct));
+            setBarPosition(pct);
+        }
+
+        progressContainer.addEventListener('touchstart', (e) => { isDragging = true; handleScrub(e); });
+        window.addEventListener('touchmove', (e) => { if (isDragging) handleScrub(e); }, { passive: false });
+        window.addEventListener('touchend', () => {
+            if (isDragging) {
+                const pct = parseFloat(progressKnob.style.left);
+                const newTime = (pct / 100) * player.getDuration();
+                player.seekTo(newTime, true);
+                isDragging = false;
+                startHideTimer();
+            }
+        });
+
+        function changeVideo(id, title, element) {
+            player.loadVideoById(id);
+            document.getElementById('displayTitle').innerText = title;
+            document.querySelectorAll('.thumb-card').forEach(c => c.classList.remove('active'));
+            element.classList.add('active');
             player.playVideo();
             hideUI();
         }
