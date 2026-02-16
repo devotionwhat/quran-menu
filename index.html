@@ -372,6 +372,29 @@
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
     (function() {
+      // ---------- HELPER: extract video ID (robust) ----------
+      function getVideoId(url) {
+        if (!url) return null;
+        // Try to match v= parameter
+        const match = url.match(/[?&]v=([^&]+)/);
+        if (match) return match[1];
+        // If it's already just an ID (11 chars)
+        if (url.length === 11) return url;
+        return null;
+      }
+
+      // ---------- BUILD VIDEOS WITH LOGGING ----------
+      function buildVideos(links, label) {
+        return links.map((link, index) => {
+          const id = getVideoId(link);
+          if (!id) {
+            console.warn(`Invalid video URL for ${label} at index ${index}:`, link);
+            return null;
+          }
+          return { id, title: `${label} ${index+1}` };
+        }).filter(v => v !== null);
+      }
+
       // ---------- HOME VIDEOS (original long list) ----------
       const homeLinks = [
         "https://www.youtube.com/watch?v=wL_4_Al1U1k",
@@ -490,60 +513,54 @@
         "https://www.youtube.com/watch?v=N3hvAwEyuPo",
       ];
 
-      // ---------- TRENDING VIDEOS (now using reliable homeLinks subset) ----------
+      // ---------- TRENDING VIDEOS (reliable) ----------
       const trendingLinks = [
         "https://www.youtube.com/watch?v=wL_4_Al1U1k",
         "https://www.youtube.com/watch?v=J8X6TeJtvsU",
         "https://www.youtube.com/watch?v=914PooSyyL0",
       ];
 
-      // ---------- خواطر القران الكريم VIDEOS (using reliable homeLinks) ----------
+      // ---------- خواطر القران الكريم VIDEOS (reliable) ----------
       const quranLinks = [
         "https://www.youtube.com/watch?v=Sn4-8qbi0ps",
         "https://www.youtube.com/watch?v=5RvgLQiBt9o",
         "https://www.youtube.com/watch?v=4-Gn1CbXKSE",
       ];
 
-      // ---------- مكة والمدينة مباشر VIDEOS (working links) ----------
+      // ---------- مكة والمدينة مباشر VIDEOS (working) ----------
       const meccaMedinaLinks = [
-        "https://www.youtube.com/watch?v=2z9gvsF9n7c", // Makkah Live
-        "https://www.youtube.com/watch?v=Qd4KZis1pYQ", // Madinah Live
-        "https://www.youtube.com/watch?v=6xQQuK4hAgM", // Another live
+        "https://www.youtube.com/watch?v=2z9gvsF9n7c",
+        "https://www.youtube.com/watch?v=Qd4KZis1pYQ",
+        "https://www.youtube.com/watch?v=6xQQuK4hAgM",
       ];
 
-      // ---------- خواطر الشيخ الشعراوي VIDEOS (working links) ----------
+      // ---------- خواطر الشيخ الشعراوي VIDEOS (working) ----------
       const shaarawyLinks = [
         "https://www.youtube.com/watch?v=Jc2Vg5x6v_U",
         "https://www.youtube.com/watch?v=8Z3Jd7gA5_Q",
       ];
 
-      // Helper to extract video ID – robust against extra parameters
-      function getVideoId(url) {
-        const match = url.match(/[?&]v=([^&]+)/);
-        return match ? match[1] : null;
-      }
-
-      // Build video objects (skip any invalid URLs)
-      function buildVideos(links, titlePrefix) {
-        return links.map((link, index) => {
-          const id = getVideoId(link);
-          return id ? { id, title: `${titlePrefix} ${index+1}` } : null;
-        }).filter(v => v !== null);
-      }
-
+      // Build video objects with labels
       const homeVideos = buildVideos(homeLinks, 'Video');
       const trendingVideos = buildVideos(trendingLinks, 'Trending');
       const quranVideos = buildVideos(quranLinks, 'القرآن الكريم - مقطع');
       const meccaMedinaVideos = buildVideos(meccaMedinaLinks, 'مباشر');
       const shaarawyVideos = buildVideos(shaarawyLinks, 'الشعراوي');
 
-      // Override first two home titles to match static items
+      // Override first two home titles
       if (homeVideos.length >= 2) {
         homeVideos[0].title = "Arkon Fly - Live Session";
         homeVideos[1].title = "Multicolor";
       }
 
-      // Master list for player carousel: combine ALL video sets, deduplicate by id
+      // Log video counts for debugging
+      console.log('Home videos:', homeVideos.length);
+      console.log('Mecca/Medina videos:', meccaMedinaVideos.length);
+      console.log('Shaarawy videos:', shaarawyVideos.length);
+      console.log('Trending videos:', trendingVideos.length);
+      console.log('Quran videos:', quranVideos.length);
+
+      // Master list for player carousel: combine all, deduplicate
       const masterVideos = [];
       const seenIds = new Set();
       [...homeVideos, ...trendingVideos, ...quranVideos, ...meccaMedinaVideos, ...shaarawyVideos].forEach(v => {
@@ -552,6 +569,7 @@
           masterVideos.push(v);
         }
       });
+      console.log('Master videos:', masterVideos.length);
 
       // ---------- PLAYER GLOBAL VARIABLES (unchanged) ----------
       let player;
@@ -711,10 +729,15 @@
         document.querySelector('.app').style.display = 'flex';
       };
 
-      // ---------- GRID LOADING FUNCTION ----------
+      // ---------- GRID LOADING FUNCTION with error handling ----------
       const videoContainer = document.getElementById('mainVideoContainer');
 
-      function loadGrid(videos) {
+      function loadGrid(videos, tabName) {
+        console.log(`Loading ${tabName} with ${videos.length} videos`);
+        if (videos.length === 0) {
+          videoContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #E8003C;">لا توجد فيديوهات في هذا القسم</div>';
+          return;
+        }
         const gridDiv = document.createElement('div');
         gridDiv.className = 'video-grid';
         videos.forEach(v => {
@@ -722,10 +745,23 @@
           thumbCon.className = 'thumb-con';
           thumbCon.setAttribute('data-id', v.id);
           thumbCon.setAttribute('data-title', v.title);
+          // Create an img element inside thumb for better error handling
           thumbCon.innerHTML = `
-            <div class="thumb" style="background-image: url('https://i.ytimg.com/vi/${v.id}/mqdefault.jpg')"></div>
+            <div class="thumb" style="background-color: #222; background-size: cover;"></div>
             <div class="play-button"></div>
           `;
+          const thumbDiv = thumbCon.querySelector('.thumb');
+          const img = new Image();
+          img.onload = () => {
+            thumbDiv.style.backgroundImage = `url('${img.src}')`;
+          };
+          img.onerror = () => {
+            console.warn(`Failed to load thumbnail for ${v.id}, using fallback`);
+            thumbDiv.style.backgroundColor = '#333';
+            thumbDiv.style.backgroundImage = 'linear-gradient(45deg, #444, #222)';
+          };
+          img.src = `https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`;
+
           thumbCon.addEventListener('click', (e) => {
             e.preventDefault();
             openPlayerWithVideo(v.id, v.title);
@@ -738,15 +774,15 @@
 
       // ---------- ATTACH EVENT LISTENERS TO ALL TAB BUTTONS USING CLASSES ----------
       document.querySelectorAll('.btn-home').forEach(btn => {
-        btn.addEventListener('click', (e) => { e.preventDefault(); loadGrid(homeVideos); });
+        btn.addEventListener('click', (e) => { e.preventDefault(); loadGrid(homeVideos, 'Home'); });
       });
 
       document.querySelectorAll('.btn-mecca').forEach(btn => {
-        btn.addEventListener('click', (e) => { e.preventDefault(); loadGrid(meccaMedinaVideos); });
+        btn.addEventListener('click', (e) => { e.preventDefault(); loadGrid(meccaMedinaVideos, 'Mecca'); });
       });
 
       document.querySelectorAll('.btn-shaarawy').forEach(btn => {
-        btn.addEventListener('click', (e) => { e.preventDefault(); loadGrid(shaarawyVideos); });
+        btn.addEventListener('click', (e) => { e.preventDefault(); loadGrid(shaarawyVideos, 'Shaarawy'); });
       });
 
       document.querySelector('.btn-all')?.addEventListener('click', (e) => {
@@ -759,13 +795,13 @@
             allVideos.push(v);
           }
         });
-        loadGrid(allVideos);
+        loadGrid(allVideos, 'All');
       });
 
       // ---------- INITIAL LOAD (Home) ----------
-      window.addEventListener('load', () => loadGrid(homeVideos));
+      window.addEventListener('load', () => loadGrid(homeVideos, 'Home'));
 
-      // Also attach click to the two static video items (in case they remain)
+      // Also attach click to the two static video items
       document.querySelectorAll('.video__item[data-video-id]').forEach(item => {
         item.addEventListener('click', function(e) {
           const videoId = this.dataset.videoId;
