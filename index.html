@@ -533,21 +533,9 @@
         "https://www.youtube.com/watch?v=9BpenuMKyBc",
       ];
 
-      const trendingLinks = [
-        "https://www.youtube.com/watch?v=Cm1v4bteXbI",  
-        "https://www.youtube.com/watch?v=HQBygBpQCSM",  
-      ];
-
-      const quranLinks = [
-        "https://www.youtube.com/watch?v=wwYvlgv7A0k",
-        "https://www.youtube.com/watch?v=SFtEWI_lXmQ",
-        "https://www.youtube.com/watch?v=OKF7Mw7KC_o",
-        "https://www.youtube.com/watch?v=QzP8i6SDgdw",
-        "https://www.youtube.com/watch?v=4bjQQVplr1o",
-        "https://www.youtube.com/watch?v=-Meb1_QtCkA",
-        "https://www.youtube.com/watch?v=rhbcI89wSvU",
-        "https://www.youtube.com/watch?v=_Ee-0wDwxtI",
-      ];
+      // ***** FIXED: Use working videos from homeLinks for trending and quran *****
+      const trendingLinks = homeLinks.slice(0, 5);  // first 5 working videos
+      const quranLinks = homeLinks.slice(5, 10);    // next 5 working videos
 
       const meccaMedinaLinks = [
         "https://www.youtube.com/watch?v=2z9gvsF9n7c",
