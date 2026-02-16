@@ -35,24 +35,21 @@
     }
     @media (min-width: 500px) {
       .screen {
-        max-width: 420px;
-        max-height: 800px;
+        max-width: 420px; max-height: 800px;
         border-radius: 25px;
         box-shadow: 0px 0px 10px 2px rgba(140,140,140,0.15);
       }
     }
 
     .icon {
-      object-fit: contain; height: 25px;
-      opacity: 0.5;
+      object-fit: contain; height: 25px; opacity: 0.5;
       filter: grayscale(100%); cursor: pointer; transition: 0.4s ease;
     }
     .icon:hover { filter: grayscale(0%); opacity: 1; }
 
     .header {
       display: flex; justify-content: space-between; align-items: center;
-      width: 100%;
-      height: 60px; flex-shrink: 0;
+      width: 100%; height: 60px; flex-shrink: 0;
     }
     .header__logo { display: flex; align-items: center; }
     .header__icon { height: 25px; object-fit: cover; margin-right: 5px; }
@@ -63,12 +60,16 @@
       width: 100%; height: 60px; flex-shrink: 0;
     }
     .categories__link {
-      position: relative; font-size: 10px;
-      padding: 6px 16px;
+      position: relative; font-size: 10px; padding: 6px 16px;
       border-radius: 16px; border: 1px solid #E8003C; color: #E8003C;
       cursor: pointer; overflow: hidden;
     }
+    .categories__link::before {
+      content: ""; position: absolute; top: 0; left: -100%;
+      width: 100%; height: 100%; background: #E8003C; transition: 0.4s ease;
+    }
     .categories__link:hover { color: #ffffff; }
+    .categories__link:hover::before { left: 0%; }
     .categories__text { position: relative; z-index: 10; }
 
     .video {
@@ -79,196 +80,642 @@
       min-height: 0;
     }
 
-    /* ========== DYNAMIC GRID ========== */
-    .video-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr); /* 2 Columns like the photo */
-      grid-column-gap: 12px;
-      grid-row-gap: 20px;
-      width: 100%;
-      padding-bottom: 20px;
-    }
-
+    /* static items (will be replaced) */
     .video__item {
-      display: flex;
-      flex-direction: column;
-      cursor: pointer;
+      position: relative; width: 100%; margin-bottom: 10px;
     }
-
-    .thumb-con {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      position: relative;
-      overflow: hidden;
-      border-radius: 12px; /* Rounded corners for thumbnails */
-      background-color: #111;
+    .video__img {
+      height: 165px; width: 100%; border-radius: 10px; object-fit: cover;
     }
-
-    .thumb {
-      background-size: cover;
-      background-position: center;
-      height: 100%;
-      width: 100%;
+    .video__stats {
+      position: absolute; top: 0; height: 165px; width: 100%; cursor: pointer;
     }
-
+    .video__views {
+      position: absolute; top: 10px; left: 10px; font-size: 9px;
+      padding: 2px 10px; border-radius: 12px; color: #ffffff;
+      background-color: #E8003C;
+    }
+    .video__options {
+      position: absolute; top: 10px; right: 10px;
+    }
+    .video__duration {
+      position: absolute; bottom: 10px; right: 10px; font-size: 8px;
+      padding: 2px 6px; border-radius: 6px; color: #ffffff;
+      background-color: #8c8c8c;
+    }
     .video__info {
-      padding: 8px 4px 0;
+      display: flex; margin: 5px 0 10px;
     }
-
-    .video__title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #000;
-      line-height: 1.4;
-      margin-bottom: 2px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+    .video__photo {
+      object-fit: cover; height: 30px; width: 30px; border-radius: 50%;
+      margin-right: 5px; cursor: pointer;
     }
+    .video__title { font-size: 12px; }
+    .video__channel { font-size: 9px; line-height: 1.8; opacity: 0.9; }
 
-    .video__channel {
-      font-size: 10px;
-      color: #606060;
-      font-weight: 400;
-    }
-
-    .play-button {
-      position: absolute;
-      width: 30px; height: 30px;
-      background-color: transparent;
-      top: 50%; left: 48%;
-      transform: translate(-50%, -50%) rotate(45deg);
-      border-top: 4px solid white;
-      border-right: 4px solid white;
-      filter: drop-shadow(0 0 5px rgba(0,0,0,0.4));
-    }
-
-    /* ========== NAVIGATION MENU ========== */
     .menu {
       width: 100%; background-color: #ffffff; border-radius: 20px;
       box-shadow: 0px 0px 5px 1px rgba(140,140,140,0.15);
       padding: 10px 14px; margin-top: 8px; flex-shrink: 0;
     }
-    .menu__list { display: flex; justify-content: space-between; list-style: none; }
-    .menu__link { display: flex; flex-direction: column; align-items: center; text-decoration: none; }
+    .menu__list { display: flex; justify-content: space-between; }
+    .menu__link {
+      display: flex; flex-direction: column; justify-content: center; height: 100%;
+    }
+    .menu__link:hover .menu__icon { filter: grayscale(0%); opacity: 1; }
+    .menu__link:hover .menu__txt { color: #E8003C; }
     .menu__icon { height: 20px; object-fit: contain; }
-    .menu__txt { color: #8c8c8c; font-size: 8px; font-weight: bold; margin-top: 4px; }
+    .menu__txt {
+      color: #8c8c8c; font-size: 8px; transition: 0.4s ease; font-weight: bold;
+    }
 
-    /* ========== PLAYER CONTAINER ========== */
+    /* ========== VIDEO GRID WITH TITLES ========== */
+    .video-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-row-gap: 1.2em;
+      width: 100%;
+      padding: 0 0 0.5em;
+    }
+
+    .video-card {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .thumb-con {
+      --height: 10;
+      height: calc(var(--height) * 1em);
+      width: 100%;
+      max-width: 100%;
+      position: relative;
+      perspective: 100px;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    .thumb {
+      background-color: #111;
+      background-size: cover;
+      height: 100%; width: 100%;
+      transform: translateZ(5px);
+    }
+
+    .play-button {
+      --height: 2;
+      position: absolute;
+      height: calc(var(--height) * 1em);
+      width: calc(var(--height) * 1em);
+      background-color: transparent;
+      top: 50%; left: 48%;
+      transform: translateX(-50%) translateY(-50%) rotate(45deg);
+      border-top: calc(var(--height) * 0.5em) solid white;
+      border-right: calc(var(--height) * 0.5em) solid white;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,0.4));
+      transition: 150ms ease-in-out;
+    }
+    .thumb-con:hover .play-button { border-color: #ccc; }
+
+    .video-info {
+      margin-top: 8px;
+      padding: 0 2px;
+    }
+
+    .video-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #0f0f0f;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ========== FULLSCREEN PLAYER ========== */
     #playerContainer {
-      position: fixed; top: 0; left: 0;
+      position: fixed;
+      top: 0; left: 0;
       width: 100vw; height: 100vh;
       background-color: #000;
       z-index: 1000;
       display: none;
+      color: white;
+      font-family: 'Arial Rounded MT Bold', 'Helvetica', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
-    #youtube-player { width: 100%; height: 100%; border: none; }
-    .back-btn {
-      position: absolute; top: 20px; left: 20px; z-index: 1010;
-      background: rgba(0,0,0,0.6); color: white; border: none;
-      padding: 10px 15px; border-radius: 50px; font-weight: bold;
+    #playerContainer .main-container {
+      position: relative; width: 100%; height: 100%;
+    }
+    #playerContainer #youtube-player {
+      width: 100%; height: 100%;
+    }
+    #playerContainer #ui-trigger {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 5; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #playerContainer #status-icon {
+      font-size: 60px;
+      background: rgba(0,0,0,0.5);
+      width: 100px; height: 100px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      transform: scale(0.5);
+    }
+    #playerContainer #status-icon.show { opacity: 1; transform: scale(1); }
+
+    #playerContainer #video-ui {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; display: flex; flex-direction: column;
+      justify-content: space-between; padding: 20px; box-sizing: border-box;
+      background: rgba(0, 0, 0, 0.4); z-index: 10;
+      transition: opacity 0.4s ease, visibility 0.4s;
+    }
+    #playerContainer .hidden-ui { opacity: 0; visibility: hidden; }
+
+    #playerContainer .top-bar {
+      display: flex; align-items: center; gap: 15px; pointer-events: auto;
+    }
+    #playerContainer .back-btn {
+      font-size: 28px; cursor: pointer; background: none; border: none; color: white;
+    }
+    #playerContainer .video-title { font-size: 18px; font-weight: bold; margin: 0; }
+    #playerContainer .sub-btn {
+      background: #FF0000; color: white; border: none; padding: 8px 16px;
+      border-radius: 20px; font-weight: bold;
+    }
+
+    #playerContainer .bottom-section {
+      pointer-events: auto; display: flex; flex-direction: column; gap: 15px;
+    }
+    #playerContainer .carousel-section {
+      width: 100%; display: flex; align-items: center; overflow-x: auto;
+      gap: 15px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    }
+    #playerContainer .carousel-section::-webkit-scrollbar { display: none; }
+
+    #playerContainer .thumb-card {
+      flex: 0 0 auto; width: 180px; height: 100px; border-radius: 12px;
+      overflow: hidden; cursor: pointer; border: 4px solid transparent;
+    }
+    #playerContainer .thumb-card.active { border-color: #FF0000; }
+    #playerContainer .thumb-card img { width: 100%; height: 100%; object-fit: cover; }
+
+    #playerContainer .progress-row {
+      width: 100%; display: flex; align-items: center; gap: 15px;
+    }
+    #playerContainer .progress-container {
+      flex-grow: 1; height: 40px;
+      display: flex; align-items: center; cursor: pointer; position: relative;
+      touch-action: none;
+    }
+    #playerContainer .progress-bg {
+      width: 100%; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px;
+    }
+    #playerContainer .progress-fill {
+      width: 0%; height: 100%; background: #FF0000; border-radius: 3px;
+    }
+    #playerContainer .progress-knob {
+      width: 24px; height: 24px; background: white; border-radius: 50%;
+      position: absolute; left: 0%; transform: translateX(-50%);
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
   </style>
 </head>
 <body>
-
+  <!-- MAIN UI (phone screen) -->
   <div class="app">
     <div class="screen">
       <header class="header">
-        <img class="header__menu icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGc+PHBhdGggZmlsbD0iI2U4MDAzYyIgZD0ibTYsMzZsMTIsMGwwLC00bC0xMiwwbDAsNHptMCwtMjRsMCw0bDM2LDBsMCwtNGwtMzYsMHptMCwxNGwyNCwwbDAsLTRsLTI0LDBsMCw0eiIvPjwvZz48L3N2Zz4=">
+        <img class="header__menu icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGZp%0D%0AbGw9IiNlODAwM2MiIGlkPSJzdmdfMSIgZD0ibTYsMzZsMTIsMGwwLC00bC0xMiwwbDAsNHptMCwt%0D%0AMjRsMCw0bDM2LDBsMCwtNGwtMzYsMHptMCwxNGwyNCwwbDAsLTRsLTI0LDBsMCw0eiIvPgogPC9n%0D%0APgo8L3N2Zz4=" alt="menu">
         <div class="header__logo">
-          <h1 class="header__title" style="color:#FF0000; font-weight:800;">YouTube</h1>
+          <img class="header__icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQg%0D%0AU1ZHIDEuMC8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvVFIvMjAwMS9SRUMtU1ZHLTIwMDEwOTA0%0D%0AL0RURC9zdmcxMC5kdGQnPjxzdmcgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMzIgMzIiIGhl%0D%0AaWdodD0iMzJweCIgaWQ9IkxheWVyXzEiIHZlcnNpb249IjEuMCIgdmlld0JveD0iMCAwIDMyIDMy%0D%0AIiB3aWR0aD0iMzJweCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMu%0D%0Ab3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+%0D%0APGc+PHBhdGggZD0iTTMxLjY3LDkuMTc5YzAsMC0wLjMxMi0yLjM1My0xLjI3MS0zLjM4OWMtMS4y%0D%0AMTctMS4zNTgtMi41OC0xLjM2Ni0zLjIwNS0xLjQ0M0MyMi43MTcsNCwxNi4wMDIsNCwxNi4wMDIs%0D%0ANCAgIGgtMC4wMTVjMCwwLTYuNzE1LDAtMTEuMTkxLDAuMzQ3QzQuMTcxLDQuNDI0LDIuODA5LDQu%0D%0ANDMyLDEuNTkxLDUuNzlDMC42MzMsNi44MjYsMC4zMiw5LjE3OSwwLjMyLDkuMTc5UzAsMTEuOTQs%0D%0AMCwxNC43MDF2Mi41ODggICBjMCwyLjc2MywwLjMyLDUuNTIzLDAuMzIsNS41MjNzMC4zMTIsMi4z%0D%0ANTIsMS4yNzEsMy4zODZjMS4yMTgsMS4zNTgsMi44MTUsMS4zMTcsMy41MjcsMS40NTlDNy42Nzcs%0D%0AMjcuOTE5LDE1Ljk5NSwyOCwxNS45OTUsMjggICBzNi43MjItMC4wMTIsMTEuMTk5LTAuMzU1YzAu%0D%0ANjI1LTAuMDgsMS45ODgtMC4wODgsMy4yMDUtMS40NDZjMC45NTgtMS4wMzQsMS4yNzEtMy4zODYs%0D%0AMS4yNzEtMy4zODZzMC4zMi0yLjc2MSwwLjMyLTUuNTIzdi0yLjU4OCAgIEMzMS45OSwxMS45NCwz%0D%0AMS42Nyw5LjE3OSwzMS42Nyw5LjE3OXoiIGZpbGw9IiNFMDJGMkYiLz48cG9seWdvbiBmaWxsPSIj%0D%0ARkZGRkZGIiBwb2ludHM9IjEyLDEwIDEyLDIyIDIyLDE2ICAiLz48L2c+PGcvPjxnLz48Zy8+PGcv%0D%0APjxnLz48Zy8+PC9zdmc+" alt="youtube">
+          <h1 class="header__title">Youtube</h1>
         </div>
-        <img class="header__search icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGc+PHBhdGggZmlsbD0iI2U4MDAzYyIgZD0ibTMxLDI4bC0xLjU5LDBsLTAuNTUsLTAuNTVjMS45NiwtMi4yNyAzLjE0LC01LjIyIDMuMTQsLTguNDVjMCwtNy4xOCAtNS44MiwtMTMgLTEzLC0xM3MtMTMsNS44MiAtMTMsMTNzNS44MiwxMyAxMywxM2MzLjIzLDAgNi4xOCwtMS4xOCA4LjQ1LC0zLjEzbDAuNTUsMC41NWwwLDEuNThsMTAsOS45OGwyLjk4LC0yLjk4bC05Ljk4LC0xMHptLTEyLDBjLTQuOTcsMCAtOSwtNC4wMyAtOSwtOXM0LjAzLC05IDksLTlzOSw0LjAzIDksOXMtNC4wMyw5IC05LDl6Ii8+PC9nPjwvc3ZnPg==">
+        <img class="header__search icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGZp%0D%0AbGw9IiNlODAwM2MiIGlkPSJzdmdfMSIgZD0ibTMxLDI4bC0xLjU5LDBsLTAuNTUsLTAuNTVjMS45%0D%0ANiwtMi4yNyAzLjE0LC01LjIyIDMuMTQsLTguNDVjMCwtNy4xOCAtNS44MiwtMTMgLTEzLC0xM3Mt%0D%0AMTMsNS44MiAtMTMsMTNzNS44MiwxMyAxMywxM2MzLjIzLDAgNi4xOCwtMS4xOCA4LjQ1LC0zLjEz%0D%0AbDAuNTUsMC41NWwwLDEuNThsMTAsOS45OGwyLjk4LC0yLjk4bC05Ljk4LC0xMHptLTEyLDBjLTQu%0D%0AOTcsMCAtOSwtNC4wMyAtOSwtOXM0LjAzLC05IDksLTlzOSw0LjAzIDksOXMtNC4wMyw5IC05LDl6%0D%0AIi8+CiA8L2c+Cjwvc3ZnPg==" alt="search">
       </header>
 
+      <!-- CATEGORY TABS (top) with classes -->
       <div class="categories">
-        <a class="categories__link btn-home"><span class="categories__text">الرئيسية</span></a>
-        <a class="categories__link btn-mecca"><span class="categories__text">مكة والمدينة</span></a>
-        <a class="categories__link btn-shaarawy"><span class="categories__text">الشعراوي</span></a>
+        <a class="categories__link" href="#"><span class="categories__text btn-home">الرئيسية</span></a>
+        <a class="categories__link" href="#"><span class="categories__text btn-mecca">مكة والمدينة مباشر</span></a>
+        <a class="categories__link" href="#"><span class="categories__text btn-shaarawy">خواطر الشيخ الشعراوي</span></a>
+        <a class="categories__link" href="#"><span class="categories__text btn-all">All</span></a>
       </div>
 
+      <!-- scrollable content area (will be replaced by grid on load) -->
       <div class="video" id="mainVideoContainer">
+        <!-- two default items (will be replaced) -->
+        <div class="video__item" data-video-id="kWvFnOBP4Sc" data-video-title="Arkon Fly - Live Session">
+          <div class="video__cover">
+            <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-2.jpg?raw=true" alt="video">
+            <div class="video__stats">
+              <span class="video__views">4.5M</span>
+              <span class="video__duration">10:43</span>
+              <img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGlk%0D%0APSJzdmdfMSIgZmlsbD0ibm9uZSIgZD0ibTAsMGw0OCwwbDAsNDhsLTQ4LDBsMCwtNDh6Ii8+CiAg%0D%0APHBhdGggZmlsbD0iI2ZmZmZmZiIgaWQ9InN2Z18yIiBkPSJtMTIsMjBjLTIuMjEsMCAtNCwxLjc5%0D%0AIC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bTI0LDBjLTIuMjEs%0D%0AMCAtNCwxLjc5IC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bS0x%0D%0AMiwwYy0yLjIxLDAgLTQsMS43OSAtNCw0czEuNzksNCA0LDRzNCwtMS43OSA0LC00cy0xLjc5LC00%0D%0AIC00LC00eiIvPgogPC9nPgo8L3N2Zz4=" alt="options">
+            </div>
+          </div>
+          <div class="video__info">
+            <img class="video__photo" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/channel-1.png?raw=true" alt="channel">
+            <div class="video__description">
+              <h2 class="video__title">Arkon Fly - Live Session</h2>
+              <h3 class="video__channel">Song.FM</h3>
+            </div>
+          </div>
         </div>
+        <div class="video__item" data-video-id="zE3Ek97kz_U" data-video-title="Multicolor">
+          <div class="video__cover">
+            <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-1.jpg?raw=true" alt="video">
+            <div class="video__stats">
+              <span class="video__views">4.6M</span>
+              <span class="video__duration">10:43</span>
+              <img class="video__options icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw%0D%0AL3N2ZyI+CgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5v%0D%0AbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0x%0D%0AIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxwYXRoIGlk%0D%0APSJzdmdfMSIgZmlsbD0ibm9uZSIgZD0ibTAsMGw0OCwwbDAsNDhsLTQ4LDBsMCwtNDh6Ii8+CiAg%0D%0APHBhdGggZmlsbD0iI2ZmZmZmZiIgaWQ9InN2Z18yIiBkPSJtMTIsMjBjLTIuMjEsMCAtNCwxLjc5%0D%0AIC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bTI0LDBjLTIuMjEs%0D%0AMCAtNCwxLjc5IC00LDRzMS43OSw0IDQsNHM0LC0xLjc5IDQsLTRzLTEuNzksLTQgLTQsLTR6bS0x%0D%0AMiwwYy0yLjIxLDAgLTQsMS43OSAtNCw0czEuNzksNCA0LDRzNCwtMS43OSA0LC00cy0xLjc5LC00%0D%0AIC00LC00eiIvPgogPC9nPgo8L3N2Zz4=" alt="options">
+            </div>
+          </div>
+          <div class="video__info">
+            <img class="video__photo" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/channel-2.png?raw=true" alt="channel">
+            <div class="video__description">
+              <h2 class="video__title">Multicolor</h2>
+              <h3 class="video__channel">Is this just fantasy</h3>
+            </div>
+          </div>
+        </div>
+      </div>
 
+      <!-- BOTTOM MENU BUTTONS (also with classes) -->
       <nav class="menu">
         <ul class="menu__list">
-          <li class="menu__item"><a class="menu__link btn-home"><img class="menu__icon icon" src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png"><span class="menu__txt">Home</span></a></li>
-          <li class="menu__item"><a class="menu__link btn-mecca"><img class="menu__icon icon" src="https://cdn-icons-png.flaticon.com/512/1055/1055644.png"><span class="menu__txt">Live</span></a></li>
-          <li class="menu__item"><a class="menu__link btn-shaarawy"><img class="menu__icon icon" src="https://cdn-icons-png.flaticon.com/512/2662/2662503.png"><span class="menu__txt">Quran</span></a></li>
+          <li class="menu__item"><a class="menu__link btn-home" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0ibm9uZSIgZD0iTTAsMGgyNHYyNEgwVjB6Ii8+DQo8cGF0%0D%0AaCBmaWxsPSIjRTgwMDNDIiBkPSJNMjEsMkgzQzEuOSwyLDEsMi45LDEsNHYxMmMwLDEuMSwwLjks%0D%0AMiwyLDJoN3YySDh2Mmg4di0yaC0ydi0yaDdjMS4xLDAsMi0wLjksMi0yVjRDMjMsMi45LDIyLjEs%0D%0AMiwyMSwyeg0KCSBNMjEsMTZIM1Y0aDE4VjE2eiIvPg0KPC9zdmc+DQo=" alt="الرئيسية"><span class="menu__txt">الرئيسية</span></a></li>
+          <li class="menu__item"><a class="menu__link btn-mecca" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0ibm9uZSIgZD0iTTAsMGgyNHYyNEgwVjB6Ii8+DQo8cGF0%0D%0AaCBmaWxsPSIjRTgwMDNDIiBkPSJNMTEuNTcsMTMuMTZjLTEuMzYsMC4yNzktMi4xNywxLjE2LTIu%0D%0AMTcsMi40MWMwLDEuMzQsMS4xMSwyLjQyLDIuNDksMi40MmMyLjA0OSwwLDMuNzA5LTEuNjYsMy43%0D%0AMDktMy43MTENCgljMC0xLjA2OS0wLjE0OS0yLjExOS0wLjQ1OS0zLjExOUMxNC4zNSwxMi4yMywx%0D%0AMi45NCwxMi44OCwxMS41NywxMy4xNnogTTEzLjUsMC42N2MwLDAsMC43NCwyLjY1LDAuNzQsNC44%0D%0ADQoJYzAsMi4wNi0xLjM1LDMuNzMtMy40MSwzLjczQzguNzYsOS4yLDcuMiw3LjUzLDcuMiw1LjQ3%0D%0AbDAuMDMtMC4zNkM1LjIxLDcuNTEsNCwxMC42Miw0LDE0YzAsNC40MiwzLjU4LDgsOCw4czgtMy41%0D%0AOCw4LTgNCglDMjAsOC42MSwxNy40MSwzLjgsMTMuNSwwLjY3eiBNMTIsMjBjLTMuMzEsMC02LTIu%0D%0ANjg5LTYtNmMwLTEuNTI5LDAuMy0zLjA0LDAuODYtNC40M2MxLjAxLDEuMDEsMi40MSwxLjYzLDMu%0D%0AOTcsMS42Mw0KCWMyLjY2LDAsNC43NS0xLjgzLDUuMjc5LTQuNDNDMTcuMzQsOC45NywxOCwxMS40%0D%0ANCwxOCwxNEMxOCwxNy4zMTEsMTUuMzExLDIwLDEyLDIweiIvPg0KPC9zdmc+DQo=" alt="مباشر"><span class="menu__txt">مباشر</span></a></li>
+          <li class="menu__item"><a class="menu__link btn-shaarawy" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0U4MDAzQyIgZD0iTTE2LjUsM2MtMS43NCwwLTMuNDEs%0D%0AMC44MS00LjUsMi4wOUMxMC45MSwzLjgxLDkuMjQsMyw3LjUsM0M0LjQyLDMsMiw1LjQyLDIsOC41%0D%0ADQoJYzAsMy43NzksMy40LDYuODU5LDguNTUsMTEuNTRMMTIsMjEuMzVsMS40NS0xLjMyQzE4LjYs%0D%0AMTUuMzU5LDIyLDEyLjI3OSwyMiw4LjVDMjIsNS40MiwxOS41OCwzLDE2LjUsM3ogTTEyLjEsMTgu%0D%0ANTVMMTIsMTguNjUNCglsLTAuMS0wLjEwMUM3LjE0LDE0LjI0LDQsMTEuMzksNCw4LjVDNCw2LjUs%0D%0ANS41LDUsNy41LDVjMS41NCwwLDMuMDQsMC45OSwzLjU3LDIuMzZoMS44N0MxMy40Niw1Ljk5LDE0%0D%0ALjk2LDUsMTYuNSw1DQoJYzIsMCwzLjUsMS41LDMuNSwzLjVDMjAsMTEuMzksMTYuODU5LDE0LjI0%0D%0ALDEyLjEsMTguNTV6Ii8+DQo8L3N2Zz4NCg==" alt="خواطر القران الكريم"><span class="menu__txt">خواطر القران الكريم</span></a></li>
+          <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0U4MDAzQyIgZD0iTTIwLDJINEMyLjksMiwyLDIuOSwy%0D%0ALDR2MThsNC00aDE0YzEuMSwwLDItMC45LDItMlY0QzIyLDIuOSwyMS4xLDIsMjAsMnogTTIwLDE2%0D%0ASDZsLTIsMlY0aDE2VjE2eiIvPg0KPC9zdmc+DQo=" alt="inbox"><span class="menu__txt">Inbox</span></a></li>
+          <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0ibm9uZSIgZD0iTTAsMGgyNHYyNEgwVjB6IE0wLDBoMjR2%0D%0AMjRIMFYweiIvPg0KPHBhdGggZmlsbD0iI0U4MDAzQyIgZD0iTTIxLDNIM0MxLjksMywxLDMuOSwx%0D%0ALDV2MTRjMCwxLjEsMC45LDIsMiwyaDE4YzEuMSwwLDItMC45LDItMlY1QzIzLDMuOSwyMi4xLDMs%0D%0AMjEsM3ogTTIxLDE5SDNWNWgxMHY0aDhWMTkNCgl6Ii8+DQo8L3N2Zz4NCg==" alt="library"><span class="menu__txt">Library</span></a></li>
         </ul>
       </nav>
     </div>
   </div>
 
+  <!-- FULLSCREEN PLAYER (hidden initially) -->
   <div id="playerContainer">
-    <button class="back-btn" onclick="closePlayer()">✕ Close</button>
-    <div id="youtube-player"></div>
+    <div class="main-container">
+      <div id="youtube-player"></div>
+      <div id="ui-trigger" onclick="handleMainClick()">
+        <div id="status-icon">▶</div>
+      </div>
+      <div id="video-ui">
+        <div class="top-bar">
+          <button class="back-btn" onclick="closePlayer()">←</button>
+          <div style="flex-grow:1">
+            <div class="video-title" id="displayTitle">مكة المكرمة</div>
+          </div>
+          <button class="sub-btn">SUBSCRIBE</button>
+        </div>
+        <div class="bottom-section">
+          <div class="carousel-section" id="playerCarousel" onscroll="resetHideTimer()" ontouchstart="resetHideTimer()">
+            <!-- dynamic thumbnails will be injected here -->
+          </div>
+          <div class="progress-row">
+            <span id="currentTime" style="font-size:14px; min-width:45px;">0:00</span>
+            <div class="progress-container" id="progressContainer">
+              <div class="progress-bg"><div class="progress-fill" id="progressFill"></div></div>
+              <div class="progress-knob" id="progressKnob"></div>
+            </div>
+            <span id="totalTime" style="font-size:14px; min-width:45px;">0:00</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
+  <!-- YouTube IFrame API -->
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
-    const homeLinks = ["https://youtu.be/dQw4w9WgXcQ", "https://youtu.be/3JZ_D3ELwOQ"];
-    const trendingLinks = ["https://youtu.be/9bZkp7q19f0"];
-    const quranLinks = ["https://youtu.be/CevxZvSJLk8"];
-
-    function regexYTLink(url) {
-      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-      const match = url.match(regExp);
-      return (match && match[2].length === 11) ? match[2] : null;
-    }
-
-    const homeVideos = homeLinks.map((l, i) => ({ id: regexYTLink(l), title: "Amazing Nature Scenes " + (i+1) }));
-    const trendingVideos = trendingLinks.map((l, i) => ({ id: regexYTLink(l), title: "Trending Video " + (i+1) }));
-    const quranVideos = quranLinks.map((l, i) => ({ id: regexYTLink(l), title: "القرآن الكريم - مقطع " + (i+1) }));
-
-    function loadGrid(videoList) {
-      const container = document.getElementById('mainVideoContainer');
-      const grid = document.createElement('div');
-      grid.className = 'video-grid';
-
-      videoList.forEach(v => {
-        const item = document.createElement('div');
-        item.className = 'video__item';
-        item.innerHTML = `
-          <div class="thumb-con">
-            <div class="thumb" style="background-image: url('https://img.youtube.com/vi/${v.id}/mqdefault.jpg')"></div>
-            <div class="play-button"></div>
-          </div>
-          <div class="video__info">
-            <h2 class="video__title">${v.title}</h2>
-            <h3 class="video__channel">YouTube Kids • 1.2M views</h3>
-          </div>
-        `;
-        item.onclick = () => openPlayer(v.id);
-        grid.appendChild(item);
-      });
-      container.innerHTML = '';
-      container.appendChild(grid);
-    }
-
-    let player;
-    function openPlayer(id) {
-      document.getElementById('playerContainer').style.display = 'block';
-      if (player) {
-        player.loadVideoById(id);
-      } else {
-        player = new YT.Player('youtube-player', { videoId: id, playerVars: { autoplay: 1 } });
+    (function() {
+      // ---------- HELPER: extract video ID ----------
+      function getVideoId(url) {
+        const match = url.match(/[?&]v=([^&]+)/);
+        return match ? match[1] : null;
       }
-    }
 
-    function closePlayer() {
-      document.getElementById('playerContainer').style.display = 'none';
-      if (player) player.stopVideo();
-    }
+      // ---------- VIDEO LISTS WITH TITLES ----------
+      // Home videos (first few with real titles, rest generic)
+      const homeLinks = [
+        { url: "https://www.youtube.com/watch?v=wL_4_Al1U1k", title: "Arkon Fly - Live Session" },
+        { url: "https://www.youtube.com/watch?v=J8X6TeJtvsU", title: "Multicolor" },
+        { url: "https://www.youtube.com/watch?v=914PooSyyL0", title: "Is this just fantasy" },
+        { url: "https://www.youtube.com/watch?v=Sn4-8qbi0ps", title: "Video 4" },
+        { url: "https://www.youtube.com/watch?v=5RvgLQiBt9o", title: "Video 5" },
+        { url: "https://www.youtube.com/watch?v=4-Gn1CbXKSE", title: "Video 6" },
+        { url: "https://www.youtube.com/watch?v=b2vkXogolqw", title: "Video 7" },
+        { url: "https://www.youtube.com/watch?v=RV1ZNzobabQ", title: "Video 8" },
+        { url: "https://www.youtube.com/watch?v=XGkxW1_qrk4", title: "Video 9" },
+        { url: "https://www.youtube.com/watch?v=VcmyT3_aarI", title: "Video 10" },
+        { url: "https://www.youtube.com/watch?v=iHjivhBxG80", title: "Video 11" },
+        { url: "https://www.youtube.com/watch?v=fA_7e59yU3k", title: "Video 12" },
+        // ... add more as needed, but keep the rest from the original list
+      ];
 
-    // Setup tab listeners
-    document.querySelectorAll('.btn-home').forEach(b => b.onclick = () => loadGrid(homeVideos));
-    document.querySelectorAll('.btn-mecca').forEach(b => b.onclick = () => loadGrid(trendingVideos));
-    document.querySelectorAll('.btn-shaarawy').forEach(b => b.onclick = () => loadGrid(quranVideos));
+      // Trending videos
+      const trendingLinks = [
+        { url: "https://www.youtube.com/watch?v=Cm1v4bteXbI", title: "Trending 1" },
+        { url: "https://www.youtube.com/watch?v=HQBygBpQCSM", title: "Trending 2" },
+      ];
 
-    window.onload = () => loadGrid(homeVideos);
+      // Quran videos
+      const quranLinks = [
+        { url: "https://www.youtube.com/watch?v=wwYvlgv7A0k", title: "القرآن الكريم - مقطع 1" },
+        { url: "https://www.youtube.com/watch?v=SFtEWI_lXmQ", title: "القرآن الكريم - مقطع 2" },
+        { url: "https://www.youtube.com/watch?v=OKF7Mw7KC_o", title: "القرآن الكريم - مقطع 3" },
+        { url: "https://www.youtube.com/watch?v=QzP8i6SDgdw", title: "القرآن الكريم - مقطع 4" },
+        { url: "https://www.youtube.com/watch?v=4bjQQVplr1o", title: "القرآن الكريم - مقطع 5" },
+        { url: "https://www.youtube.com/watch?v=-Meb1_QtCkA", title: "القرآن الكريم - مقطع 6" },
+        { url: "https://www.youtube.com/watch?v=rhbcI89wSvU", title: "القرآن الكريم - مقطع 7" },
+        { url: "https://www.youtube.com/watch?v=_Ee-0wDwxtI", title: "القرآن الكريم - مقطع 8" },
+      ];
+
+      // Mecca/Medina videos
+      const meccaMedinaLinks = [
+        { url: "https://www.youtube.com/watch?v=2z9gvsF9n7c", title: "مباشر من مكة" },
+        { url: "https://www.youtube.com/watch?v=Qd4KZis1pYQ", title: "مباشر من المدينة" },
+        { url: "https://www.youtube.com/watch?v=6xQQuK4hAgM", title: "مباشر 3" },
+      ];
+
+      // Shaarawy videos
+      const shaarawyLinks = [
+        { url: "https://www.youtube.com/watch?v=Jc2Vg5x6v_U", title: "الشعراوي - تفسير" },
+        { url: "https://www.youtube.com/watch?v=8Z3Jd7gA5_Q", title: "الشعراوي - خواطر" },
+      ];
+
+      // Build video objects with id and title
+      function buildVideos(links) {
+        return links.map(item => {
+          const id = getVideoId(item.url);
+          return id ? { id, title: item.title } : null;
+        }).filter(v => v !== null);
+      }
+
+      const homeVideos = buildVideos(homeLinks);
+      const trendingVideos = buildVideos(trendingLinks);
+      const quranVideos = buildVideos(quranLinks);
+      const meccaMedinaVideos = buildVideos(meccaMedinaLinks);
+      const shaarawyVideos = buildVideos(shaarawyLinks);
+
+      // Master list for player carousel (all videos, no duplicates)
+      const masterVideos = [];
+      const seenIds = new Set();
+      [...homeVideos, ...trendingVideos, ...quranVideos, ...meccaMedinaVideos, ...shaarawyVideos].forEach(v => {
+        if (!seenIds.has(v.id)) {
+          seenIds.add(v.id);
+          masterVideos.push(v);
+        }
+      });
+
+      // ---------- PLAYER GLOBAL VARIABLES ----------
+      let player;
+      let isUIVisible = true;
+      let isDragging = false;
+      let hideTimer;
+      const uiElement = document.getElementById('video-ui');
+      const statusIcon = document.getElementById('status-icon');
+      const progressFill = document.getElementById('progressFill');
+      const progressKnob = document.getElementById('progressKnob');
+      const progressContainer = document.getElementById('progressContainer');
+      const playerContainer = document.getElementById('playerContainer');
+      const displayTitle = document.getElementById('displayTitle');
+      const carousel = document.getElementById('playerCarousel');
+
+      window.onYouTubeIframeAPIReady = function() {
+        player = new YT.Player('youtube-player', {
+          videoId: masterVideos[0]?.id || '',
+          playerVars: { autoplay: 1, controls: 0, modestbranding: 1, rel: 0, iv_load_policy: 3, playsinline: 1 },
+          events: { onReady: onPlayerReady }
+        });
+      };
+
+      function onPlayerReady() {
+        setInterval(updateProgressBar, 100);
+        startHideTimer();
+      }
+
+      function startHideTimer() {
+        clearTimeout(hideTimer);
+        if (isUIVisible && !isDragging && player && player.getPlayerState() === 1) {
+          hideTimer = setTimeout(() => hideUI(), 5000);
+        }
+      }
+      function resetHideTimer() { if (isUIVisible) startHideTimer(); }
+      function hideUI() { isUIVisible = false; uiElement.classList.add('hidden-ui'); }
+      function showUI() { isUIVisible = true; uiElement.classList.remove('hidden-ui'); startHideTimer(); }
+
+      window.handleMainClick = function() {
+        if (isDragging) return;
+        if (!isUIVisible) showUI();
+        else {
+          const state = player.getPlayerState();
+          if (state === 1) { player.pauseVideo(); showStatusIcon('Ⅱ'); clearTimeout(hideTimer); }
+          else { player.playVideo(); showStatusIcon('▶'); hideUI(); }
+        }
+      };
+
+      function showStatusIcon(char) {
+        statusIcon.innerText = char;
+        statusIcon.classList.add('show');
+        setTimeout(() => statusIcon.classList.remove('show'), 600);
+      }
+
+      function updateProgressBar() {
+        if (player && player.getCurrentTime && !isDragging) {
+          const current = player.getCurrentTime();
+          const total = player.getDuration();
+          if (total > 0) {
+            const pct = (current / total) * 100;
+            setBarPosition(pct);
+            document.getElementById('currentTime').innerText = formatTime(current);
+            document.getElementById('totalTime').innerText = formatTime(total);
+          }
+        }
+      }
+      function setBarPosition(pct) {
+        pct = Math.max(0, Math.min(100, pct));
+        progressFill.style.width = pct + '%';
+        progressKnob.style.left = pct + '%';
+      }
+      function formatTime(seconds) {
+        const min = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60);
+        return min + ":" + (sec < 10 ? '0' : '') + sec;
+      }
+
+      progressContainer.addEventListener('touchstart', (e) => { isDragging = true; handleScrub(e); });
+      window.addEventListener('touchmove', (e) => { if (isDragging) handleScrub(e); }, { passive: false });
+      window.addEventListener('touchend', () => {
+        if (isDragging) {
+          const pct = parseFloat(progressKnob.style.left) || 0;
+          const newTime = (pct / 100) * player.getDuration();
+          player.seekTo(newTime, true);
+          isDragging = false;
+          startHideTimer();
+        }
+      });
+      function handleScrub(e) {
+        e.stopPropagation();
+        resetHideTimer();
+        const rect = progressContainer.getBoundingClientRect();
+        const touchX = e.touches ? e.touches[0].clientX : e.clientX;
+        const offsetX = touchX - rect.left;
+        let pct = (offsetX / rect.width) * 100;
+        pct = Math.max(0, Math.min(100, pct));
+        setBarPosition(pct);
+      }
+
+      window.changeVideo = function(id, title, element) {
+        if (window.event) window.event.stopPropagation();
+        player.loadVideoById(id);
+        displayTitle.innerText = title;
+        document.querySelectorAll('#playerCarousel .thumb-card').forEach(c => c.classList.remove('active'));
+        if (element) element.classList.add('active');
+        player.playVideo();
+        hideUI();
+        setTimeout(() => {
+          element?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }, 100);
+      };
+
+      function populateCarousel(activeId) {
+        carousel.innerHTML = '';
+        masterVideos.forEach(v => {
+          const card = document.createElement('div');
+          card.className = 'thumb-card' + (v.id === activeId ? ' active' : '');
+          card.setAttribute('onclick', `changeVideo('${v.id}', '${v.title}', this)`);
+          card.innerHTML = `<img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg">`;
+          carousel.appendChild(card);
+        });
+        setTimeout(() => {
+          const activeCard = document.querySelector('#playerCarousel .thumb-card.active');
+          if (activeCard) {
+            activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        }, 150);
+      }
+
+      window.openPlayerWithVideo = function(videoId, videoTitle) {
+        playerContainer.style.display = 'block';
+        document.querySelector('.app').style.display = 'none';
+
+        if (player && player.loadVideoById) {
+          player.loadVideoById(videoId);
+          displayTitle.innerText = videoTitle;
+          populateCarousel(videoId);
+          player.playVideo();
+          hideUI();
+        } else {
+          const checkExist = setInterval(() => {
+            if (player && player.loadVideoById) {
+              clearInterval(checkExist);
+              player.loadVideoById(videoId);
+              displayTitle.innerText = videoTitle;
+              populateCarousel(videoId);
+              player.playVideo();
+              hideUI();
+            }
+          }, 100);
+        }
+      };
+
+      window.closePlayer = function() {
+        if (player && player.pauseVideo) player.pauseVideo();
+        playerContainer.style.display = 'none';
+        document.querySelector('.app').style.display = 'flex';
+      };
+
+      // ---------- GRID LOADING FUNCTION (with titles) ----------
+      const videoContainer = document.getElementById('mainVideoContainer');
+
+      function loadGrid(videos) {
+        if (videos.length === 0) {
+          videoContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #E8003C;">لا توجد فيديوهات في هذا القسم</div>';
+          return;
+        }
+        const gridDiv = document.createElement('div');
+        gridDiv.className = 'video-grid';
+        videos.forEach(v => {
+          const card = document.createElement('div');
+          card.className = 'video-card';
+          card.setAttribute('data-id', v.id);
+          card.setAttribute('data-title', v.title);
+
+          // Thumbnail container
+          const thumbCon = document.createElement('div');
+          thumbCon.className = 'thumb-con';
+          thumbCon.innerHTML = `
+            <div class="thumb" style="background-image: url('https://i.ytimg.com/vi/${v.id}/mqdefault.jpg');"></div>
+            <div class="play-button"></div>
+          `;
+
+          // Title container
+          const infoDiv = document.createElement('div');
+          infoDiv.className = 'video-info';
+          infoDiv.innerHTML = `<div class="video-title">${v.title}</div>`;
+
+          card.appendChild(thumbCon);
+          card.appendChild(infoDiv);
+
+          card.addEventListener('click', (e) => {
+            e.preventDefault();
+            openPlayerWithVideo(v.id, v.title);
+          });
+
+          gridDiv.appendChild(card);
+        });
+        videoContainer.innerHTML = '';
+        videoContainer.appendChild(gridDiv);
+      }
+
+      // ---------- CLASS-BASED EVENT LISTENERS ----------
+      document.querySelectorAll('.btn-home').forEach(btn => {
+        btn.addEventListener('click', (e) => { e.preventDefault(); loadGrid(homeVideos); });
+      });
+
+      document.querySelectorAll('.btn-mecca').forEach(btn => {
+        btn.addEventListener('click', (e) => { e.preventDefault(); loadGrid(meccaMedinaVideos); });
+      });
+
+      document.querySelectorAll('.btn-shaarawy').forEach(btn => {
+        btn.addEventListener('click', (e) => { e.preventDefault(); loadGrid(shaarawyVideos); });
+      });
+
+      document.querySelector('.btn-all')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        const allVideos = [];
+        const seen = new Set();
+        [...homeVideos, ...trendingVideos, ...quranVideos, ...meccaMedinaVideos, ...shaarawyVideos].forEach(v => {
+          if (!seen.has(v.id)) {
+            seen.add(v.id);
+            allVideos.push(v);
+          }
+        });
+        loadGrid(allVideos);
+      });
+
+      // ---------- INITIAL LOAD (Home) ----------
+      window.addEventListener('load', () => loadGrid(homeVideos));
+
+      // Also attach click to the two static video items
+      document.querySelectorAll('.video__item[data-video-id]').forEach(item => {
+        item.addEventListener('click', function(e) {
+          const videoId = this.dataset.videoId;
+          const videoTitle = this.dataset.videoTitle;
+          openPlayerWithVideo(videoId, videoTitle);
+        });
+      });
+    })();
   </script>
 </body>
 </html>
