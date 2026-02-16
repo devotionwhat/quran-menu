@@ -533,7 +533,7 @@
         "https://www.youtube.com/watch?v=9BpenuMKyBc",
       ];
 
-      // ***** FIXED: Use working videos from homeLinks for trending and quran *****
+      // Use working videos from homeLinks for all tabs (to ensure images load)
       const trendingLinks = homeLinks.slice(0, 5);  // first 5 working videos
       const quranLinks = homeLinks.slice(5, 10);    // next 5 working videos
 
@@ -559,7 +559,7 @@
         return match ? match[1] : null;
       }
 
-      // Build video objects with generic titles (for now)
+      // Build video objects with generic titles
       function buildVideos(links, prefix) {
         return links.map((link, index) => {
           const id = getVideoId(link);
@@ -584,7 +584,6 @@
       });
 
       // ---------- LAZY LOADING SETUP ----------
-      // Intersection Observer for grid thumbnails (background images)
       const imageObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
@@ -596,9 +595,8 @@
             imageObserver.unobserve(thumb);
           }
         });
-      }, { rootMargin: '200px' }); // load when within 200px of viewport
+      }, { rootMargin: '200px' });
 
-      // Observer for carousel images (img elements)
       const carouselImageObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
@@ -615,14 +613,13 @@
 
       // ---------- INFINITE SCROLL FOR MAIN GRID ----------
       const BATCH_SIZE = 10;
-      let currentVideoList = [];           // current full video list for active tab
-      let currentIndex = 0;                 // next index to load
+      let currentVideoList = [];           
+      let currentIndex = 0;                 
       let isLoading = false;
       let allVideosLoaded = false;
       const videoContainer = document.getElementById('mainVideoContainer');
-      const scrollContainer = document.querySelector('.video'); // the scrollable element
+      const scrollContainer = document.querySelector('.video');
 
-      // Function to load next batch
       function loadNextBatch() {
         if (isLoading || allVideosLoaded || !currentVideoList.length) return;
         isLoading = true;
@@ -638,7 +635,6 @@
         isLoading = false;
       }
 
-      // Append video cards to grid
       function appendVideosToGrid(videos) {
         const gridDiv = document.querySelector('.video-grid') || document.createElement('div');
         if (!gridDiv.classList.contains('video-grid')) {
@@ -655,18 +651,16 @@
           thumbCon.className = 'thumb-con';
           const thumbDiv = document.createElement('div');
           thumbDiv.className = 'thumb';
-          thumbDiv.dataset.id = v.id; // store id for lazy loading
-          // Initially no background image, will be set by observer
+          thumbDiv.dataset.id = v.id;
           thumbCon.appendChild(thumbDiv);
           
           const playButton = document.createElement('div');
           playButton.className = 'play-button';
           thumbCon.appendChild(playButton);
           
-          // Duration placeholder (optional)
           const durationSpan = document.createElement('span');
           durationSpan.className = 'video-duration';
-          durationSpan.textContent = '0:00'; // placeholder
+          durationSpan.textContent = '0:00';
           thumbCon.appendChild(durationSpan);
 
           const infoDiv = document.createElement('div');
@@ -688,26 +682,21 @@
 
           gridDiv.appendChild(card);
           
-          // Observe the thumbnail for lazy loading
           imageObserver.observe(thumbDiv);
         });
       }
 
-      // Reset grid for new tab
       function resetGrid(newVideoList) {
         currentVideoList = newVideoList;
         currentIndex = 0;
         allVideosLoaded = false;
-        videoContainer.innerHTML = ''; // clear grid
-        // Create empty grid container
+        videoContainer.innerHTML = '';
         const gridDiv = document.createElement('div');
         gridDiv.className = 'video-grid';
         videoContainer.appendChild(gridDiv);
-        // Load first batch
         loadNextBatch();
       }
 
-      // Scroll listener for infinite scroll
       function onScroll() {
         if (allVideosLoaded || isLoading) return;
         const scrollEl = scrollContainer;
@@ -715,7 +704,6 @@
         const scrollTop = scrollEl.scrollTop;
         const scrollHeight = scrollEl.scrollHeight;
         const clientHeight = scrollEl.clientHeight;
-        // If near bottom (100px), load more
         if (scrollTop + clientHeight >= scrollHeight - 200) {
           loadNextBatch();
         }
@@ -756,9 +744,24 @@
           hideTimer = setTimeout(() => hideUI(), 5000);
         }
       }
-      function resetHideTimer() { if (isUIVisible) startHideTimer(); }
-      function hideUI() { isUIVisible = false; uiElement.classList.add('hidden-ui'); }
-      function showUI() { isUIVisible = true; uiElement.classList.remove('hidden-ui'); startHideTimer(); }
+
+      function resetHideTimer() {
+        // This function is called on user interaction (scroll, touch) – restart the timer
+        if (isUIVisible) {
+          startHideTimer();
+        }
+      }
+
+      function hideUI() {
+        isUIVisible = false;
+        uiElement.classList.add('hidden-ui');
+      }
+
+      function showUI() {
+        isUIVisible = true;
+        uiElement.classList.remove('hidden-ui');
+        startHideTimer();
+      }
 
       window.handleMainClick = function() {
         if (isDragging) return;
@@ -839,15 +842,12 @@
         masterVideos.forEach(v => {
           const card = document.createElement('div');
           card.className = 'thumb-card' + (v.id === activeId ? ' active' : '');
-          // Use img element with lazy loading
           const img = document.createElement('img');
-          img.dataset.id = v.id; // store id for observer
+          img.dataset.id = v.id;
           img.alt = v.title;
           card.appendChild(img);
           card.setAttribute('onclick', `changeVideo('${v.id}', '${v.title}', this)`);
           carousel.appendChild(card);
-          
-          // Observe the image
           carouselImageObserver.observe(img);
         });
         setTimeout(() => {
@@ -928,7 +928,7 @@
         resetGrid(homeVideos);
       });
 
-      // Also attach click to the two static video items (in case they remain)
+      // Also attach click to the two static video items
       document.querySelectorAll('.video__item[data-video-id]').forEach(item => {
         item.addEventListener('click', function(e) {
           const videoId = this.dataset.videoId;
@@ -936,6 +936,14 @@
           openPlayerWithVideo(videoId, videoTitle);
         });
       });
+
+      // ---------- ADDITIONAL EVENT LISTENERS TO RESET TIMER ON CAROUSEL INTERACTION ----------
+      // Ensure that any scroll or touch on the carousel resets the hide timer
+      if (carousel) {
+        carousel.addEventListener('scroll', resetHideTimer);
+        carousel.addEventListener('touchstart', resetHideTimer);
+        carousel.addEventListener('touchmove', resetHideTimer);
+      }
     })();
   </script>
 </body>
