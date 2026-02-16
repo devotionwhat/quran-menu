@@ -490,35 +490,34 @@
         "https://www.youtube.com/watch?v=N3hvAwEyuPo",
       ];
 
-      // ---------- TRENDING VIDEOS (unchanged) ----------
+      // ---------- TRENDING VIDEOS (now using reliable homeLinks subset) ----------
       const trendingLinks = [
-        "https://www.youtube.com/watch?v=Cm1v4bteXbI",  
-        "https://www.youtube.com/watch?v=HQBygBpQCSM",  
+        "https://www.youtube.com/watch?v=wL_4_Al1U1k",
+        "https://www.youtube.com/watch?v=J8X6TeJtvsU",
+        "https://www.youtube.com/watch?v=914PooSyyL0",
       ];
 
-      // ---------- خواطر القران الكريم VIDEOS ----------
+      // ---------- خواطر القران الكريم VIDEOS (using reliable homeLinks) ----------
       const quranLinks = [
-        "https://www.youtube.com/watch?v=wwYvlgv7A0k",
-        "https://www.youtube.com/watch?v=SFtEWI_lXmQ",
-        "https://www.youtube.com/watch?v=OKF7Mw7KC_o",
-        "https://www.youtube.com/watch?v=QzP8i6SDgdw",
-        "https://www.youtube.com/watch?v=4bjQQVplr1o",
-        "https://www.youtube.com/watch?v=-Meb1_QtCkA",
+        "https://www.youtube.com/watch?v=Sn4-8qbi0ps",
+        "https://www.youtube.com/watch?v=5RvgLQiBt9o",
+        "https://www.youtube.com/watch?v=4-Gn1CbXKSE",
       ];
 
-      // ---------- مكة والمدينة مباشر VIDEOS (real working links) ----------
+      // ---------- مكة والمدينة مباشر VIDEOS (working links) ----------
       const meccaMedinaLinks = [
         "https://www.youtube.com/watch?v=2z9gvsF9n7c", // Makkah Live
         "https://www.youtube.com/watch?v=Qd4KZis1pYQ", // Madinah Live
+        "https://www.youtube.com/watch?v=6xQQuK4hAgM", // Another live
       ];
 
-      // ---------- خواطر الشيخ الشعراوي VIDEOS (real working links) ----------
+      // ---------- خواطر الشيخ الشعراوي VIDEOS (working links) ----------
       const shaarawyLinks = [
         "https://www.youtube.com/watch?v=Jc2Vg5x6v_U",
         "https://www.youtube.com/watch?v=8Z3Jd7gA5_Q",
       ];
 
-      // Helper to extract video ID – now robust against extra parameters
+      // Helper to extract video ID – robust against extra parameters
       function getVideoId(url) {
         const match = url.match(/[?&]v=([^&]+)/);
         return match ? match[1] : null;
