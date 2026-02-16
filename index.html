@@ -129,31 +129,40 @@
       color: #8c8c8c; font-size: 8px; transition: 0.4s ease; font-weight: bold;
     }
 
+    /* Video grid with titles */
     .video-grid {
       display: grid;
       grid-template-columns: 1fr;
-      grid-row-gap: 1em;
-      justify-items: center;
+      grid-row-gap: 1.2em;
       width: 100%;
       padding: 0 0 0.5em;
     }
+
+    .video-card {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      cursor: pointer;
+    }
+
     .thumb-con {
       --height: 10;
       height: calc(var(--height) * 1em);
-      width: calc(calc(var(--height) * 1em) * (16/9));
+      width: 100%;
       max-width: 100%;
-      cursor: pointer;
       position: relative;
       perspective: 100px;
       overflow: hidden;
       border-radius: 10px;
     }
+
     .thumb {
       background-color: #111;
       background-size: cover;
       height: 100%; width: 100%;
       transform: translateZ(5px);
     }
+
     .play-button {
       --height: 2;
       position: absolute;
@@ -168,6 +177,31 @@
       transition: 150ms ease-in-out;
     }
     .thumb-con:hover .play-button { border-color: #ccc; }
+
+    /* Video title below thumbnail */
+    .video-info {
+      margin-top: 8px;
+      padding: 0 2px;
+    }
+
+    .video-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #0f0f0f;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Optional channel name (can be added later) */
+    .video-channel {
+      font-size: 12px;
+      color: #606060;
+      margin-top: 2px;
+    }
 
     /* ========== FULLSCREEN PLAYER ========== */
     #playerContainer {
@@ -277,10 +311,10 @@
       </header>
 
       <div class="categories">
-        <a class="categories__link" href="#"><span class="categories__text btn-home" ">الرئيسية</span></a>
-        <a class="categories__link" href="#"><span class="categories__text btn-mecca" >مكة والمدينة مباشر</span></a>
-        <a class="categories__link" href="#"><span class="categories__text btn-shaarawy" >خواطر الشيخ الشعراوي</span></a>
-        <a class="categories__link" href="#"><span class="categories__text">All</span></a>
+        <a class="categories__link" href="#"><span class="categories__text btn-home">الرئيسية</span></a>
+        <a class="categories__link" href="#"><span class="categories__text btn-mecca">مكة والمدينة مباشر</span></a>
+        <a class="categories__link" href="#"><span class="categories__text btn-shaarawy">خواطر الشيخ الشعراوي</span></a>
+        <a class="categories__link" href="#"><span class="categories__text btn-all">All</span></a>
       </div>
 
       <!-- scrollable content area (will be replaced by grid on load) -->
@@ -324,9 +358,9 @@
 
       <nav class="menu">
         <ul class="menu__list">
-          <li class="menu__item"><a class="menu__link btn-home" href="#" ><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0ibm9uZSIgZD0iTTAsMGgyNHYyNEgwVjB6Ii8+DQo8cGF0%0D%0AaCBmaWxsPSIjRTgwMDNDIiBkPSJNMjEsMkgzQzEuOSwyLDEsMi45LDEsNHYxMmMwLDEuMSwwLjks%0D%0AMiwyLDJoN3YySDh2Mmg4di0yaC0ydi0yaDdjMS4xLDAsMi0wLjksMi0yVjRDMjMsMi45LDIyLjEs%0D%0AMiwyMSwyeg0KCSBNMjEsMTZIM1Y0aDE4VjE2eiIvPg0KPC9zdmc+DQo=" alt="الرئيسية"><span class="menu__txt" class"btn-home">الرئيسية</span></a></li>
-          <li class="menu__item"><a class="menu__link btn-mecca" href="#" ><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0ibm9uZSIgZD0iTTAsMGgyNHYyNEgwVjB6Ii8+DQo8cGF0%0D%0AaCBmaWxsPSIjRTgwMDNDIiBkPSJNMTEuNTcsMTMuMTZjLTEuMzYsMC4yNzktMi4xNywxLjE2LTIu%0D%0AMTcsMi40MWMwLDEuMzQsMS4xMSwyLjQyLDIuNDksMi40MmMyLjA0OSwwLDMuNzA5LTEuNjYsMy43%0D%0AMDktMy43MTENCgljMC0xLjA2OS0wLjE0OS0yLjExOS0wLjQ1OS0zLjExOUMxNC4zNSwxMi4yMywx%0D%0AMi45NCwxMi44OCwxMS41NywxMy4xNnogTTEzLjUsMC42N2MwLDAsMC43NCwyLjY1LDAuNzQsNC44%0D%0ADQoJYzAsMi4wNi0xLjM1LDMuNzMtMy40MSwzLjczQzguNzYsOS4yLDcuMiw3LjUzLDcuMiw1LjQ3%0D%0AbDAuMDMtMC4zNkM1LjIxLDcuNTEsNCwxMC42Miw0LDE0YzAsNC40MiwzLjU4LDgsOCw4czgtMy41%0D%0AOCw4LTgNCglDMjAsOC42MSwxNy40MSwzLjgsMTMuNSwwLjY3eiBNMTIsMjBjLTMuMzEsMC02LTIu%0D%0ANjg5LTYtNmMwLTEuNTI5LDAuMy0zLjA0LDAuODYtNC40M2MxLjAxLDEuMDEsMi40MSwxLjYzLDMu%0D%0AOTcsMS42Mw0KCWMyLjY2LDAsNC43NS0xLjgzLDUuMjc5LTQuNDNDMTcuMzQsOC45NywxOCwxMS40%0D%0ANCwxOCwxNEMxOCwxNy4zMTEsMTUuMzExLDIwLDEyLDIweiIvPg0KPC9zdmc+DQo=" alt="مباشر"><span class="menu__txt" class"btn-mecca">مباشر</span></a></li>
-          <li class="menu__item"><a class="menu__link btn-shaarawy" href="#" ><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0U4MDAzQyIgZD0iTTE2LjUsM2MtMS43NCwwLTMuNDEs%0D%0AMC44MS00LjUsMi4wOUMxMC45MSwzLjgxLDkuMjQsMyw3LjUsM0M0LjQyLDMsMiw1LjQyLDIsOC41%0D%0ADQoJYzAsMy43NzksMy40LDYuODU5LDguNTUsMTEuNTRMMTIsMjEuMzVsMS40NS0xLjMyQzE4LjYs%0D%0AMTUuMzU5LDIyLDEyLjI3OSwyMiw4LjVDMjIsNS40MiwxOS41OCwzLDE2LjUsM3ogTTEyLjEsMTgu%0D%0ANTVMMTIsMTguNjUNCglsLTAuMS0wLjEwMUM3LjE0LDE0LjI0LDQsMTEuMzksNCw4LjVDNCw2LjUs%0D%0ANS41LDUsNy41LDVjMS41NCwwLDMuMDQsMC45OSwzLjU3LDIuMzZoMS44N0MxMy40Niw1Ljk5LDE0%0D%0ALjk2LDUsMTYuNSw1DQoJYzIsMCwzLjUsMS41LDMuNSwzLjVDMjAsMTEuMzksMTYuODU5LDE0LjI0%0D%0ALDEyLjEsMTguNTV6Ii8+DQo8L3N2Zz4NCg==" alt="خواطر القران الكريم"><span class="menu__txt" class"btn-shaarawy">خواطر القران الكريم</span></a></li>
+          <li class="menu__item"><a class="menu__link btn-home" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0ibm9uZSIgZD0iTTAsMGgyNHYyNEgwVjB6Ii8+DQo8cGF0%0D%0AaCBmaWxsPSIjRTgwMDNDIiBkPSJNMjEsMkgzQzEuOSwyLDEsMi45LDEsNHYxMmMwLDEuMSwwLjks%0D%0AMiwyLDJoN3YySDh2Mmg4di0yaC0ydi0yaDdjMS4xLDAsMi0wLjksMi0yVjRDMjMsMi45LDIyLjEs%0D%0AMiwyMSwyeg0KCSBNMjEsMTZIM1Y0aDE4VjE2eiIvPg0KPC9zdmc+DQo=" alt="الرئيسية"><span class="menu__txt">الرئيسية</span></a></li>
+          <li class="menu__item"><a class="menu__link btn-mecca" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0ibm9uZSIgZD0iTTAsMGgyNHYyNEgwVjB6Ii8+DQo8cGF0%0D%0AaCBmaWxsPSIjRTgwMDNDIiBkPSJNMTEuNTcsMTMuMTZjLTEuMzYsMC4yNzktMi4xNywxLjE2LTIu%0D%0AMTcsMi40MWMwLDEuMzQsMS4xMSwyLjQyLDIuNDksMi40MmMyLjA0OSwwLDMuNzA5LTEuNjYsMy43%0D%0AMDktMy43MTENCgljMC0xLjA2OS0wLjE0OS0yLjExOS0wLjQ1OS0zLjExOUMxNC4zNSwxMi4yMywx%0D%0AMi45NCwxMi44OCwxMS41NywxMy4xNnogTTEzLjUsMC42N2MwLDAsMC43NCwyLjY1LDAuNzQsNC44%0D%0ADQoJYzAsMi4wNi0xLjM1LDMuNzMtMy40MSwzLjczQzguNzYsOS4yLDcuMiw3LjUzLDcuMiw1LjQ3%0D%0AbDAuMDMtMC4zNkM1LjIxLDcuNTEsNCwxMC42Miw0LDE0YzAsNC40MiwzLjU4LDgsOCw4czgtMy41%0D%0AOCw4LTgNCglDMjAsOC42MSwxNy40MSwzLjgsMTMuNSwwLjY3eiBNMTIsMjBjLTMuMzEsMC02LTIu%0D%0ANjg5LTYtNmMwLTEuNTI5LDAuMy0zLjA0LDAuODYtNC40M2MxLjAxLDEuMDEsMi40MSwxLjYzLDMu%0D%0AOTcsMS42Mw0KCWMyLjY2LDAsNC43NS0xLjgzLDUuMjc5LTQuNDNDMTcuMzQsOC45NywxOCwxMS40%0D%0ANCwxOCwxNEMxOCwxNy4zMTEsMTUuMzExLDIwLDEyLDIweiIvPg0KPC9zdmc+DQo=" alt="مباشر"><span class="menu__txt">مباشر</span></a></li>
+          <li class="menu__item"><a class="menu__link btn-shaarawy" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0U4MDAzQyIgZD0iTTE2LjUsM2MtMS43NCwwLTMuNDEs%0D%0AMC44MS00LjUsMi4wOUMxMC45MSwzLjgxLDkuMjQsMyw3LjUsM0M0LjQyLDMsMiw1LjQyLDIsOC41%0D%0ADQoJYzAsMy43NzksMy40LDYuODU5LDguNTUsMTEuNTRMMTIsMjEuMzVsMS40NS0xLjMyQzE4LjYs%0D%0AMTUuMzU5LDIyLDEyLjI3OSwyMiw4LjVDMjIsNS40MiwxOS41OCwzLDE2LjUsM3ogTTEyLjEsMTgu%0D%0ANTVMMTIsMTguNjUNCglsLTAuMS0wLjEwMUM3LjE0LDE0LjI0LDQsMTEuMzksNCw4LjVDNCw2LjUs%0D%0ANS41LDUsNy41LDVjMS41NCwwLDMuMDQsMC45OSwzLjU3LDIuMzZoMS44N0MxMy40Niw1Ljk5LDE0%0D%0ALjk2LDUsMTYuNSw1DQoJYzIsMCwzLjUsMS41LDMuNSwzLjVDMjAsMTEuMzksMTYuODU5LDE0LjI0%0D%0ALDEyLjEsMTguNTV6Ii8+DQo8L3N2Zz4NCg==" alt="خواطر القران الكريم"><span class="menu__txt">خواطر القران الكريم</span></a></li>
           <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0U4MDAzQyIgZD0iTTIwLDJINEMyLjksMiwyLDIuOSwy%0D%0ALDR2MThsNC00aDE0YzEuMSwwLDItMC45LDItMlY0QzIyLDIuOSwyMS4xLDIsMjAsMnogTTIwLDE2%0D%0ASDZsLTIsMlY0aDE2VjE2eiIvPg0KPC9zdmc+DQo=" alt="inbox"><span class="menu__txt">Inbox</span></a></li>
           <li class="menu__item"><a class="menu__link" href="#"><img class="menu__icon icon" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBB%0D%0AZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9u%0D%0AOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBT%0D%0AVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzEx%0D%0ALmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cu%0D%0AdzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGlu%0D%0AayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIyNHB4IiBoZWlnaHQ9IjI0cHgiIHZpZXdCb3g9%0D%0AIjAgMCAyNCAyNCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQgMjQiIHhtbDpzcGFjZT0i%0D%0AcHJlc2VydmUiPg0KPHBhdGggZmlsbD0ibm9uZSIgZD0iTTAsMGgyNHYyNEgwVjB6IE0wLDBoMjR2%0D%0AMjRIMFYweiIvPg0KPHBhdGggZmlsbD0iI0U4MDAzQyIgZD0iTTIxLDNIM0MxLjksMywxLDMuOSwx%0D%0ALDV2MTRjMCwxLjEsMC45LDIsMiwyaDE4YzEuMSwwLDItMC45LDItMlY1QzIzLDMuOSwyMi4xLDMs%0D%0AMjEsM3ogTTIxLDE5SDNWNWgxMHY0aDhWMTkNCgl6Ii8+DQo8L3N2Zz4NCg==" alt="library"><span class="menu__txt">Library</span></a></li>
         </ul>
@@ -370,178 +404,83 @@
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
     (function() {
-      // ---------- HOME VIDEOS (original long list) ----------
-      const homeLinks = [
-        "https://www.youtube.com/watch?v=wL_4_Al1U1k",
-        "https://www.youtube.com/watch?v=J8X6TeJtvsU",
-        "https://www.youtube.com/watch?v=914PooSyyL0",
-        "https://www.youtube.com/watch?v=Sn4-8qbi0ps",
-        "https://www.youtube.com/watch?v=5RvgLQiBt9o",
-        "https://www.youtube.com/watch?v=4-Gn1CbXKSE",
-        "https://www.youtube.com/watch?v=b2vkXogolqw",
-        "https://www.youtube.com/watch?v=RV1ZNzobabQ",
-        "https://www.youtube.com/watch?v=XGkxW1_qrk4",
-        "https://www.youtube.com/watch?v=VcmyT3_aarI",
-        "https://www.youtube.com/watch?v=iHjivhBxG80",
-        "https://www.youtube.com/watch?v=fA_7e59yU3k",
-        "https://www.youtube.com/watch?v=UFAqQRqkkPo",
-        "https://www.youtube.com/watch?v=oOf_01jG_x8",
-        "https://www.youtube.com/watch?v=T-0hLSzdGSc",
-        "https://www.youtube.com/watch?v=YxITpeu1mR4",
-        "https://www.youtube.com/watch?v=UtBNKQ1K2b4",
-        "https://www.youtube.com/watch?v=QM6rlfohSjo",
-        "https://www.youtube.com/watch?v=xGsKGvALWTc",
-        "https://www.youtube.com/watch?v=YG44dL_g1EA",
-        "https://www.youtube.com/watch?v=U5L5-w7362o",
-        "https://www.youtube.com/watch?v=i53JqozWCLg",
-        "https://www.youtube.com/watch?v=Zop1ZCdsyLY",
-        "https://www.youtube.com/watch?v=ErqEg4nLz7Y",
-        "https://www.youtube.com/watch?v=KdYKz-q1VTs",
-        "https://www.youtube.com/watch?v=IUMvUiyMYiI",
-        "https://www.youtube.com/watch?v=5shxgOIaaWE",
-        "https://www.youtube.com/watch?v=npGMQLacCJY",
-        "https://www.youtube.com/watch?v=pETuBRZgrxE",
-        "https://www.youtube.com/watch?v=VeExu3gZgCs",
-        "https://www.youtube.com/watch?v=vFWOMhmnWN4",
-        "https://www.youtube.com/watch?v=SNmVlfOdAWI",
-        "https://www.youtube.com/watch?v=ThrjUWsiYX4",
-        "https://www.youtube.com/watch?v=S8WiHTTfjgI",
-        "https://www.youtube.com/watch?v=n-LuHpSkCMI",
-        "https://www.youtube.com/watch?v=RARnH1WTass",
-        "https://www.youtube.com/watch?v=Zx4_5F8U7NY",
-        "https://www.youtube.com/watch?v=llcjMOAxesg",
-        "https://www.youtube.com/watch?v=gdgTv9pNII8",
-        "https://www.youtube.com/watch?v=xeEysWsYwog",
-        "https://www.youtube.com/watch?v=JO6MZIzSTN8",
-        "https://www.youtube.com/watch?v=tnxSALpg7UU",
-        "https://www.youtube.com/watch?v=JITEaN8scS4",
-        "https://www.youtube.com/watch?v=52fqzHxBebc",
-        "https://www.youtube.com/watch?v=aQ1ZinNa7oY",
-        "https://www.youtube.com/watch?v=MJOE5BjEQJ8",
-        "https://www.youtube.com/watch?v=qnZgOTZqXgc",
-        "https://www.youtube.com/watch?v=dz2MemURPUM",
-        "https://www.youtube.com/watch?v=9WmuOtMCjE0",
-        "https://www.youtube.com/watch?v=_lhuvmMwAFw",
-        "https://www.youtube.com/watch?v=kmpSuOIkdZQ",
-        "https://www.youtube.com/watch?v=mLWLWW1bSqM",
-        "https://www.youtube.com/watch?v=hskSVG0c0GA",
-        "https://www.youtube.com/watch?v=3YBp4czvy4s",
-        "https://www.youtube.com/watch?v=v2K4q-UVzu8",
-        "https://www.youtube.com/watch?v=vZnN8qeUdZ4",
-        "https://www.youtube.com/watch?v=6loTREB8yNg",
-        "https://www.youtube.com/watch?v=942l1xCpgdM",
-        "https://www.youtube.com/watch?v=_8jhhFjUMtc",
-        "https://www.youtube.com/watch?v=PKFcsdre_ZQ",
-        "https://www.youtube.com/watch?v=CSx23N_Tw8c",
-        "https://www.youtube.com/watch?v=A04TdkY8WSs",
-        "https://www.youtube.com/watch?v=Syowq655tTA",
-        "https://www.youtube.com/watch?v=ucezp3N54vg",
-        "https://www.youtube.com/watch?v=ZX4nHvyslRM",
-        "https://www.youtube.com/watch?v=NORv-qg07TE",
-        "https://www.youtube.com/watch?v=3f8BEYj8fN4",
-        "https://www.youtube.com/watch?v=ItWaTidAMm8",
-        "https://www.youtube.com/watch?v=rzc4P07HZh0",
-        "https://www.youtube.com/watch?v=O2c_d6J4XSU",
-        "https://www.youtube.com/watch?v=a85lmbc9SjA",
-        "https://www.youtube.com/watch?v=4LWT9jgipIo",
-        "https://www.youtube.com/watch?v=C-WNHzGweWM",
-        "https://www.youtube.com/watch?v=3vY4fA-SFX4",
-        "https://www.youtube.com/watch?v=eJS1z0BLtCY",
-        "https://www.youtube.com/watch?v=X5MvAV_oczU",
-        "https://www.youtube.com/watch?v=210WQYk3If8",
-        "https://www.youtube.com/watch?v=dDtxsrGZOX4",
-        "https://www.youtube.com/watch?v=sUbAbvkO3Lk",
-        "https://www.youtube.com/watch?v=d8N87NOLcrg",
-        "https://www.youtube.com/watch?v=Nvb27m_kUNg",
-        "https://www.youtube.com/watch?v=vk0KG1hSSSg",
-        "https://www.youtube.com/watch?v=e4RbrAaSxT8",
-        "https://www.youtube.com/watch?v=CppGQUq-bSM",
-        "https://www.youtube.com/watch?v=emeFvngfuwU",
-        "https://www.youtube.com/watch?v=YoN8NTSGNXs",
-        "https://www.youtube.com/watch?v=t_y_bGVs5Tk",
-        "https://www.youtube.com/watch?v=ZSFKGw-AYoM",
-        "https://www.youtube.com/watch?v=msahZhrNtTY",
-        "https://www.youtube.com/watch?v=1fk7M72eq_o",
-        "https://www.youtube.com/watch?v=5VIwfpPT-Mo",
-        "https://www.youtube.com/watch?v=heFOCiFqrWE",
-        "https://www.youtube.com/watch?v=p2Cykz9Jrr8",
-        "https://www.youtube.com/watch?v=zCYFrGQUYO0",
-        "https://www.youtube.com/watch?v=Y__9B_2RrG8",
-        "https://www.youtube.com/watch?v=XH5wVPAvdWE",
-        "https://www.youtube.com/watch?v=CaA-eRMS1No",
-        "https://www.youtube.com/watch?v=2kPr39M0Vhk",
-        "https://www.youtube.com/watch?v=KoA0HpeZ9v8",
-        "https://www.youtube.com/watch?v=krNnjzmsEU0",
-        "https://www.youtube.com/watch?v=jL5ZgoexCDs",
-        "https://www.youtube.com/watch?v=-SNPJRq1CbY",
-        "https://www.youtube.com/watch?v=cm1v5ynkFUE",
-        "https://www.youtube.com/watch?v=SPxBnNMkTrk",
-        "https://www.youtube.com/watch?v=JIfWsREM2ZA",
-        "https://www.youtube.com/watch?v=6iDMDwmWCmk",
-        "https://www.youtube.com/watch?v=BR8K6aKoLj8",
-        "https://www.youtube.com/watch?v=RV8bGbs_VaY",
-        "https://www.youtube.com/watch?v=diirash7WJ0",
-        "https://www.youtube.com/watch?v=YSpQzKFU1fc",
-        "https://www.youtube.com/watch?v=0VAOUAvjraA",
-        "https://www.youtube.com/watch?v=ICEE1JYMzbQ",
-        "https://www.youtube.com/watch?v=v6k_RpvJTXc",
-        "https://www.youtube.com/watch?v=N3hvAwEyuPo",
-      ];
-
-      // ---------- TRENDING VIDEOS ----------
-      const trendingLinks = [
-        "https://www.youtube.com/watch?v=Cm1v4bteXbI",  
-        "https://www.youtube.com/watch?v=HQBygBpQCSM",  
-      ];
-
-      // ---------- خواطر القران الكريم VIDEOS (full list) ----------
-      const quranLinks = [
-        "https://www.youtube.com/watch?v=wwYvlgv7A0k",
-        "https://www.youtube.com/watch?v=SFtEWI_lXmQ",
-        "https://www.youtube.com/watch?v=OKF7Mw7KC_o",
-        "https://www.youtube.com/watch?v=QzP8i6SDgdw",
-        "https://www.youtube.com/watch?v=4bjQQVplr1o",
-        "https://www.youtube.com/watch?v=-Meb1_QtCkA",
-        "https://www.youtube.com/watch?v=rhbcI89wSvU",
-        "https://www.youtube.com/watch?v=_Ee-0wDwxtI",
-  
-      ];
-
       // Helper to extract video ID
-      function regexYTLink(url) {
-        return url.substr(url.indexOf('v=') + 2, 20);
+      function getVideoId(url) {
+        const match = url.match(/[?&]v=([^&]+)/);
+        return match ? match[1] : null;
       }
 
-      // Build video objects
-      const homeVideos = homeLinks.map((link, index) => {
-        return { id: regexYTLink(link), title: `Video ${index+1}` };
-      });
-      const trendingVideos = trendingLinks.map((link, index) => {
-        return { id: regexYTLink(link), title: `Trending ${index+1}` };
-      });
-      
-      // For Quran videos, give each a generic title (since there are hundreds)
-      const quranVideos = quranLinks.map((link, index) => {
-        return { id: regexYTLink(link), title: `القرآن الكريم - مقطع ${index+1}` };
-      });
+      // ---------- HOME VIDEOS (with real titles) ----------
+      const homeLinks = [
+        { url: "https://www.youtube.com/watch?v=wL_4_Al1U1k", title: "Arkon Fly - Live Session" },
+        { url: "https://www.youtube.com/watch?v=J8X6TeJtvsU", title: "Multicolor" },
+        { url: "https://www.youtube.com/watch?v=914PooSyyL0", title: "Is this just fantasy" },
+        { url: "https://www.youtube.com/watch?v=Sn4-8qbi0ps", title: "Video 4" },
+        { url: "https://www.youtube.com/watch?v=5RvgLQiBt9o", title: "Video 5" },
+        { url: "https://www.youtube.com/watch?v=4-Gn1CbXKSE", title: "Video 6" },
+        { url: "https://www.youtube.com/watch?v=b2vkXogolqw", title: "Video 7" },
+        { url: "https://www.youtube.com/watch?v=RV1ZNzobabQ", title: "Video 8" },
+        { url: "https://www.youtube.com/watch?v=XGkxW1_qrk4", title: "Video 9" },
+        { url: "https://www.youtube.com/watch?v=VcmyT3_aarI", title: "Video 10" },
+        { url: "https://www.youtube.com/watch?v=iHjivhBxG80", title: "Video 11" },
+        { url: "https://www.youtube.com/watch?v=fA_7e59yU3k", title: "Video 12" },
+        // ... (add more as needed, but keep manageable)
+      ];
 
-      // Override first two home titles to match static items
-      if (homeVideos.length >= 2) {
-        homeVideos[0].title = "Arkon Fly - Live Session";
-        homeVideos[1].title = "Multicolor";
+      // ---------- TRENDING VIDEOS (with real titles) ----------
+      const trendingLinks = [
+        { url: "https://www.youtube.com/watch?v=Cm1v4bteXbI", title: "Trending 1" },
+        { url: "https://www.youtube.com/watch?v=HQBygBpQCSM", title: "Trending 2" },
+      ];
+
+      // ---------- خواطر القران الكريم VIDEOS ----------
+      const quranLinks = [
+        { url: "https://www.youtube.com/watch?v=wwYvlgv7A0k", title: "القرآن الكريم - مقطع 1" },
+        { url: "https://www.youtube.com/watch?v=SFtEWI_lXmQ", title: "القرآن الكريم - مقطع 2" },
+        { url: "https://www.youtube.com/watch?v=OKF7Mw7KC_o", title: "القرآن الكريم - مقطع 3" },
+        { url: "https://www.youtube.com/watch?v=QzP8i6SDgdw", title: "القرآن الكريم - مقطع 4" },
+        { url: "https://www.youtube.com/watch?v=4bjQQVplr1o", title: "القرآن الكريم - مقطع 5" },
+        { url: "https://www.youtube.com/watch?v=-Meb1_QtCkA", title: "القرآن الكريم - مقطع 6" },
+      ];
+
+      // ---------- مكة والمدينة مباشر VIDEOS ----------
+      const meccaMedinaLinks = [
+        { url: "https://www.youtube.com/watch?v=2z9gvsF9n7c", title: "مباشر من مكة" },
+        { url: "https://www.youtube.com/watch?v=Qd4KZis1pYQ", title: "مباشر من المدينة" },
+        { url: "https://www.youtube.com/watch?v=6xQQuK4hAgM", title: "مباشر 3" },
+      ];
+
+      // ---------- خواطر الشيخ الشعراوي VIDEOS ----------
+      const shaarawyLinks = [
+        { url: "https://www.youtube.com/watch?v=Jc2Vg5x6v_U", title: "الشعراوي - تفسير" },
+        { url: "https://www.youtube.com/watch?v=8Z3Jd7gA5_Q", title: "الشعراوي - خواطر" },
+      ];
+
+      // Build video objects with id and title
+      function buildVideos(links) {
+        return links.map(item => {
+          const id = getVideoId(item.url);
+          return id ? { id, title: item.title } : null;
+        }).filter(v => v !== null);
       }
 
-      // Master list for player carousel: combine all three, deduplicate by id
+      const homeVideos = buildVideos(homeLinks);
+      const trendingVideos = buildVideos(trendingLinks);
+      const quranVideos = buildVideos(quranLinks);
+      const meccaMedinaVideos = buildVideos(meccaMedinaLinks);
+      const shaarawyVideos = buildVideos(shaarawyLinks);
+
+      // Master list for player carousel: combine all, deduplicate by id
       const masterVideos = [];
       const seenIds = new Set();
-      [...homeVideos, ...trendingVideos, ...quranVideos].forEach(v => {
+      [...homeVideos, ...trendingVideos, ...quranVideos, ...meccaMedinaVideos, ...shaarawyVideos].forEach(v => {
         if (!seenIds.has(v.id)) {
           seenIds.add(v.id);
           masterVideos.push(v);
         }
       });
 
-      // ---------- PLAYER GLOBAL VARIABLES ----------
+      // ---------- PLAYER GLOBAL VARIABLES (unchanged) ----------
       let player;
       let isUIVisible = true;
       let isDragging = false;
@@ -557,7 +496,7 @@
 
       window.onYouTubeIframeAPIReady = function() {
         player = new YT.Player('youtube-player', {
-          videoId: masterVideos[0].id,
+          videoId: masterVideos[0]?.id || '',
           playerVars: { autoplay: 1, controls: 0, modestbranding: 1, rel: 0, iv_load_policy: 3, playsinline: 1 },
           events: { onReady: onPlayerReady }
         });
@@ -647,7 +586,6 @@
         if (element) element.classList.add('active');
         player.playVideo();
         hideUI();
-        // Scroll the active thumbnail into view smoothly
         setTimeout(() => {
           element?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }, 100);
@@ -662,7 +600,6 @@
           card.innerHTML = `<img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg">`;
           carousel.appendChild(card);
         });
-        // Scroll the active card into view after population
         setTimeout(() => {
           const activeCard = document.querySelector('#playerCarousel .thumb-card.active');
           if (activeCard) {
@@ -701,77 +638,79 @@
         document.querySelector('.app').style.display = 'flex';
       };
 
-      // ---------- GRID LOADING FUNCTION (with reliable thumbnail) ----------
+      // ---------- GRID LOADING FUNCTION (with titles) ----------
       const videoContainer = document.getElementById('mainVideoContainer');
 
-      function loadGrid(videoList) {
-  const grid = document.getElementById('videoGrid');
-  grid.innerHTML = '';
+      function loadGrid(videos) {
+        if (videos.length === 0) {
+          videoContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #E8003C;">لا توجد فيديوهات في هذا القسم</div>';
+          return;
+        }
+        const gridDiv = document.createElement('div');
+        gridDiv.className = 'video-grid';
+        videos.forEach(v => {
+          const card = document.createElement('div');
+          card.className = 'video-card';
+          card.setAttribute('data-id', v.id);
+          card.setAttribute('data-title', v.title);
 
-  videoList.forEach(video => {
-    const item = document.createElement('div');
-    item.className = 'video__item';
-    item.setAttribute('data-video-id', video.id);
+          // Thumbnail container
+          const thumbCon = document.createElement('div');
+          thumbCon.className = 'thumb-con';
+          thumbCon.innerHTML = `
+            <div class="thumb" style="background-image: url('https://i.ytimg.com/vi/${v.id}/mqdefault.jpg');"></div>
+            <div class="play-button"></div>
+          `;
 
-    // This structure mirrors the photo: Thumbnail on top, Text below
-    item.innerHTML = `
-      <div class="video__thumb" style="background-image: url('${video.thumb}');">
-        <div class="video__duration">0:59</div>
-      </div>
-      <div class="video__info">
-        <div class="video__title">${video.title}</div>
-        <div class="video__details">YouTube Kids • 1.2M views</div>
-      </div>
-    `;
+          // Title container
+          const infoDiv = document.createElement('div');
+          infoDiv.className = 'video-info';
+          infoDiv.innerHTML = `<div class="video-title">${v.title}</div>`;
 
-    item.addEventListener('click', () => {
-      openPlayer(video.id);
-    });
-    grid.appendChild(item);
-  });
-}
+          card.appendChild(thumbCon);
+          card.appendChild(infoDiv);
 
-     // ---------- TAB BUTTONS (class-based) ----------
-document.querySelectorAll('.btn-home').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    loadGrid(homeVideos);
-  });
-});
+          card.addEventListener('click', (e) => {
+            e.preventDefault();
+            openPlayerWithVideo(v.id, v.title);
+          });
 
-document.querySelectorAll('.btn-mecca').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    loadGrid(trendingVideos);
-  });
-});
+          gridDiv.appendChild(card);
+        });
+        videoContainer.innerHTML = '';
+        videoContainer.appendChild(gridDiv);
+      }
 
-document.querySelectorAll('.btn-shaarawy').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    loadGrid(quranVideos);
-  });
-});
-
-document.querySelector('.btn-all')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  // Combine all videos without duplicates
-  const allVideos = [];
-  const seen = new Set();
-  [...homeVideos, ...trendingVideos, ...quranVideos, ...meccaMedinaVideos, ...shaarawyVideos].forEach(v => {
-    if (!seen.has(v.id)) {
-      seen.add(v.id);
-      allVideos.push(v);
-    }
-  });
-  loadGrid(allVideos);
-});
-      // ---------- INITIAL LOAD (Home) ----------
-      window.addEventListener('load', function() {
-        loadGrid(homeVideos);
+      // ---------- CLASS-BASED EVENT LISTENERS ----------
+      document.querySelectorAll('.btn-home').forEach(btn => {
+        btn.addEventListener('click', (e) => { e.preventDefault(); loadGrid(homeVideos); });
       });
 
-      // Also attach click to the two static video items (in case they remain)
+      document.querySelectorAll('.btn-mecca').forEach(btn => {
+        btn.addEventListener('click', (e) => { e.preventDefault(); loadGrid(meccaMedinaVideos); });
+      });
+
+      document.querySelectorAll('.btn-shaarawy').forEach(btn => {
+        btn.addEventListener('click', (e) => { e.preventDefault(); loadGrid(shaarawyVideos); });
+      });
+
+      document.querySelector('.btn-all')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        const allVideos = [];
+        const seen = new Set();
+        [...homeVideos, ...trendingVideos, ...quranVideos, ...meccaMedinaVideos, ...shaarawyVideos].forEach(v => {
+          if (!seen.has(v.id)) {
+            seen.add(v.id);
+            allVideos.push(v);
+          }
+        });
+        loadGrid(allVideos);
+      });
+
+      // ---------- INITIAL LOAD (Home) ----------
+      window.addEventListener('load', () => loadGrid(homeVideos));
+
+      // Also attach click to the two static video items
       document.querySelectorAll('.video__item[data-video-id]').forEach(item => {
         item.addEventListener('click', function(e) {
           const videoId = this.dataset.videoId;
