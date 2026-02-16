@@ -746,8 +746,10 @@
       }
 
       function resetHideTimer() {
-        // This function is called on user interaction (scroll, touch) – restart the timer
-        if (isUIVisible) {
+        // If UI is hidden, show it immediately. Otherwise restart the hide timer.
+        if (!isUIVisible) {
+          showUI();
+        } else {
           startHideTimer();
         }
       }
