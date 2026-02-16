@@ -395,10 +395,37 @@
       ];
 
       // Build video arrays (all guaranteed to have thumbnails)
+
+
+         const LiveLinks = [
+        "https://www.youtube.com/watch?v=9eY-8d62Mhk",
+        "https://www.youtube.com/watch?v=gxw8lbvsN0I",
+        
+      ];
+
+      // Build video arrays – all tabs get working videos
+
+         const TafsirLinks = [
+        "https://www.youtube.com/watch?v=wL_4_Al1U1k",
+        "https://www.youtube.com/watch?v=J8X6TeJtvsU",
+        "https://www.youtube.com/watch?v=914PooSyyL0",
+        "https://www.youtube.com/watch?v=Sn4-8qbi0ps",
+        "https://www.youtube.com/watch?v=5RvgLQiBt9o",
+        "https://www.youtube.com/watch?v=4-Gn1CbXKSE",
+        "https://www.youtube.com/watch?v=b2vkXogolqw",
+        "https://www.youtube.com/watch?v=RV1ZNzobabQ",
+        "https://www.youtube.com/watch?v=XGkxW1_qrk4",
+        "https://www.youtube.com/watch?v=VcmyT3_aarI",
+        "https://www.youtube.com/watch?v=iHjivhBxG80",
+        "https://www.youtube.com/watch?v=fA_7e59yU3k",
+      ];
+
+      
+      // Build video arrays – all tabs get working videos
       const homeVideos = reliableLinks.map((link, i) => ({ id: getVideoId(link), title: `Video ${i+1}` }));
       const meccaMedinaVideos = reliableLinks.slice(0, 3).map((link, i) => ({ id: getVideoId(link), title: `مباشر ${i+1}` }));
       const shaarawyVideos = reliableLinks.slice(3, 6).map((link, i) => ({ id: getVideoId(link), title: `الشعراوي ${i+1}` }));
-      const trendingVideos = reliableLinks.slice(6, 9).map((link, i) => ({ id: getVideoId(link), title: `Trending ${i+1}` }));
+      const homeVideos = LiveLinks.map((link, i) => ({ id: getVideoId(link), title: `Video ${i+1}` }));
       const quranVideos = reliableLinks.slice(9, 12).map((link, i) => ({ id: getVideoId(link), title: `القرآن الكريم - مقطع ${i+1}` }));
 
       // Override first two home titles
