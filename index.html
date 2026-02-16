@@ -1931,6 +1931,34 @@
         videoContainer.appendChild(gridDiv);
       }
 
+
+
+      function loadGrid(videos) {
+  const grid = document.getElementById('videoGrid');
+  grid.innerHTML = '';
+
+  videos.forEach(video => {
+    const item = document.createElement('div');
+    item.className = 'video__item';
+    item.setAttribute('data-video-id', video.id);
+
+    // This structure mirrors the photo: Thumbnail on top, Text below
+    item.innerHTML = `
+      <div class="video__thumb" style="background-image: url('${video.thumb}');">
+        <div class="video__duration">0:59</div>
+      </div>
+      <div class="video__info">
+        <div class="video__title">${video.title}</div>
+        <div class="video__details">YouTube Kids • 1.2M views</div>
+      </div>
+    `;
+
+    item.addEventListener('click', () => {
+      openPlayer(video.id);
+    });
+    grid.appendChild(item);
+  });
+}
      // ---------- TAB BUTTONS (class-based) ----------
 document.querySelectorAll('.btn-home').forEach(btn => {
   btn.addEventListener('click', (e) => {
