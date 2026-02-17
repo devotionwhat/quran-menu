@@ -353,9 +353,9 @@
         <a class="categories__link" href="#"><span class="categories__text btn-all">All</span></a>
       </div>
 
-      <!-- scrollable content area (will be replaced by grid on load) -->
+      <!-- scrollable content area -->
       <div class="video" id="mainVideoContainer">
-        <!-- two default items (will be replaced) -->
+        <!-- two default items (will be replaced on load) -->
         <div class="video__item" data-video-id="kWvFnOBP4Sc" data-video-title="Arkon Fly - Live Session">
           <div class="video__cover">
             <img class="video__img" src="https://github.com/ricardoolivaalonso/Codepen/blob/master/Youtube/video-2.jpg?raw=true" alt="video">
@@ -441,7 +441,7 @@
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
   (function() {
-    // ---------- RAW VIDEO URL LISTS (place your full lists here) ----------
+    // ---------- RAW VIDEO URL LISTS ----------
     const homeLinks = [
      "https://www.youtube.com/watch?v=UdQhpwNkZFs",
 "https://www.youtube.com/watch?v=R0fH5CTi5UU",
@@ -15878,7 +15878,6 @@
 "https://www.youtube.com/watch?v=pDtAQ2yhAJk",
     ];
 
-    // Helper to extract video ID
     function getVideoId(url) {
       const match = url.match(/[?&]v=([^&]+)/);
       return match ? match[1] : null;
@@ -15914,7 +15913,7 @@
 
     // ---------- INFINITE SCROLL FOR MAIN GRID ----------
     const BATCH_SIZE = 10;
-    let currentRawList = [];          // raw URLs for the current category
+    let currentRawList = [];
     let currentIndex = 0;
     let isLoading = false;
     let allVideosLoaded = false;
@@ -16000,6 +15999,8 @@
       gridDiv.className = 'video-grid';
       videoContainer.appendChild(gridDiv);
       loadNextBatch();
+      // Ensure that after reset, the scroll container can still trigger loading
+      // (no need to reattach listener, it's already attached)
     }
 
     function onScroll() {
@@ -16014,14 +16015,15 @@
       }
     }
 
-    scrollContainer.addEventListener('scroll', onScroll);
+    // Attach scroll listener once
+    scrollContainer.addEventListener('scroll', onScroll, { passive: true });
 
     // ---------- PLAYER GLOBAL VARIABLES ----------
     let player;
     let isUIVisible = true;
     let isDragging = false;
     let hideTimer;
-    let masterVideoIds = [];           // array of unique video IDs (built lazily)
+    let masterVideoIds = [];
     const uiElement = document.getElementById('video-ui');
     const statusIcon = document.getElementById('status-icon');
     const progressFill = document.getElementById('progressFill');
@@ -16031,13 +16033,11 @@
     const displayTitle = document.getElementById('displayTitle');
     const carousel = document.getElementById('playerCarousel');
 
-    // Carousel lazy loading
     const CAROUSEL_BATCH = 20;
     let carouselStart = 0;
     let carouselAllLoaded = false;
     let currentActiveId = null;
 
-    // ---------- NEW HELPER FUNCTIONS FOR CAROUSEL HIGHLIGHT/SCROLL ----------
     function getCarouselCardByVideoId(id) {
       return Array.from(document.querySelectorAll('#playerCarousel .thumb-card')).find(card => {
         const img = card.querySelector('img');
@@ -16048,18 +16048,15 @@
     function setActiveCarouselItem(id) {
       document.querySelectorAll('#playerCarousel .thumb-card').forEach(c => c.classList.remove('active'));
       const card = getCarouselCardByVideoId(id);
-      if (card) {
-        card.classList.add('active');
-      }
+      if (card) card.classList.add('active');
     }
 
-    // ---------- MODIFIED LOAD MORE (uses global arrays) ----------
     function loadMoreCarousel() {
       if (carouselAllLoaded || !masterVideoIds.length) return;
       const end = Math.min(carouselStart + CAROUSEL_BATCH, masterVideoIds.length);
       for (let i = carouselStart; i < end; i++) {
         const id = masterVideoIds[i];
-        const title = `Video ${i + 1}`; // simple title
+        const title = `Video ${i + 1}`;
         const card = document.createElement('div');
         card.className = 'thumb-card' + (id === currentActiveId ? ' active' : '');
         const img = document.createElement('img');
@@ -16077,9 +16074,7 @@
       if (carouselStart >= masterVideoIds.length) carouselAllLoaded = true;
     }
 
-    // ---------- MODIFIED POPULATE CAROUSEL (ensures active video is loaded) ----------
     function populateCarousel(activeId) {
-      // Build master video IDs if not already built
       if (masterVideoIds.length === 0) {
         const seen = new Set();
         const allRaw = [
@@ -16095,16 +16090,13 @@
         });
       }
 
-      // Reset carousel
       carousel.innerHTML = '';
       carouselStart = 0;
       carouselAllLoaded = false;
       currentActiveId = activeId;
 
-      // Load first batch
       loadMoreCarousel();
 
-      // Find active index and load more if needed (so the active video appears)
       const activeIndex = masterVideoIds.indexOf(activeId);
       if (activeIndex >= 0) {
         while (carouselStart <= activeIndex && !carouselAllLoaded) {
@@ -16112,7 +16104,6 @@
         }
       }
 
-      // Now set active class and scroll to it (card now exists)
       setActiveCarouselItem(activeId);
       const activeCard = getCarouselCardByVideoId(activeId);
       if (activeCard) {
@@ -16121,7 +16112,6 @@
         }, 100);
       }
 
-      // Attach scroll listener for lazy loading
       carousel.removeEventListener('scroll', onCarouselScroll);
       carousel.addEventListener('scroll', onCarouselScroll, { passive: true });
     }
@@ -16134,15 +16124,13 @@
       }
     }
 
-    // ---------- MODIFIED CHANGE VIDEO (uses helper) ----------
     window.changeVideo = function(id, title, element) {
       if (window.event) window.event.stopPropagation();
       player.loadVideoById(id);
       displayTitle.innerText = title;
-      setActiveCarouselItem(id);            // unified active management
+      setActiveCarouselItem(id);
       player.playVideo();
       hideUI();
-      // Scroll to the active card (use provided element or find it)
       const card = element || getCarouselCardByVideoId(id);
       if (card) {
         setTimeout(() => {
@@ -16256,7 +16244,7 @@
       if (player && player.loadVideoById) {
         player.loadVideoById(videoId);
         displayTitle.innerText = videoTitle;
-        populateCarousel(videoId);         // now handles loading & highlighting
+        populateCarousel(videoId);
         player.playVideo();
         hideUI();
       } else {
@@ -16270,6 +16258,8 @@
             hideUI();
           }
         }, 100);
+        // Safety timeout to prevent infinite loop
+        setTimeout(() => clearInterval(checkExist), 10000);
       }
     };
 
@@ -16279,7 +16269,7 @@
       document.querySelector('.app').style.display = 'flex';
     };
 
-    // ---------- TAB BUTTONS (unchanged) ----------
+    // ---------- TAB BUTTONS ----------
     document.querySelectorAll('.btn-home').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -16315,7 +16305,7 @@
       resetGrid(homeLinks);
     });
 
-    // Also attach click to the two static video items
+    // Also attach click to the two static video items (they will be removed after reset, but just in case)
     document.querySelectorAll('.video__item[data-video-id]').forEach(item => {
       item.addEventListener('click', function(e) {
         const videoId = this.dataset.videoId;
@@ -16324,6 +16314,6 @@
       });
     });
   })();
-</script>
+  </script>
 </body>
 </html>
